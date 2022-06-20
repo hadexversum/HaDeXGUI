@@ -222,7 +222,7 @@ mod_source_reading_server <- function(id) {
 
     observe({
       if(data_source() != "HDeXaminer"){
-        shinyjs::hide("examiner_settings")
+        shinyjs::hide("HaDeX-examiner-settings-panel")
       }
     })
 
