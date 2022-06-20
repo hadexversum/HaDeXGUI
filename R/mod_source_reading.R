@@ -6,6 +6,7 @@
 #'
 #' @noRd
 #'
+#' @import dplyr
 #' @importFrom shiny NS tagList
 mod_source_reading_ui <- function(id){
   ns <- NS(id)
@@ -235,6 +236,13 @@ mod_source_reading_server <- function(id) {
         old_state_name = exam_state_name_from_file(),
         new_state_name = strsplit(input[["exam_state_name"]], ",")[[1]],
         confidence = input[["exam_confidence"]]))
+    })
+
+    output[["checking_exam_data"]] <- DT::renderDataTable({
+      dat_exam() %>%
+        select(Protein, State, Sequence,  Start, End, MHP) %>%
+        unique(.) %>%
+        arrange(Start, End)
     })
 
   })
