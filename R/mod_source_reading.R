@@ -43,6 +43,7 @@ mod_source_reading_ui <- function(id){
 
 #' source_reading Server Functions
 #'
+#' @importFrom icecream ic
 #' @noRd
 mod_source_reading_server <- function(id) {
   moduleServer(id, function(input, output, session){
@@ -51,7 +52,7 @@ mod_source_reading_server <- function(id) {
     dat_in <- reactive({
       inFile <- input[["data_file"]]
 
-      if (is.null(inFile)){
+      if (ic(is.null(inFile))){
         HaDeX::read_hdx("./inst/app/data/KD_180110_CD160_HVEM.csv")
       } else {
         validate(need(try(HaDeX::read_hdx(inFile[["datapath"]])), "Check file requirements!"))
@@ -64,20 +65,18 @@ mod_source_reading_server <- function(id) {
 
     output[["data_file_info"]] <- renderText({
       status <- ""
-      if (is.null(input[["data_file"]])){
+      if (ic((is.null(input[["data_file"]])))){
         status <- "Example file: KD_180110_CD160_HVEM.csv."
       } else {
         length(dat_in()[[1]])
         status <- "Supplied file is valid."
       }
 
-      if(data_source() == "HDeXaminer"){
+      if(ic(data_source() == "HDeXaminer")){
         paste0(status, "\nDetected data source: ", data_source(), ". User action needed below!")
       } else {
         paste0(status, "\nDetected data source: ", data_source(), ".")
       }
-
-
     })
 
   })
