@@ -269,8 +269,23 @@ mod_source_reading_server <- function(id) {
     states_from_file <- reactive({ unique(dat()[["State"]]) })
     # TODO: -\\- and is sort istead of x[order(x)] ok?
     times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
+    # TODO: -\\-, i'm using times_from_file() bc of that
+    times_with_control <- reactive({ setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
+    # TODO: find better name for times_t?
+    times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < 99999] })
 
     observe({ shinyjs::toggle(ns("chosen_control"), condition = has_modifications()) })
+
+    observe({
+      no_deut_times <- times_from_file()[times_from_file() < 0.1]
+      updateSelectInput(session,
+                        inputId = ns("no_deut_control"),
+                        choices = no_deut_times,
+                        selected = max(no_deut_times))
+
+    })
+
+
     output[["sequence_length_exp_info"]] <- renderText({ paste("Sequence length from the file is ", max_range_from_file(), ".") })
 
     dat <- reactive({
