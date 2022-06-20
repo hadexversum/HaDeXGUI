@@ -210,11 +210,11 @@ mod_source_reading_server <- function(id) {
       }
 
       updateTextInput(session,
-                      inputId = "exam_protein_name",
+                      inputId = ns("exam_protein_name"),
                       value = exam_protein_name_from_file())
 
       updateTextInput(session,
-                      inputId = "exam_state_name",
+                      inputId = ns("exam_state_name"),
                       value = exam_state_name_from_file())
     })
 
