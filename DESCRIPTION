@@ -7,10 +7,13 @@ Description: PKG_DESC.
 License: What license is it under?
 Imports: 
     config (>= 0.3.1),
+    DT,
     golem (>= 0.3.2),
     HaDeX,
     icecream,
-    shiny (>= 1.6.0)
+    shiny (>= 1.6.0),
+    shinyhelper,
+    shinyjs
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

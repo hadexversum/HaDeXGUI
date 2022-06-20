@@ -4,6 +4,7 @@
 #'
 #' @return The return value, if any, from executing the utility.
 #'
+#' @importFrom shinyhelper helper
 #' @noRd
 plotOutput_h <- function(outputId, ...)
   helper(withHaDeXSpinner(plotOutput(outputId = outputId, ...)),
