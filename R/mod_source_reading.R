@@ -245,6 +245,21 @@ mod_source_reading_server <- function(id) {
         arrange(Start, End)
     })
 
+    dat_tmp <- reactive({
+
+      if(data_source() == "HDeXaminer"){
+        validate(need(input[["exam_apply_changes"]][[1]] != 0, "Apply changes in `Input Data` tab."))
+        dat_curr <- dat_exam()
+      } else {
+        dat_curr <- dat_in()
+      }
+
+      dat_curr %>%
+        mutate(Start = Start + input[["sequence_start_shift"]] -1,
+               End = End + input[["sequence_start_shift"]] -1)
+
+    })
+
   })
 }
 
