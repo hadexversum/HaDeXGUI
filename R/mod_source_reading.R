@@ -264,6 +264,7 @@ mod_source_reading_server <- function(id) {
     has_modifications <- reactive({ attr(dat_tmp(), "has_modification") })
     max_range_from_file <- reactive({ max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
+    observe({ shinyjs::toggle(ns("chosen_control"), condition = has_modifications()) })
   })
 }
 
