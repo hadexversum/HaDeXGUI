@@ -201,6 +201,31 @@ mod_source_reading_server <- function(id) {
       )
     })
 
+    exam_protein_name_from_file <- reactive({ unique(dat_in()[["Protein"]]) })
+    exam_state_name_from_file <- reactive({ unique(dat_in()[["State"]]) })
+
+    observe({
+      if(data_source() == "HDeXaminer"){
+        shinyjs::show("HaDeX-examiner-settings-panel")
+      }
+
+      updateTextInput(session,
+                      inputId = "exam_protein_name",
+                      value = exam_protein_name_from_file())
+
+      updateTextInput(session,
+                      inputId = "exam_state_name",
+                      value = exam_state_name_from_file())
+    })
+
+    ##
+
+    observe({
+      if(data_source() != "HDeXaminer"){
+        shinyjs::hide("examiner_settings")
+      }
+    })
+
   })
 }
 
