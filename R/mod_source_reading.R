@@ -38,6 +38,22 @@ mod_source_reading_ui <- function(id){
         )
       )
     ),
+
+    fillRow(
+      id = "HaDeX-file-requirements-section",
+      flex = c(1, NA),
+      p("For the program to behave correctly, please make sure supplied file fulfills all requirements.",
+        "Requirements can be displayed by clicking the button."),
+      HaDeX_collapseButton(
+        title = "Show requirements",
+        target = "#HaDeX-file-requirements-table"
+      )
+    ),
+
+    HaDeX_collapsablePanel(
+      id = "HaDeX-file-requirements-table",
+      tableOutput(ns("file_req"))
+    ),
   )
 }
 
@@ -77,6 +93,18 @@ mod_source_reading_server <- function(id) {
       } else {
         paste0(status, "\nDetected data source: ", data_source(), ".")
       }
+    })
+
+    output[["file_req"]] <- renderTable({
+      data.frame(
+        Name = c("Protein", "Start", "End", "Sequence", "Modification", "Fragment", "MaxUptake", "MHP", "State", "Exposure", "File", "z", "RT", "Inten", "Center"),
+        Type = c("Character", "Integer", "Integer", "Character", "Character", "Character", "Numeric", "Numeric", "Character", "Numeric", "Character", "Integer", "Numeric", "Numeric", "Numeric"),
+        Obligatory = c("TRUE", "TRUE", "TRUE", "TRUE", "FALSE", "FALSE", "FALSE", "FALSE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE"),
+        Description = c("Protein name", "Peptide's first amino acid position in sequence", "Peptide's last amino acid position in sequence", "Peptide's sequence in single amino acid in one letter code", "Post-transitional modification of the peptyde", "Fragment label from ETD-HDX data", "Number od maximal deuteriul atoms uptake", "mass of the singly charged molecular ion", "Name od the protein state", "D2O exposure in minutes", "Name of .raw file", "Charge", "Peptide's retention time in minures", "Intensity", "Measured mass to charge ratio"),
+        DynamX3.0 = c("Protein", "Start", "End", "Sequence", "Modification", "Fragment", "MaxUptake", "MHP", "State", "Exposure", "File", "z", "RT", "Inten", "Center"),
+        DynamX2.0 = c("Protein", "Start", "End", "Sequence", "No information", "No information", "MaxUptake", "MHP", "State", "Exposure", "File", "z", "RT", "Inten", "Center"),
+        HDeXaminer = c("Shortest value from `Protein State`", "Start", "End", "Sequence", "No information", "No information", "Calculated based on sequence", "Calculated based on sequence", "Protein State", "Deut Time", "Experiment", "Charge", "Search RT", "Max Inty", "Exp Cent")
+      )
     })
 
   })

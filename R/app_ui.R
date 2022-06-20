@@ -44,6 +44,7 @@ app_ui <- function(request) {
 #' resources inside the Shiny application.
 #'
 #' @import shiny
+#' @importFrom shinyjs useShinyjs
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
 golem_add_external_resources <- function() {
@@ -57,8 +58,10 @@ golem_add_external_resources <- function() {
     bundle_resources(
       path = app_sys("app/www"),
       app_title = "HaDeXGUI"
-    )
+    ),
+
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
+    useShinyjs()
   )
 }
