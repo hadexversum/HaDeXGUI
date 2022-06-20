@@ -283,6 +283,30 @@ mod_source_reading_server <- function(id) {
                         selected = proteins_from_file()[1])
     })
 
+    observe({
+      updateSelectInput(session,
+                        inputId = ns("chosen_control"),
+                        choices = options_for_control())
+
+      updateNumericInput(session,
+                         inputId = ns("sequence_length"),
+                         value = max_range_from_file())
+    })
+
+
+    options_for_control <- reactive({
+      dat_tmp() %>%
+        filter(Protein == input[["chosen_protein"]]) %>%
+        mutate(Exposure = round(Exposure, 4)) %>%
+        select(Protein, State, Exposure) %>%
+        arrange(State, desc(Exposure)) %>%
+        unique(.) %>%
+        mutate(control = paste0(Protein, " | ", State, " | ", Exposure)) %>%
+        select(control)
+
+    })
+
+    # TODO: ask about dat
     states_chosen_protein <- reactive({
       dat() %>%
         filter(Protein == input[["chosen_protein"]]) %>%
