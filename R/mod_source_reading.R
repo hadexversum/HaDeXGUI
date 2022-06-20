@@ -111,10 +111,7 @@ input_parameters <- function(ns) HaDeX_plotSettingsSection(
 
   title = "Select the parameters:",
 
-  selectInput_h(inputId = ns("chosen_protein"),
-                label = "Choose protein: ",
-                choices = c("db_CD160"),
-                width = "100%"),
+  uiOutput(ns("gen_chosen_protein")),
   selectInput_h(inputId = ns("chosen_control"),
                 label = "Maximal exchange control: ",
                 choices = c("not present", "db_CD160 | CD160 | 1440"),
@@ -262,7 +259,9 @@ mod_source_reading_server <- function(id) {
 
     proteins_from_file <- reactive({ unique(dat_tmp()[["Protein"]]) })
     has_modifications <- reactive({ attr(dat_tmp(), "has_modification") })
-    max_range_from_file <- reactive({ max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
+    max_range_from_file <- reactive({
+      req(input[["chosen_protein"]])
+      max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
 
     # TODO: ask : dat or dat_tmp is ok?
@@ -276,11 +275,13 @@ mod_source_reading_server <- function(id) {
 
     observe({ shinyjs::toggle(ns("chosen_control"), condition = has_modifications()) })
 
-    observe({
-      updateSelectInput(session,
-                        inputId = ns("chosen_protein"),
-                        choices = proteins_from_file(),
-                        selected = proteins_from_file()[1])
+
+    output[["gen_chosen_protein"]] <- renderUI({
+      selectInput_h(inputId = ns("chosen_protein"),
+                    label = "Choose protein: ",
+                    choices = proteins_from_file(),
+                    selected = proteins_from_file()[1],
+                    width = "100%")
     })
 
     observe({
@@ -295,6 +296,7 @@ mod_source_reading_server <- function(id) {
 
 
     options_for_control <- reactive({
+      req(input[["chosen_protein"]])
       dat_tmp() %>%
         filter(Protein == input[["chosen_protein"]]) %>%
         mutate(Exposure = round(Exposure, 4)) %>%
@@ -308,6 +310,7 @@ mod_source_reading_server <- function(id) {
 
     # TODO: ask about dat
     states_chosen_protein <- reactive({
+      req(input[["chosen_protein"]])
       dat() %>%
         filter(Protein == input[["chosen_protein"]]) %>%
         select(State) %>%
@@ -331,6 +334,7 @@ mod_source_reading_server <- function(id) {
 
 
     dat <- reactive({
+      req(input[["chosen_protein"]])
       # TODO: this function IS NOT exported from HaDeX due to empty line
       HaDeX:::create_control_dataset(dat = dat_tmp(),
                              control_protein = input[["chosen_protein"]],
