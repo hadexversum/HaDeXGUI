@@ -277,6 +277,22 @@ mod_source_reading_server <- function(id) {
     observe({ shinyjs::toggle(ns("chosen_control"), condition = has_modifications()) })
 
     observe({
+      updateSelectInput(session,
+                        inputId = ns("chosen_protein"),
+                        choices = proteins_from_file(),
+                        selected = proteins_from_file()[1])
+    })
+
+    states_chosen_protein <- reactive({
+      dat() %>%
+        filter(Protein == input[["chosen_protein"]]) %>%
+        select(State) %>%
+        unique(.) %>%
+        arrange(nchar(State)) %>%
+        .[[1]]
+    })
+
+    observe({
       no_deut_times <- times_from_file()[times_from_file() < 0.1]
       updateSelectInput(session,
                         inputId = ns("no_deut_control"),
@@ -287,6 +303,8 @@ mod_source_reading_server <- function(id) {
 
 
     output[["sequence_length_exp_info"]] <- renderText({ paste("Sequence length from the file is ", max_range_from_file(), ".") })
+
+
 
     dat <- reactive({
       # TODO: this function IS NOT exported from HaDeX due to empty line
