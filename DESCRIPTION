@@ -8,6 +8,8 @@ License: What license is it under?
 Imports: 
     config (>= 0.3.1),
     golem (>= 0.3.2),
+    HaDeX,
+    icecream,
     shiny (>= 1.6.0)
 Suggests: 
     testthat (>= 3.0.0)
