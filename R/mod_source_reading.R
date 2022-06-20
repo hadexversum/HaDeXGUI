@@ -152,10 +152,12 @@ input_parameters <- function(ns) HaDeX_plotSettingsSection(
 #' source_reading Server Functions
 #'
 #' @importFrom icecream ic
+#' @importFrom shinyvalidate InputValidator sv_gte sv_lte
 #' @noRd
 mod_source_reading_server <- function(id) {
   moduleServer(id, function(input, output, session){
     ns <- session$ns
+    iv <- InputValidator$new()
 
     dat_in <- reactive({
       inFile <- input[["data_file"]]
@@ -342,52 +344,26 @@ mod_source_reading_server <- function(id) {
                              control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
     })
 
-
-    observe({
-
-      tryCatch({
-        if(input[["deut_part"]] > 100)
-          updateNumericInput(session,
-                             inputId = "deut_part",
-                             value = 100)
-      },
-      error = function(e){
-        updateNumericInput(session,
-                           inputId = "deut_part",
-                           value = 100)
-      })
-
-    })
-
+    # TODO: ask wtf is with max_range
     observe({
 
       tryCatch({
         if(input[["sequence_length"]] < max_range())
           updateNumericInput(session,
-                             inputId = "sequence_length",
+                             inputId = ns("sequence_length"),
                              value = max_range())
       },
       error = function(e){
         updateNumericInput(session,
-                           inputId = "sequence_length",
+                           inputId = ns("sequence_length"),
                            value = max_range())
       })
 
     })
 
-    observe({
-
-      tryCatch(
-        { if(input[["sequence_start_shift"]] < 0)
-          updateNumericInput(session,
-                             inputId = "sequence_start_shift",
-                             value = 1) },
-        error = function(e) {
-          message("You cannot shift it to minus values!")
-          updateNumericInput(session,
-                             inputId = "sequence_start_shift",
-                             value = 1) })
-    })
+    iv$add_rule("sequence_start_shift", sv_gte(0))
+    iv$add_rule("deut_part", sv_lte(100))
+    iv$enable()
   })
 }
 
