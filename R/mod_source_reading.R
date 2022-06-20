@@ -265,6 +265,7 @@ mod_source_reading_server <- function(id) {
     max_range_from_file <- reactive({ max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
     observe({ shinyjs::toggle(ns("chosen_control"), condition = has_modifications()) })
+    output[["sequence_length_exp_info"]] <- renderText({ paste("Sequence length from the file is ", max_range_from_file(), ".") })
   })
 }
 
