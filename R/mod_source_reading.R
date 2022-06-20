@@ -264,8 +264,22 @@ mod_source_reading_server <- function(id) {
     has_modifications <- reactive({ attr(dat_tmp(), "has_modification") })
     max_range_from_file <- reactive({ max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
+
+    # TODO: ask : dat or dat_tmp is ok?
+    states_from_file <- reactive({ unique(dat()[["State"]]) })
+    # TODO: -\\- and is sort istead of x[order(x)] ok?
+    times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
+
     observe({ shinyjs::toggle(ns("chosen_control"), condition = has_modifications()) })
     output[["sequence_length_exp_info"]] <- renderText({ paste("Sequence length from the file is ", max_range_from_file(), ".") })
+
+    dat <- reactive({
+      # TODO: this function IS NOT exported from HaDeX due to empty line
+      HaDeX:::create_control_dataset(dat = dat_tmp(),
+                             control_protein = input[["chosen_protein"]],
+                             control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
+                             control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
+    })
   })
 }
 
