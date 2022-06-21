@@ -112,10 +112,7 @@ input_parameters <- function(ns) HaDeX_plotSettingsSection(
   title = "Select the parameters:",
 
   uiOutput(ns("gen_chosen_protein")),
-  selectInput_h(inputId = ns("chosen_control"),
-                label = "Maximal exchange control: ",
-                choices = c("not present", "db_CD160 | CD160 | 1440"),
-                width = "100%"),
+  uiOutput(ns("gen_chosen_control")),
   selectInput_h(inputId = ns("no_deut_control"),
                 label = "No deuterated time point:",
                 choices = c(0, 0.001, 5),
@@ -269,9 +266,6 @@ mod_source_reading_server <- function(id) {
     # TODO: find better name for times_t?
     times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < 99999] })
 
-    observe({ shinyjs::toggle(ns("chosen_control"), condition = has_modifications()) })
-
-
     output[["gen_chosen_protein"]] <- renderUI({
       selectInput_h(inputId = ns("chosen_protein"),
                     label = "Choose protein: ",
@@ -280,11 +274,14 @@ mod_source_reading_server <- function(id) {
                     width = "100%")
     })
 
-    observe({
-      updateSelectInput(session,
-                        inputId = ns("chosen_control"),
-                        choices = options_for_control())
+    output[["gen_chosen_control"]] <- renderUI({
+      selectInput_h(inputId = ns("chosen_control"),
+                    label = "Maximal exchange control: ",
+                    choices = options_for_control(),
+                    width = "100%")
+    })
 
+    observe({
       updateNumericInput(session,
                          inputId = ns("sequence_length"),
                          value = max_range_from_file())
