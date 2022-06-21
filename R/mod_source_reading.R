@@ -134,11 +134,8 @@ input_parameters <- function(ns) HaDeX_plotSettingsSection(
       ),
       column(
         width = 6,
-        numericInput_h(inputId = ns("sequence_length"),
-                       label = "Sequence length:",
-                       value = 300, step = 1,
-                       width = "100%")
-      )
+      uiOutput(ns("gen_sequence_length"))
+    )
     )
   ),
   textOutput(ns("sequence_length_exp_info"))
@@ -149,7 +146,7 @@ input_parameters <- function(ns) HaDeX_plotSettingsSection(
 #' source_reading Server Functions
 #'
 #' @importFrom icecream ic
-#' @importFrom shinyvalidate InputValidator sv_gte sv_lte
+#' @importFrom shinyvalidate InputValidator sv_gte sv_lte compose_rules
 #' @noRd
 mod_source_reading_server <- function(id) {
   moduleServer(id, function(input, output, session){
@@ -201,7 +198,7 @@ mod_source_reading_server <- function(id) {
     exam_state_name_from_file <- reactive({ unique(dat_in()[["State"]]) })
 
     observeEvent(data_source(), {
-      if (data_source() == "HDeXaminer") {
+      golem::invoke_js(if (data_source() == "HDeXaminer") "show" else "hide", "#HaDeX-examiner-settings-panel")
         golem::invoke_js("show", "#HaDeX-examiner-settings-panel")
 
         updateTextInput(session,
@@ -285,6 +282,14 @@ mod_source_reading_server <- function(id) {
                          value = max_range_from_file())
     })
 
+    output[["gen_sequence_length"]] <- renderUI({
+      numericInput_h(inputId = ns("sequence_length"),
+                     label = "Sequence length:",
+                     #TODO: is the hardcoded value relevant for ex. input?
+                     value = max_range_from_file(), step = 1,
+                     min = max_range_from_file(),
+                     width = "100%")
+    })
 
     options_for_control <- reactive({
       req(input[["chosen_protein"]])
@@ -336,26 +341,13 @@ mod_source_reading_server <- function(id) {
                              control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
     })
 
-    # TODO: ask wtf is with max_range
-    observe({
-
-      tryCatch({
-        if(input[["sequence_length"]] < max_range())
-          updateNumericInput(session,
-                             inputId = ns("sequence_length"),
-                             value = max_range())
-      },
-      error = function(e){
-        updateNumericInput(session,
-                           inputId = ns("sequence_length"),
-                           value = max_range())
-      })
-
-    })
-
     iv <- InputValidator$new()
     iv$add_rule("sequence_start_shift", sv_gte(0))
     iv$add_rule("deut_part", sv_lte(100))
+    iv$add_rule("sequence_length", compose_rules(
+      ~ if (is.na(.)) "Must not contain `NA` values.",
+      ~ if (. < max_range_from_file()) "Must be no shorther than any max end position in the file."
+    ))
     iv$enable()
   })
 }
