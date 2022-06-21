@@ -146,6 +146,8 @@ mod_source_reading_server <- function(id) {
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 
+    ### reactive values
+
     dat_in <- reactive({
       inFile <- input[["data_file"]]
 
@@ -160,28 +162,6 @@ mod_source_reading_server <- function(id) {
 
     data_source <- reactive({ attr(dat_in(), "source") })
 
-    output[["data_file_info"]] <- renderText({
-      status <- ""
-      if (ic((is.null(input[["data_file"]])))){
-        status <- "Example file: KD_180110_CD160_HVEM.csv."
-      } else {
-        length(dat_in()[[1]])
-        status <- "Supplied file is valid."
-      }
-
-      if(ic(data_source() == "HDeXaminer")){
-        paste0(status, "\nDetected data source: ", data_source(), ". User action needed below!")
-      } else {
-        paste0(status, "\nDetected data source: ", data_source(), ".")
-      }
-    })
-
-    observeEvent(data_source(), {
-      golem::invoke_js(if (data_source() == "HDeXaminer") "show" else "hide", "#HaDeX-examiner-settings-panel")
-    })
-
-
-
     dat_exam <- eventReactive(input[["exam_apply_changes"]], {
       get_internal_messages(HaDeX::update_hdexaminer_file(
         dat = dat_in(),
@@ -193,16 +173,8 @@ mod_source_reading_server <- function(id) {
         confidence = input[["exam_confidence"]]))
     })
 
-    output[["checking_exam_data"]] <- DT::renderDataTable({
-      dat_exam() %>%
-        select(Protein, State, Sequence,  Start, End, MHP) %>%
-        unique(.) %>%
-        arrange(Start, End)
-    })
-
     dat_tmp <- reactive({
-
-      if(data_source() == "HDeXaminer"){
+      if (data_source() == "HDeXaminer") {
         validate(need(input[["exam_apply_changes"]][[1]] != 0, "Apply changes in `Input Data` tab."))
         dat_curr <- dat_exam()
       } else {
@@ -210,9 +182,21 @@ mod_source_reading_server <- function(id) {
       }
 
       dat_curr %>%
-        mutate(Start = Start + input[["sequence_start_shift"]] -1,
-               End = End + input[["sequence_start_shift"]] -1)
+        mutate(Start = Start + input[["sequence_start_shift"]] - 1,
+               End = End + input[["sequence_start_shift"]] - 1)
+    })
 
+    dat <- reactive({
+      req(
+        input[["chosen_protein"]],
+        input[["chosen_control"]]
+      )
+
+      # TODO: this function IS NOT exported from HaDeX due to empty line
+      HaDeX:::create_control_dataset(dat = dat_tmp(),
+                                     control_protein = input[["chosen_protein"]],
+                                     control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
+                                     control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
     })
 
     proteins_from_file <- reactive({ unique(dat_in()[["Protein"]]) })
@@ -221,7 +205,6 @@ mod_source_reading_server <- function(id) {
       req(input[["chosen_protein"]])
       max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
-
     states_from_file <- reactive({ unique(dat_in()[["State"]]) })
     # TODO: -\\- and is sort istead of x[order(x)] ok?
     times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
@@ -229,6 +212,31 @@ mod_source_reading_server <- function(id) {
     times_with_control <- reactive({ setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
     # TODO: find better name for times_t?
     times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < 99999] })
+
+    options_for_control <- reactive({
+      req(input[["chosen_protein"]])
+      dat_tmp() %>%
+        filter(Protein == input[["chosen_protein"]]) %>%
+        mutate(Exposure = round(Exposure, 4)) %>%
+        select(Protein, State, Exposure) %>%
+        arrange(State, desc(Exposure)) %>%
+        unique(.) %>%
+        mutate(control = paste0(Protein, " | ", State, " | ", Exposure)) %>%
+        select(control)
+
+    })
+
+    states_chosen_protein <- reactive({
+      req(input[["chosen_protein"]])
+      dat_tmp() %>%
+        filter(Protein == input[["chosen_protein"]]) %>%
+        select(State) %>%
+        unique(.) %>%
+        arrange(nchar(State)) %>%
+        .[[1]]
+    })
+
+    ### ui outputs
 
     output[["gen_chosen_protein"]] <- renderUI({
       selectInput_h(inputId = ns("chosen_protein"),
@@ -268,29 +276,6 @@ mod_source_reading_server <- function(id) {
                      width = "100%")
     })
 
-    options_for_control <- reactive({
-      req(input[["chosen_protein"]])
-      dat_tmp() %>%
-        filter(Protein == input[["chosen_protein"]]) %>%
-        mutate(Exposure = round(Exposure, 4)) %>%
-        select(Protein, State, Exposure) %>%
-        arrange(State, desc(Exposure)) %>%
-        unique(.) %>%
-        mutate(control = paste0(Protein, " | ", State, " | ", Exposure)) %>%
-        select(control)
-
-    })
-
-    states_chosen_protein <- reactive({
-      req(input[["chosen_protein"]])
-      dat_tmp() %>%
-        filter(Protein == input[["chosen_protein"]]) %>%
-        select(State) %>%
-        unique(.) %>%
-        arrange(nchar(State)) %>%
-        .[[1]]
-    })
-
     output[["gen_no_deut_control"]] <- renderUI({
       req(times_from_file())
       no_deut_times <- times_from_file()[times_from_file() < 0.1]
@@ -300,23 +285,40 @@ mod_source_reading_server <- function(id) {
                     selected = max(no_deut_times))
     })
 
+    ### other outputs
+
+    output[["data_file_info"]] <- renderText({
+      status <- ""
+      if (ic((is.null(input[["data_file"]])))){
+        status <- "Example file: KD_180110_CD160_HVEM.csv."
+      } else {
+        length(dat_in()[[1]])
+        status <- "Supplied file is valid."
+      }
+
+      if(ic(data_source() == "HDeXaminer")){
+        paste0(status, "\nDetected data source: ", data_source(), ". User action needed below!")
+      } else {
+        paste0(status, "\nDetected data source: ", data_source(), ".")
+      }
+    })
+
+    output[["checking_exam_data"]] <- DT::renderDataTable({
+      dat_exam() %>%
+        select(Protein, State, Sequence,  Start, End, MHP) %>%
+        unique(.) %>%
+        arrange(Start, End)
+    })
 
     output[["sequence_length_exp_info"]] <- renderText({ paste("Sequence length from the file is ", max_range_from_file(), ".") })
 
+    ### observers
 
-
-    dat <- reactive({
-      req(
-        input[["chosen_protein"]],
-        input[["chosen_control"]]
-      )
-
-      # TODO: this function IS NOT exported from HaDeX due to empty line
-      HaDeX:::create_control_dataset(dat = dat_tmp(),
-                             control_protein = input[["chosen_protein"]],
-                             control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
-                             control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
+    observeEvent(data_source(), {
+      golem::invoke_js(if (data_source() == "HDeXaminer") "show" else "hide", "#HaDeX-examiner-settings-panel")
     })
+
+    ### validator
 
     iv <- InputValidator$new()
     iv$add_rule("sequence_start_shift", sv_gte(0))
