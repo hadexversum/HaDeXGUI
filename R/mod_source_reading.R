@@ -80,12 +80,8 @@ mod_source_reading_ui <- function(id){
                          value = 1440,
                          min = 0,
                          width = "100%"),
-          textInput_h(inputId = ns("exam_protein_name"),
-                      label = "Protein name:",
-                      width = "100%"),
-          textInput_h(inputId = ns("exam_state_name"),
-                      label = "States names:",
-                      width = "100%"),
+          uiOutput(ns("gen_exam_protein_name")),
+          uiOutput(ns("gen_exam_state_name")),
           checkboxGroupInput_h(inputId = ns("exam_confidence"),
                                label = "Accepted confidence values:",
                                choices = c("High", "Medium", "Low"),
@@ -123,19 +119,17 @@ input_parameters <- function(ns) HaDeX_plotSettingsSection(
                  min = 0, max = 100, step = 1,
                  width = "100%"),
 
-  fluidPage(
-    fluidRow(
-      column(
-        width = 6,
-        numericInput_h(inputId = ns("sequence_start_shift"),
-                       label = "Sequence start:",
-                       value = 1, step = 1,
-                       width = "100%"),
-      ),
-      column(
-        width = 6,
+  fluidRow(
+    column(
+      width = 6,
+      numericInput_h(inputId = ns("sequence_start_shift"),
+                     label = "Sequence start:",
+                     value = 1, step = 1, min = 1,
+                     width = "100%"),
+    ),
+    column(
+      width = 6,
       uiOutput(ns("gen_sequence_length"))
-    )
     )
   ),
   textOutput(ns("sequence_length_exp_info"))
@@ -199,19 +193,9 @@ mod_source_reading_server <- function(id) {
 
     observeEvent(data_source(), {
       golem::invoke_js(if (data_source() == "HDeXaminer") "show" else "hide", "#HaDeX-examiner-settings-panel")
-        golem::invoke_js("show", "#HaDeX-examiner-settings-panel")
-
-        updateTextInput(session,
-                        inputId = ns("exam_protein_name"),
-                        value = exam_protein_name_from_file())
-        updateTextInput(session,
-                        inputId = ns("exam_state_name"),
-                        value = exam_state_name_from_file())
-
-      } else {
-        golem::invoke_js("hide", "#HaDeX-examiner-settings-panel")
-      }
     })
+
+
 
     dat_exam <- eventReactive(input[["exam_apply_changes"]], {
       get_internal_messages(HaDeX::update_hdexaminer_file(
@@ -246,14 +230,14 @@ mod_source_reading_server <- function(id) {
 
     })
 
-    proteins_from_file <- reactive({ unique(dat_tmp()[["Protein"]]) })
+    proteins_from_file <- reactive({ unique(dat_in()[["Protein"]]) })
     has_modifications <- reactive({ attr(dat_tmp(), "has_modification") })
     max_range_from_file <- reactive({
       req(input[["chosen_protein"]])
       max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
 
-    states_from_file <- reactive({ unique(dat_tmp()[["State"]]) })
+    states_from_file <- reactive({ unique(dat_in()[["State"]]) })
     # TODO: -\\- and is sort istead of x[order(x)] ok?
     times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
     # TODO: -\\-, i'm using times_from_file() bc of that
@@ -276,10 +260,18 @@ mod_source_reading_server <- function(id) {
                     width = "100%")
     })
 
-    observe({
-      updateNumericInput(session,
-                         inputId = ns("sequence_length"),
-                         value = max_range_from_file())
+    output[["gen_exam_protein_name"]] <- renderUI({
+      textInput_h(inputId = ns("exam_protein_name"),
+                  label = "Protein name:",
+                  value = proteins_from_file(),
+                  width = "100%")
+    })
+
+    output[["gen_exam_state_name"]] <- renderUI({
+      textInput_h(inputId = ns("exam_state_name"),
+                  label = "States names:",
+                  value = paste(states_from_file(), collapse = ", "),
+                  width = "100%")
     })
 
     output[["gen_sequence_length"]] <- renderUI({
