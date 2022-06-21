@@ -154,7 +154,6 @@ input_parameters <- function(ns) HaDeX_plotSettingsSection(
 mod_source_reading_server <- function(id) {
   moduleServer(id, function(input, output, session){
     ns <- session$ns
-    iv <- InputValidator$new()
 
     dat_in <- reactive({
       inFile <- input[["data_file"]]
@@ -354,6 +353,7 @@ mod_source_reading_server <- function(id) {
 
     })
 
+    iv <- InputValidator$new()
     iv$add_rule("sequence_start_shift", sv_gte(0))
     iv$add_rule("deut_part", sv_lte(100))
     iv$enable()
