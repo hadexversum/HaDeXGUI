@@ -63,7 +63,7 @@ mod_source_reading_ui <- function(id){
       id = "HaDeX-settings-panel",
       wellPanel(
         id = "HaDeX-standard-settings-panel",
-        input_parameters(ns)
+        input_parameters_section(ns)
       ),
 
       undisplay(
@@ -103,7 +103,7 @@ mod_source_reading_ui <- function(id){
   )
 }
 
-input_parameters <- function(ns) HaDeX_plotSettingsSection(
+input_parameters_section <- function(ns) HaDeX_plotSettingsSection(
 
   title = "Select the parameters:",
 
@@ -132,7 +132,7 @@ input_parameters <- function(ns) HaDeX_plotSettingsSection(
       uiOutput(ns("gen_sequence_length"))
     )
   ),
-  textOutput(ns("sequence_length_exp_info"))
+  verbatimTextOutput(ns("sequence_length_exp_info"))
 
 
 )
