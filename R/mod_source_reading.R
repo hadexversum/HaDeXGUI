@@ -176,9 +176,6 @@ mod_source_reading_server <- function(id) {
       }
     })
 
-    exam_protein_name_from_file <- reactive({ unique(dat_in()[["Protein"]]) })
-    exam_state_name_from_file <- reactive({ unique(dat_in()[["State"]]) })
-
     observeEvent(data_source(), {
       golem::invoke_js(if (data_source() == "HDeXaminer") "show" else "hide", "#HaDeX-examiner-settings-panel")
     })
