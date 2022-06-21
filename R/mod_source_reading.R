@@ -327,7 +327,11 @@ mod_source_reading_server <- function(id) {
 
 
     dat <- reactive({
-      req(input[["chosen_protein"]])
+      req(
+        input[["chosen_protein"]],
+        input[["chosen_control"]]
+      )
+
       # TODO: this function IS NOT exported from HaDeX due to empty line
       HaDeX:::create_control_dataset(dat = dat_tmp(),
                              control_protein = input[["chosen_protein"]],
