@@ -109,10 +109,7 @@ input_parameters_section <- function(ns) HaDeX_plotSettingsSection(
 
   uiOutput(ns("gen_chosen_protein")),
   uiOutput(ns("gen_chosen_control")),
-  selectInput_h(inputId = ns("no_deut_control"),
-                label = "No deuterated time point:",
-                choices = c(0, 0.001, 5),
-                selected = 0.001),
+  uiOutput(ns("gen_no_deut_control")),
   numericInput_h(inputId = ns("deut_part"),
                  label = "Choose D20 concentration [%]: ",
                  value = 90,
@@ -133,8 +130,6 @@ input_parameters_section <- function(ns) HaDeX_plotSettingsSection(
     )
   ),
   verbatimTextOutput(ns("sequence_length_exp_info"))
-
-
 )
 
 #' source_reading Server Functions
@@ -189,9 +184,9 @@ mod_source_reading_server <- function(id) {
       get_internal_messages(HaDeX::update_hdexaminer_file(
         dat = dat_in(),
         fd_time = input[["examiner_fd_timepoint"]],
-        old_protein_name = exam_protein_name_from_file(),
+        old_protein_name = proteins_from_file(),
         new_protein_name = input[["exam_protein_name"]],
-        old_state_name = exam_state_name_from_file(),
+        old_state_name = states_from_file(),
         new_state_name = strsplit(input[["exam_state_name"]], ",")[[1]],
         confidence = input[["exam_confidence"]]))
     })
@@ -294,13 +289,13 @@ mod_source_reading_server <- function(id) {
         .[[1]]
     })
 
-    observe({
+    output[["gen_no_deut_control"]] <- renderUI({
+      req(times_from_file())
       no_deut_times <- times_from_file()[times_from_file() < 0.1]
-      updateSelectInput(session,
-                        inputId = ns("no_deut_control"),
-                        choices = no_deut_times,
-                        selected = max(no_deut_times))
-
+      selectInput_h(inputId = ns("no_deut_control"),
+                    label = "No deuterated time point:",
+                    choices = no_deut_times,
+                    selected = max(no_deut_times))
     })
 
 
