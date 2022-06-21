@@ -267,7 +267,7 @@ mod_source_reading_server <- function(id) {
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
 
     # TODO: ask : dat or dat_tmp is ok?
-    states_from_file <- reactive({ unique(dat()[["State"]]) })
+    states_from_file <- reactive({ unique(dat_tmp()[["State"]]) })
     # TODO: -\\- and is sort istead of x[order(x)] ok?
     times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
     # TODO: -\\-, i'm using times_from_file() bc of that
@@ -313,7 +313,7 @@ mod_source_reading_server <- function(id) {
     # TODO: ask about dat
     states_chosen_protein <- reactive({
       req(input[["chosen_protein"]])
-      dat() %>%
+      dat_tmp() %>%
         filter(Protein == input[["chosen_protein"]]) %>%
         select(State) %>%
         unique(.) %>%
