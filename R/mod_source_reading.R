@@ -61,6 +61,7 @@ mod_source_reading_ui <- function(id){
 
     fillRow(
       id = "HaDeX-settings-panel",
+
       wellPanel(
         id = "HaDeX-standard-settings-panel",
         input_parameters_section(ns)
@@ -69,33 +70,7 @@ mod_source_reading_ui <- function(id){
       undisplay(
         wellPanel(
           id = "HaDeX-examiner-settings-panel",
-          h3("File from HDeXaminer detected!"),
-          span(
-            "Some of the information from the data file requires your confirmation.",
-            "For the additional information on how the data from HDeXaminer is processed, check the requirements above.",
-            "Keep in mind that the MHP value is generated based on the peptide sequence and therefore, may differ from actual value in case of the modifications."
-          ),
-          numericInput_h(inputId = ns("examiner_fd_timepoint"),
-                         label = "FD timepoint [min]:",
-                         value = 1440,
-                         min = 0,
-                         width = "100%"),
-          uiOutput(ns("gen_exam_protein_name")),
-          uiOutput(ns("gen_exam_state_name")),
-          checkboxGroupInput_h(inputId = ns("exam_confidence"),
-                               label = "Accepted confidence values:",
-                               choices = c("High", "Medium", "Low"),
-                               selected = c("Medium", "High")),
-          actionButton(inputId = ns("exam_apply_changes"),
-                       label = "Apply changes to continue"),
-          span(
-            "The calculated values of MPH might slightly differ based on data used and its precision."
-          ),
-          a(
-            href = "http://www.matrixscience.com/help/aa_help.html",
-            "Used amino mass data"
-          ),
-          DT::dataTableOutput(ns("checking_exam_data")),
+          hdexaminer_parameters_section(ns)
         )
       ),
       flex = c(NA, 1)
@@ -130,6 +105,36 @@ input_parameters_section <- function(ns) HaDeX_plotSettingsSection(
     )
   ),
   verbatimTextOutput(ns("sequence_length_exp_info"))
+)
+
+hdexaminer_parameters_section <- function(ns) tagList(
+  h3("File from HDeXaminer detected!"),
+  span(
+    "Some of the information from the data file requires your confirmation.",
+    "For the additional information on how the data from HDeXaminer is processed, check the requirements above.",
+    "Keep in mind that the MHP value is generated based on the peptide sequence and therefore, may differ from actual value in case of the modifications."
+  ),
+  numericInput_h(inputId = ns("examiner_fd_timepoint"),
+                 label = "FD timepoint [min]:",
+                 value = 1440,
+                 min = 0,
+                 width = "100%"),
+  uiOutput(ns("gen_exam_protein_name")),
+  uiOutput(ns("gen_exam_state_name")),
+  checkboxGroupInput_h(inputId = ns("exam_confidence"),
+                       label = "Accepted confidence values:",
+                       choices = c("High", "Medium", "Low"),
+                       selected = c("Medium", "High")),
+  actionButton(inputId = ns("exam_apply_changes"),
+               label = "Apply changes to continue"),
+  span(
+    "The calculated values of MPH might slightly differ based on data used and its precision."
+  ),
+  a(
+    href = "http://www.matrixscience.com/help/aa_help.html",
+    "Used amino mass data"
+  ),
+  DT::dataTableOutput(ns("checking_exam_data"))
 )
 
 #' source_reading Server Functions
