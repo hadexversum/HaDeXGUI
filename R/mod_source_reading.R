@@ -66,7 +66,7 @@ mod_source_reading_ui <- function(id){
         input_parameters(ns)
       ),
 
-      shinyjs::hidden(
+      undisplay(
         wellPanel(
           id = "HaDeX-examiner-settings-panel",
           h3("File from HDeXaminer detected!"),
@@ -204,25 +204,19 @@ mod_source_reading_server <- function(id) {
     exam_protein_name_from_file <- reactive({ unique(dat_in()[["Protein"]]) })
     exam_state_name_from_file <- reactive({ unique(dat_in()[["State"]]) })
 
-    observe({
-      if(data_source() == "HDeXaminer"){
-        shinyjs::show("HaDeX-examiner-settings-panel")
-      }
+    observeEvent(data_source(), {
+      if (data_source() == "HDeXaminer") {
+        golem::invoke_js("show", "#HaDeX-examiner-settings-panel")
 
-      updateTextInput(session,
-                      inputId = ns("exam_protein_name"),
-                      value = exam_protein_name_from_file())
+        updateTextInput(session,
+                        inputId = ns("exam_protein_name"),
+                        value = exam_protein_name_from_file())
+        updateTextInput(session,
+                        inputId = ns("exam_state_name"),
+                        value = exam_state_name_from_file())
 
-      updateTextInput(session,
-                      inputId = ns("exam_state_name"),
-                      value = exam_state_name_from_file())
-    })
-
-    ##
-
-    observe({
-      if(data_source() != "HDeXaminer"){
-        shinyjs::hide("HaDeX-examiner-settings-panel")
+      } else {
+        golem::invoke_js("hide", "#HaDeX-examiner-settings-panel")
       }
     })
 
