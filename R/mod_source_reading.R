@@ -10,7 +10,8 @@
 #' @importFrom shiny NS tagList
 mod_source_reading_ui <- function(id){
   ns <- NS(id)
-  tabPanel(
+
+  HaDeX_nonplotTab(
     title = "Input data",
 
     p(strong("Upload your file."), "Otherwise, you will see the example data."),
