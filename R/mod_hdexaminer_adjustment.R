@@ -54,10 +54,13 @@ mod_hdexaminer_adjustment_server <- function(id, dat_raw) {
     proteins_from_file <- reactive({ ic(unique(dat_raw()[["Protein"]])) })
     states_from_file <- reactive({ unique(dat_raw()[["State"]]) })
 
+    # this invalidation flag is to be sure that every time a new file is
+    # uploaded, confirmation of changes is required
     invalidation_flag <- reactiveVal(FALSE)
-
-    observe({ invalidation_flag(FALSE) }) %>% bindEvent(dat_raw())
-    observe({ invalidation_flag(TRUE) }) %>% bindEvent(input[["exam_apply_changes"]])
+    observe({ invalidation_flag(FALSE) }) %>%
+      bindEvent(dat_raw())
+    observe({ invalidation_flag(TRUE) }) %>%
+      bindEvent(input[["exam_apply_changes"]])
 
     dat_exam <- reactive({
       validate(need(invalidation_flag(), "Apply changes in `Input Data` tab."))
