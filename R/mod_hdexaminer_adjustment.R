@@ -109,9 +109,3 @@ mod_hdexaminer_adjustment_server <- function(id, dat_raw) {
     )
   })
 }
-
-## To be copied in the UI
-# mod_hdexaminer_adjustment_ui("hdexaminer_adjustment_1")
-
-## To be copied in the server
-# mod_hdexaminer_adjustment_server("hdexaminer_adjustment_1")

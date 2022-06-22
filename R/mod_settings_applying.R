@@ -170,9 +170,3 @@ mod_settings_applying_server <- function(id, dat_adjusted){
     )
   })
 }
-
-## To be copied in the UI
-# mod_settings_applying_ui("settings_applying_1")
-
-## To be copied in the server
-# mod_settings_applying_server("settings_applying_1")

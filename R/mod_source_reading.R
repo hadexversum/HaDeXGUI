@@ -91,15 +91,16 @@ mod_source_reading_server <- function(id) {
     ### reactive values
 
     dat_raw <- reactive({
-      inFile <- input[["data_file"]]
+      data_file <- input[["data_file"]]
 
-      if (ic(is.null(inFile))){
+      if (is.null(data_file)) {
         HaDeX::read_hdx("./inst/app/data/KD_180110_CD160_HVEM.csv")
       } else {
-        validate(need(try(HaDeX::read_hdx(inFile[["datapath"]])), "Check file requirements!"))
-        HaDeX::read_hdx(inFile[["datapath"]])
+        validate(need(try({
+          file <- HaDeX::read_hdx(data_file[["datapath"]])
+        }), "File does not fullfill requirements. Check file requirements!"))
+        file
       }
-
     })
 
     data_source <- reactive({ attr(dat_raw(), "source") })
@@ -136,14 +137,10 @@ mod_source_reading_server <- function(id) {
       )
     })
 
+    ### return values
+
     return(
       mod_settings_applying_server("settings_applying", dat_adjusted = dat_adjusted)
     )
   })
 }
-
-## To be copied in the UI
-# mod_source_reading_ui("source_reading_1")
-
-## To be copied in the server
-# mod_source_reading_server("source_reading_1")
