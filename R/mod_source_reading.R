@@ -158,19 +158,18 @@ mod_source_reading_server <- function(id) {
 
 
     has_modifications <- reactive({ attr(dat_adjusted(), "has_modification") })
-    max_range_from_file <- reactive({
-      req(input[["chosen_protein"]])
-      max(filter(dat_adjusted(), Protein == input[["chosen_protein"]])[['End']]) })
-    max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
-    # TODO: -\\- and is sort istead of x[order(x)] ok?
-    times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
-    # TODO: -\\-, i'm using times_from_file() bc of that
-    times_with_control <- reactive({ setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
-    # TODO: find better name for times_t?
-    times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < 99999] })
-
     proteins_from_file <- reactive({ unique(dat_adjusted()[["Protein"]]) })
     states_from_file <- reactive({ unique(dat_adjusted()[["State"]]) })
+    max_range_from_file <- reactive({
+      req(input[["chosen_protein"]])
+      max(filter(dat_adjusted(), Protein == input[["chosen_protein"]])[['End']])
+    })
+    times_from_file <- reactive({ sort(round(unique(dat_adjusted()[["Exposure"]]), digits = 3)) })
+    # TODO: -\\-, i'm using times_from_file() bc of that
+    times_with_control <- reactive({ setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
+
+    times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < 99999] })
+    max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
 
     options_for_control <- reactive({
       req(input[["chosen_protein"]])
