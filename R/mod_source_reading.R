@@ -163,6 +163,7 @@ mod_source_reading_server <- function(id) {
     data_source <- reactive({ attr(dat_in(), "source") })
 
     dat_exam <- reactive({
+      # TODO: do something with the messages
       get_internal_messages(HaDeX::update_hdexaminer_file(
         dat = dat_in(),
         fd_time = input[["examiner_fd_timepoint"]],
