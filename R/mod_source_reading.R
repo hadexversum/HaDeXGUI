@@ -70,7 +70,7 @@ mod_source_reading_ui <- function(id){
       undisplay(
         wellPanel(
           id = "HaDeX-examiner-settings-panel",
-          hdexaminer_parameters_section(ns)
+          mod_hdexaminer_adjustment_ui(ns("hdexaminer_adjustment"))
         )
       ),
       flex = c(NA, 1)
@@ -107,36 +107,6 @@ input_parameters_section <- function(ns) HaDeX_plotSettingsSection(
   verbatimTextOutput(ns("sequence_length_exp_info"))
 )
 
-hdexaminer_parameters_section <- function(ns) tagList(
-  h3("File from HDeXaminer detected!"),
-  span(
-    "Some of the information from the data file requires your confirmation.",
-    "For the additional information on how the data from HDeXaminer is processed, check the requirements above.",
-    "Keep in mind that the MHP value is generated based on the peptide sequence and therefore, may differ from actual value in case of the modifications."
-  ),
-  numericInput_h(inputId = ns("examiner_fd_timepoint"),
-                 label = "FD timepoint [min]:",
-                 value = 1440,
-                 min = 0,
-                 width = "100%"),
-  uiOutput(ns("gen_exam_protein_name")),
-  uiOutput(ns("gen_exam_state_name")),
-  checkboxGroupInput_h(inputId = ns("exam_confidence"),
-                       label = "Accepted confidence values:",
-                       choices = c("High", "Medium", "Low"),
-                       selected = c("Medium", "High")),
-  actionButton(inputId = ns("exam_apply_changes"),
-               label = "Apply changes to continue"),
-  span(
-    "The calculated values of MPH might slightly differ based on data used and its precision."
-  ),
-  a(
-    href = "http://www.matrixscience.com/help/aa_help.html",
-    "Used amino mass data"
-  ),
-  DT::dataTableOutput(ns("checking_exam_data"))
-)
-
 #' source_reading Server Functions
 #'
 #' @importFrom icecream ic
@@ -162,27 +132,13 @@ mod_source_reading_server <- function(id) {
 
     data_source <- reactive({ attr(dat_raw(), "source") })
 
-    dat_exam <- reactive({
-      # TODO: do something with the messages
-      get_internal_messages(HaDeX::update_hdexaminer_file(
-        dat = dat_raw(),
-        fd_time = input[["examiner_fd_timepoint"]],
-        old_protein_name = proteins_from_file(),
-        new_protein_name = input[["exam_protein_name"]],
-        old_state_name = states_from_file(),
-        new_state_name = strsplit(input[["exam_state_name"]], ",")[[1]],
-        confidence = input[["exam_confidence"]]))
-    }) %>% bindEvent(input[["exam_apply_changes"]])
+    dat_exam <- mod_hdexaminer_adjustment_server(ns("hdexaminer_adjustment"), dat_raw = dat_raw)
 
     dat_adjusted <- reactive({
-      if (data_source() == "HDeXaminer") {
-        validate(need(input[["exam_apply_changes"]][[1]] != 0, "Apply changes in `Input Data` tab."))
-        dat_curr <- dat_exam()
-      } else {
-        dat_curr <- dat_raw()
-      }
-
-      dat_curr %>%
+      switch (data_source(),
+              "HDeXaminer" = dat_exam(),
+              dat_raw()
+      ) %>%
         mutate(Start = Start + input[["sequence_start_shift"]] - 1,
                End = End + input[["sequence_start_shift"]] - 1)
     })
@@ -200,19 +156,21 @@ mod_source_reading_server <- function(id) {
                                      control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
     })
 
-    proteins_from_file <- reactive({ unique(dat_raw()[["Protein"]]) })
+
     has_modifications <- reactive({ attr(dat_adjusted(), "has_modification") })
     max_range_from_file <- reactive({
       req(input[["chosen_protein"]])
       max(filter(dat_adjusted(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
-    states_from_file <- reactive({ unique(dat_raw()[["State"]]) })
     # TODO: -\\- and is sort istead of x[order(x)] ok?
     times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
     # TODO: -\\-, i'm using times_from_file() bc of that
     times_with_control <- reactive({ setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
     # TODO: find better name for times_t?
     times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < 99999] })
+
+    proteins_from_file <- reactive({ unique(dat_adjusted()[["Protein"]]) })
+    states_from_file <- reactive({ unique(dat_adjusted()[["State"]]) })
 
     options_for_control <- reactive({
       req(input[["chosen_protein"]])
@@ -254,20 +212,6 @@ mod_source_reading_server <- function(id) {
                     width = "100%")
     })
 
-    output[["gen_exam_protein_name"]] <- renderUI({
-      textInput_h(inputId = ns("exam_protein_name"),
-                  label = "Protein name:",
-                  value = proteins_from_file(),
-                  width = "100%")
-    })
-
-    output[["gen_exam_state_name"]] <- renderUI({
-      textInput_h(inputId = ns("exam_state_name"),
-                  label = "States names:",
-                  value = paste(states_from_file(), collapse = ", "),
-                  width = "100%")
-    })
-
     output[["gen_sequence_length"]] <- renderUI({
       numericInput_h(inputId = ns("sequence_length"),
                      label = "Sequence length:",
@@ -302,13 +246,6 @@ mod_source_reading_server <- function(id) {
       } else {
         paste0(status, "\nDetected data source: ", data_source(), ".")
       }
-    })
-
-    output[["checking_exam_data"]] <- DT::renderDataTable({
-      dat_exam() %>%
-        select(Protein, State, Sequence,  Start, End, MHP) %>%
-        unique(.) %>%
-        arrange(Start, End)
     })
 
     output[["sequence_length_exp_info"]] <- renderText({ paste("Sequence length from the file is ", max_range_from_file(), ".") })
