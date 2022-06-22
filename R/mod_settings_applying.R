@@ -54,6 +54,8 @@ mod_settings_applying_server <- function(id, dat_adjusted){
     # TODO: should this value be calculated basing on already shifted values?
     max_range_from_file <- reactive({
       req(input[["chosen_protein"]])
+      req(dat_adjusted())
+
       max(filter(dat_adjusted(), Protein == input[["chosen_protein"]])[['End']])
     })
     # TODO: should here dat_adjusted be used?
@@ -147,7 +149,7 @@ mod_settings_applying_server <- function(id, dat_adjusted){
     iv$add_rule("sequence_start_shift", sv_gte(0))
     iv$add_rule("deut_part", sv_lte(100))
     iv$add_rule("sequence_length", compose_rules(
-      ~ if (is.na(.)) "Must not contain `NA` values.",
+      ~ if (any(is.na(.))) "Must not contain `NA` values.",
       ~ if (. < max_range_from_file()) "Must be no shorther than any max end position in the file."
     ))
     iv$enable()
