@@ -174,7 +174,7 @@ mod_source_reading_server <- function(id) {
         confidence = input[["exam_confidence"]]))
     }) %>% bindEvent(input[["exam_apply_changes"]])
 
-    dat_tmp <- reactive({
+    dat_adjusted <- reactive({
       if (data_source() == "HDeXaminer") {
         validate(need(input[["exam_apply_changes"]][[1]] != 0, "Apply changes in `Input Data` tab."))
         dat_curr <- dat_exam()
@@ -194,17 +194,17 @@ mod_source_reading_server <- function(id) {
       )
 
       # TODO: this function IS NOT exported from HaDeX due to empty line
-      HaDeX:::create_control_dataset(dat = dat_tmp(),
+      HaDeX:::create_control_dataset(dat = dat_adjusted(),
                                      control_protein = input[["chosen_protein"]],
                                      control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
                                      control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
     })
 
     proteins_from_file <- reactive({ unique(dat_raw()[["Protein"]]) })
-    has_modifications <- reactive({ attr(dat_tmp(), "has_modification") })
+    has_modifications <- reactive({ attr(dat_adjusted(), "has_modification") })
     max_range_from_file <- reactive({
       req(input[["chosen_protein"]])
-      max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
+      max(filter(dat_adjusted(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
     states_from_file <- reactive({ unique(dat_raw()[["State"]]) })
     # TODO: -\\- and is sort istead of x[order(x)] ok?
@@ -216,7 +216,7 @@ mod_source_reading_server <- function(id) {
 
     options_for_control <- reactive({
       req(input[["chosen_protein"]])
-      dat_tmp() %>%
+      dat_adjusted() %>%
         filter(Protein == input[["chosen_protein"]]) %>%
         mutate(Exposure = round(Exposure, 4)) %>%
         select(Protein, State, Exposure) %>%
@@ -229,7 +229,7 @@ mod_source_reading_server <- function(id) {
 
     states_chosen_protein <- reactive({
       req(input[["chosen_protein"]])
-      dat_tmp() %>%
+      dat_adjusted() %>%
         filter(Protein == input[["chosen_protein"]]) %>%
         select(State) %>%
         unique(.) %>%
