@@ -56,7 +56,11 @@ mod_settings_applying_server <- function(id, dat_adjusted){
       req(input[["chosen_protein"]])
       req(dat_adjusted())
 
-      max(filter(dat_adjusted(), Protein == input[["chosen_protein"]])[['End']])
+      ends <- filter(dat_adjusted(), Protein == input[["chosen_protein"]])[['End']]
+
+      validate(need(length(ends) > 0, "Chosen protein need to appear in data!"))
+
+      max(ends)
     })
     # TODO: should here dat_adjusted be used?
     times_from_file <- reactive({ sort(round(unique(dat_adjusted()[["Exposure"]]), digits = 3)) })
