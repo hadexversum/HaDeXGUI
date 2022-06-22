@@ -138,9 +138,7 @@ mod_source_reading_server <- function(id) {
       switch(data_source(),
         "HDeXaminer" = dat_exam(),
         dat_raw()
-      ) %>%
-        mutate(Start = Start + input[["sequence_start_shift"]] - 1,
-               End = End + input[["sequence_start_shift"]] - 1)
+      )
     })
 
     dat <- reactive({
@@ -149,9 +147,11 @@ mod_source_reading_server <- function(id) {
         input[["chosen_control"]]
       )
 
+      dat_adjusted() %>%
+        mutate(Start = Start + input[["sequence_start_shift"]] - 1,
+               End = End + input[["sequence_start_shift"]] - 1) %>%
       # TODO: this function IS NOT exported from HaDeX due to empty line
-      HaDeX:::create_control_dataset(dat = dat_adjusted(),
-                                     control_protein = input[["chosen_protein"]],
+      HaDeX:::create_control_dataset(control_protein = input[["chosen_protein"]],
                                      control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
                                      control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
     })
