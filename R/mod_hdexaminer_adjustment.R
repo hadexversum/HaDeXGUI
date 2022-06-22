@@ -51,8 +51,22 @@ mod_hdexaminer_adjustment_server <- function(id, dat_raw) {
 
     ### reactive values
 
-    proteins_from_file <- reactive({ unique(dat_raw()[["Protein"]]) })
+    proteins_from_file <- reactive({ ic(unique(dat_raw()[["Protein"]])) })
     states_from_file <- reactive({ unique(dat_raw()[["State"]]) })
+
+    dat_exam <- reactive({
+      validate(need(input[["exam_apply_changes"]][[1]] != 0, "Apply changes in `Input Data` tab."))
+
+      # TODO: do something with the messages
+      get_internal_messages(HaDeX::update_hdexaminer_file(
+        dat = dat_raw(),
+        fd_time = input[["examiner_fd_timepoint"]],
+        old_protein_name = proteins_from_file(),
+        new_protein_name = input[["exam_protein_name"]],
+        old_state_name = states_from_file(),
+        new_state_name = strsplit(input[["exam_state_name"]], ",")[[1]],
+        confidence = input[["exam_confidence"]]))
+    }) %>% bindEvent(input[["exam_apply_changes"]])
 
     ### ui outputs
 
@@ -82,19 +96,7 @@ mod_hdexaminer_adjustment_server <- function(id, dat_raw) {
     ### return values
 
     return(
-      reactive({
-        validate(need(input[["exam_apply_changes"]][[1]] != 0, "Apply changes in `Input Data` tab."))
-
-        # TODO: do something with the messages
-        get_internal_messages(HaDeX::update_hdexaminer_file(
-          dat = dat_raw(),
-          fd_time = input[["examiner_fd_timepoint"]],
-          old_protein_name = proteins_from_file(),
-          new_protein_name = input[["exam_protein_name"]],
-          old_state_name = states_from_file(),
-          new_state_name = strsplit(input[["exam_state_name"]], ",")[[1]],
-          confidence = input[["exam_confidence"]]))
-      }) %>% bindEvent(input[["exam_apply_changes"]])
+      dat_exam
     )
   })
 }

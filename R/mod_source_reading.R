@@ -132,12 +132,15 @@ mod_source_reading_server <- function(id) {
 
     data_source <- reactive({ attr(dat_raw(), "source") })
 
-    dat_exam <- mod_hdexaminer_adjustment_server(ns("hdexaminer_adjustment"), dat_raw = dat_raw)
+    dat_exam <- mod_hdexaminer_adjustment_server("hdexaminer_adjustment", dat_raw = dat_raw)
 
     dat_adjusted <- reactive({
-      switch (data_source(),
-              "HDeXaminer" = dat_exam(),
-              dat_raw()
+      switch(data_source(),
+        "HDeXaminer" = {
+          validate(need(dat_exam(), "Apply changes in HDeXaminer settings panel!"))
+          dat_exam()
+        },
+        dat_raw()
       ) %>%
         mutate(Start = Start + input[["sequence_start_shift"]] - 1,
                End = End + input[["sequence_start_shift"]] - 1)
