@@ -54,8 +54,13 @@ mod_hdexaminer_adjustment_server <- function(id, dat_raw) {
     proteins_from_file <- reactive({ ic(unique(dat_raw()[["Protein"]])) })
     states_from_file <- reactive({ unique(dat_raw()[["State"]]) })
 
+    invalidation_flag <- reactiveVal(FALSE)
+
+    observe({ invalidation_flag(FALSE) }) %>% bindEvent(dat_raw())
+    observe({ invalidation_flag(TRUE) }) %>% bindEvent(input[["exam_apply_changes"]])
+
     dat_exam <- reactive({
-      validate(need(input[["exam_apply_changes"]][[1]] != 0, "Apply changes in `Input Data` tab."))
+      validate(need(invalidation_flag(), "Apply changes in `Input Data` tab."))
 
       # TODO: do something with the messages
       get_internal_messages(HaDeX::update_hdexaminer_file(
@@ -66,7 +71,8 @@ mod_hdexaminer_adjustment_server <- function(id, dat_raw) {
         old_state_name = states_from_file(),
         new_state_name = strsplit(input[["exam_state_name"]], ",")[[1]],
         confidence = input[["exam_confidence"]]))
-    }) %>% bindEvent(input[["exam_apply_changes"]])
+    }) %>% bindEvent(invalidation_flag())
+
 
     ### ui outputs
 

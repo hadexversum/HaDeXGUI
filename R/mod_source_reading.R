@@ -136,10 +136,7 @@ mod_source_reading_server <- function(id) {
 
     dat_adjusted <- reactive({
       switch(data_source(),
-        "HDeXaminer" = {
-          validate(need(dat_exam(), "Apply changes in HDeXaminer settings panel!"))
-          dat_exam()
-        },
+        "HDeXaminer" = dat_exam(),
         dat_raw()
       ) %>%
         mutate(Start = Start + input[["sequence_start_shift"]] - 1,
