@@ -160,14 +160,16 @@ mod_source_reading_server <- function(id) {
     has_modifications <- reactive({ attr(dat_adjusted(), "has_modification") })
     proteins_from_file <- reactive({ unique(dat_adjusted()[["Protein"]]) })
     states_from_file <- reactive({ unique(dat_adjusted()[["State"]]) })
+    # TODO: should this value be calculated basing on already shifted values?
     max_range_from_file <- reactive({
       req(input[["chosen_protein"]])
       max(filter(dat_adjusted(), Protein == input[["chosen_protein"]])[['End']])
     })
+    # TODO: should here dat_adjusted be used?
     times_from_file <- reactive({ sort(round(unique(dat_adjusted()[["Exposure"]]), digits = 3)) })
+
     # TODO: -\\-, i'm using times_from_file() bc of that
     times_with_control <- reactive({ setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
-
     times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < 99999] })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
 
@@ -232,27 +234,28 @@ mod_source_reading_server <- function(id) {
     ### other outputs
 
     output[["data_file_info"]] <- renderText({
-      status <- ""
-      if (ic((is.null(input[["data_file"]])))){
-        status <- "Example file: KD_180110_CD160_HVEM.csv."
-      } else {
-        length(dat_raw()[[1]])
-        status <- "Supplied file is valid."
-      }
-
-      if(ic(data_source() == "HDeXaminer")){
-        paste0(status, "\nDetected data source: ", data_source(), ". User action needed below!")
-      } else {
-        paste0(status, "\nDetected data source: ", data_source(), ".")
-      }
+      paste0(
+        if (is.null(input[["data_file"]]))
+          "Example file: KD_180110_CD160_HVEM.csv."
+        else "Supplied file is valid.",
+        "\nDetected data source: ",
+        if (data_source() == "HDeXaminer")
+          ". User action needed below!"
+        else "."
+      )
     })
 
-    output[["sequence_length_exp_info"]] <- renderText({ paste("Sequence length from the file is ", max_range_from_file(), ".") })
+    output[["sequence_length_exp_info"]] <- renderText({
+      paste("Sequence length from the file is ", max_range_from_file(), ".")
+    })
 
-    ### observers
+    ### observer
 
-    observeEvent(data_source(), {
-      golem::invoke_js(if (data_source() == "HDeXaminer") "show" else "hide", "#HaDeX-examiner-settings-panel")
+    observe({
+      golem::invoke_js(
+        if (data_source() == "HDeXaminer") "show" else "hide",
+        "#HaDeX-examiner-settings-panel"
+      )
     })
 
     ### validator
