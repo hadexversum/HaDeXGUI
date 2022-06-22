@@ -122,7 +122,7 @@ mod_source_reading_server <- function(id) {
         if (is.null(input[["data_file"]]))
           "Example file: KD_180110_CD160_HVEM.csv."
         else "Supplied file is valid.",
-        "\nDetected data source: ",
+        "\nDetected data source: ", data_source(),
         if (data_source() == "HDeXaminer")
           ". User action needed below!"
         else "."
