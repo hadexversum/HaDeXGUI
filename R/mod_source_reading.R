@@ -148,7 +148,7 @@ mod_source_reading_server <- function(id) {
 
     ### reactive values
 
-    dat_in <- reactive({
+    dat_raw <- reactive({
       inFile <- input[["data_file"]]
 
       if (ic(is.null(inFile))){
@@ -160,12 +160,12 @@ mod_source_reading_server <- function(id) {
 
     })
 
-    data_source <- reactive({ attr(dat_in(), "source") })
+    data_source <- reactive({ attr(dat_raw(), "source") })
 
     dat_exam <- reactive({
       # TODO: do something with the messages
       get_internal_messages(HaDeX::update_hdexaminer_file(
-        dat = dat_in(),
+        dat = dat_raw(),
         fd_time = input[["examiner_fd_timepoint"]],
         old_protein_name = proteins_from_file(),
         new_protein_name = input[["exam_protein_name"]],
@@ -179,7 +179,7 @@ mod_source_reading_server <- function(id) {
         validate(need(input[["exam_apply_changes"]][[1]] != 0, "Apply changes in `Input Data` tab."))
         dat_curr <- dat_exam()
       } else {
-        dat_curr <- dat_in()
+        dat_curr <- dat_raw()
       }
 
       dat_curr %>%
@@ -200,13 +200,13 @@ mod_source_reading_server <- function(id) {
                                      control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
     })
 
-    proteins_from_file <- reactive({ unique(dat_in()[["Protein"]]) })
+    proteins_from_file <- reactive({ unique(dat_raw()[["Protein"]]) })
     has_modifications <- reactive({ attr(dat_tmp(), "has_modification") })
     max_range_from_file <- reactive({
       req(input[["chosen_protein"]])
       max(filter(dat_tmp(), Protein == input[["chosen_protein"]])[['End']]) })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
-    states_from_file <- reactive({ unique(dat_in()[["State"]]) })
+    states_from_file <- reactive({ unique(dat_raw()[["State"]]) })
     # TODO: -\\- and is sort istead of x[order(x)] ok?
     times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
     # TODO: -\\-, i'm using times_from_file() bc of that
@@ -293,7 +293,7 @@ mod_source_reading_server <- function(id) {
       if (ic((is.null(input[["data_file"]])))){
         status <- "Example file: KD_180110_CD160_HVEM.csv."
       } else {
-        length(dat_in()[[1]])
+        length(dat_raw()[[1]])
         status <- "Supplied file is valid."
       }
 
