@@ -56,14 +56,14 @@ mod_hdexaminer_adjustment_server <- function(id, dat_raw) {
 
     # this invalidation flag is to be sure that every time a new file is
     # uploaded, confirmation of changes is required
-    invalidation_flag <- reactiveVal(FALSE)
-    observe({ invalidation_flag(FALSE) }) %>%
+    invalidation_flag <- reactiveVal(0)
+    observe({ invalidation_flag(0) }) %>%
       bindEvent(dat_raw())
-    observe({ invalidation_flag(TRUE) }) %>%
+    observe({ invalidation_flag(invalidation_flag() + 1) }) %>%
       bindEvent(input[["exam_apply_changes"]])
 
     dat_exam <- reactive({
-      validate(need(invalidation_flag(), "Apply changes in `Input Data` tab."))
+      validate(need(invalidation_flag() > 0, "Apply changes in `Input Data` tab."))
 
       # TODO: do something with the messages
       get_internal_messages(HaDeX::update_hdexaminer_file(
