@@ -162,7 +162,7 @@ mod_source_reading_server <- function(id) {
 
     data_source <- reactive({ attr(dat_in(), "source") })
 
-    dat_exam <- eventReactive(input[["exam_apply_changes"]], {
+    dat_exam <- reactive({
       get_internal_messages(HaDeX::update_hdexaminer_file(
         dat = dat_in(),
         fd_time = input[["examiner_fd_timepoint"]],
@@ -171,7 +171,7 @@ mod_source_reading_server <- function(id) {
         old_state_name = states_from_file(),
         new_state_name = strsplit(input[["exam_state_name"]], ",")[[1]],
         confidence = input[["exam_confidence"]]))
-    })
+    }) %>% bindEvent(input[["exam_apply_changes"]])
 
     dat_tmp <- reactive({
       if (data_source() == "HDeXaminer") {
