@@ -18,7 +18,7 @@ app_server <- function(input, output, session) {
     dat = dat_source[["dat"]],
     chosen_protein = dat_source[["chosen_protein"]],
     states_chosen_protein = dat_source[["states_chosen_protein"]],
-    times_from_file = dat_source[["times_from_file"]],
+    times = dat_source[["times"]],
     times_with_control = dat_source[["times_with_control"]]
   )
 }

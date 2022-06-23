@@ -160,19 +160,23 @@ mod_settings_applying_server <- function(id, dat_adjusted){
 
     ### return values
 
-    # TODO: can those externally exposed values be renamed?
     return(
       list(
-        proteins_from_file = proteins_from_file,
+        proteins = proteins_from_file,
         chosen_protein = reactive({ input[["chosen_protein"]] }),
-        states_from_file = states_from_file,
-        file_has_modifications = file_has_modifications,
-        times_from_file = times_from_file,
+
+        states = states_from_file,
+        has_modifications = file_has_modifications,
+        states_chosen_protein = states_chosen_protein,
+
+        times = times_from_file,
         times_t = times_t,
         times_with_control = times_with_control,
+
         max_range = max_range,
-        states_chosen_protein = states_chosen_protein,
+
         deut_part = reactive({ as.numeric(input[["deut_part"]]) }),
+
         dat = dat
       )
     )
