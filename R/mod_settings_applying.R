@@ -172,6 +172,7 @@ mod_settings_applying_server <- function(id, dat_adjusted){
         times_with_control = times_with_control,
         max_range = max_range,
         states_chosen_protein = states_chosen_protein,
+        deut_part = reactive({ as.numeric(input[["deut_part"]]) }),
         dat = dat
       )
     )

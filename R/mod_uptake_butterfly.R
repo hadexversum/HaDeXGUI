@@ -151,8 +151,9 @@ butterfly_debug <- function(ns) uiOutput(ns("plot_debug"))
 #'
 #' @noRd
 mod_uptake_butterfly_server <- function(
-    id, dat, chosen_protein,
-    states_chosen_protein, times_from_file, times_with_control){
+    id, dat,
+    chosen_protein, states_chosen_protein, times_from_file, times_with_control,
+    deut_part){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
