@@ -20,7 +20,8 @@ mod_uptake_butterfly_ui <- function(id) {
 #'
 #' @noRd
 mod_uptake_butterfly_server <- function(
-    id, dat, states_chosen_protein, times_from_file, times_with_control){
+    id, dat, chosen_protein,
+    states_chosen_protein, times_from_file, times_with_control){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 

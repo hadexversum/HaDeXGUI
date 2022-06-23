@@ -164,6 +164,7 @@ mod_settings_applying_server <- function(id, dat_adjusted){
     return(
       list(
         proteins_from_file = proteins_from_file,
+        chosen_protein = reactive({ input[["chosen_protein"]] }),
         states_from_file = states_from_file,
         file_has_modifications = file_has_modifications,
         times_from_file = times_from_file,
