@@ -12,5 +12,12 @@ app_server <- function(input, output, session) {
     options(icecream.always.include.context = TRUE)
     ic_enable()
   }
-  mod_source_reading_server("source_reading")
+  dat_source <- mod_source_reading_server("source_reading")
+
+  mod_uptake_butterfly_server("uptake_butterfly",
+    dat = dat_source[["dat"]],
+    states_chosen_protein = dat_source[["states_chosen_protein"]],
+    times_from_file = dat_source[["times_from_file"]],
+    times_with_control = dat_source[["times_with_control"]]
+  )
 }
