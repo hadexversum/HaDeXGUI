@@ -176,6 +176,7 @@ mod_settings_applying_server <- function(id, dat_adjusted){
         max_range = max_range,
 
         deut_part = reactive({ as.numeric(input[["deut_part"]]) }),
+        no_deut_control = reactive({ as.numeric(input[["no_deut_control"]]) }),
 
         dat = dat
       )
