@@ -158,17 +158,18 @@ mod_uptake_butterfly_server <- function(
     ns <- session$ns
 
     dat_plot <- reactive({
+      # TODO: check which validates are really needed
       validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
-      validate(need(input[["butt_state"]] %in% states_chosen_protein(),
+      validate(need(input[["state"]] %in% states_chosen_protein(),
                     "Wait for the parameters to be loaded."))
 
       create_state_uptake_dataset(
         dat(),
         protein = chosen_protein(),
-        state = input[["butt_state"]],
-        time_0 = as.numeric(input[["butt_time_0"]]),
-        time_100 = as.numeric(input[["butt_time_100"]]),
+        state = input[["state"]],
+        time_0 = as.numeric(input[["time_0"]]),
+        time_100 = as.numeric(input[["time_100"]]),
         deut_part = deut_part() / 100
       )
     })
