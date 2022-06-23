@@ -7,7 +7,8 @@
 #' @importFrom shinyhelper helper
 #' @noRd
 plotOutput_h <- function(outputId, ...)
-  helper(withHaDeXSpinner(plotOutput(outputId = outputId, ...)),
+  # TODO: restore spinner
+  helper(plotOutput(outputId = outputId, ...),
          content = outputId, type = "markdown", buttonLabel = "Okay", easyClose = TRUE,
          icon = "far fa-question-circle", colour = "#856C9D")
 
