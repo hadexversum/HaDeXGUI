@@ -2,6 +2,7 @@
 
 export(run_app)
 import(dplyr)
+import(ggiraph)
 import(ggplot2)
 import(shiny)
 importFrom(ggplot2,`%+replace%`)

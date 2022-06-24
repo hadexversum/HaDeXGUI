@@ -7,6 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#' @import ggiraph
 mod_uptake_butterfly_ui <- function(id) {
   ns <- NS(id)
   HaDeX_plotTab(
@@ -102,7 +103,7 @@ butterfly_labels_adjustement <- function(ns) HaDeX_plotSettingsSection(
 
 butterfly_plot_panel <- function(ns) tabsetPanel(
   tabPanel("Butterfly plot",
-           plotOutput_h(ns("plot"), hover = hoverOpts(ns("plot_hover"), delay = 10, delayType = "debounce")),
+           girafeOutput_h(ns("plot")),
            downloadButton(ns("plot_download_button"),
                           "Save chart (.svg)")),
   tabPanel("Data",
@@ -149,6 +150,13 @@ mod_uptake_butterfly_server <- function(
           theoretical = input[["theoretical"]],
           fractional = input[["fractional"]],
           uncertainty_type = input[["uncertainty"]]
+        ) + geom_point_interactive(
+          aes(tooltip = paste0(
+            Sequence,
+            "<br/>Position: ", Start, "-", End,
+            "<br/>Value: ", round(value, 2),
+            "<br/> Exposure: ", Exposure
+          ))
         )
     })
 
@@ -179,7 +187,8 @@ mod_uptake_butterfly_server <- function(
           fractional = input[["fractional"]]
         ) %>%
         filter(Exposure %in% input[["timepoints"]]) %>%
-        filter(ID >= input[["x_range"]][[1]] & ID <= input[["x_range"]][[2]])
+        filter(ID >= input[["x_range"]][[1]] &
+               ID <= input[["x_range"]][[2]])
     })
 
     output[["gen_state"]] <- renderUI({
@@ -280,9 +289,9 @@ mod_uptake_butterfly_server <- function(
       )
     })
 
-    output[["plot"]] <- renderPlot({ plot_out() })
+    output[["plot"]] <- renderGirafe({ girafe(ggobj = plot_out(), width_svg = 12, height_svg = 7) })
 
-    output[["data"]] <- renderDataTable({ dat_out() %>% HaDeX_DT_format() })
+    output[["data"]] <- renderDataTable({ HaDeX_DT_format(dat_out()) })
 
     output[["plot_download_button"]] <- downloadHandler(
       "butterfly_plot.svg",

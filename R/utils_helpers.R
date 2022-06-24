@@ -29,3 +29,9 @@ func_list <- setNames(lapply(func_vec, function(ith_fun)
 for(ith_fun_id in 1L:length(func_list)) {
   assign(x = paste0(names(func_list)[ith_fun_id], "_h"), value = func_list[[ith_fun_id]])
 }
+
+## "ggiraph::girafeOutput"
+girafeOutput_h <- function(outputId, ...)
+  helper(getFromNamespace("girafeOutput", ns = "ggiraph")(outputId = outputId, ...), content = outputId,
+         type = "markdown", buttonLabel = "okay", easyClose = TRUE,
+         icon = "far fa-question-circle", colour = "#856C9D")
