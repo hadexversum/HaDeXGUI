@@ -80,7 +80,7 @@ butterfly_labels_adjustement <- function(ns) HaDeX_plotSettingsSection(
              textInput(inputId = ns("plot_x_label"),
                        label = "Butterfly plot axis x label:",
                        value = "Peptide ID"),
-             uiOutput("gen_plot_y_label")),
+             uiOutput(ns("gen_plot_y_label"))),
       column(width = 2,
              numericInput_h(inputId = ns("plot_title_size"),
                             label = "Size:",
