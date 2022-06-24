@@ -6,13 +6,10 @@
 #' @importFrom icecream ic_disable ic_enable
 #' @noRd
 app_server <- function(input, output, session) {
-  if (getOption("golem.app.prod"))
-    ic_disable()
-  else {
-    options(icecream.always.include.context = TRUE)
-    ic_enable()
-  }
+  apply_server_settings()
+
   dat_source <- mod_source_reading_server("source_reading")
+
 
   mod_uptake_butterfly_server("uptake_butterfly",
     dat = dat_source[["dat"]],
