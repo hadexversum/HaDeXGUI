@@ -20,8 +20,7 @@ mod_uptake_butterfly_ui <- function(id) {
       butterfly_labels_adjustement(ns)
     ),
     displayPanel = HaDeX_plotDisplayPanel(
-      butterfly_plot_panel(ns),
-      butterfly_debug(ns)
+      butterfly_plot_panel(ns)
     )
   )
 }
@@ -37,34 +36,18 @@ butterfly_general_settings <- function(ns) HaDeX_plotSettingsSection(
 
 butterfly_state <- function(ns) HaDeX_plotSettingsSection(
   title = "State",
-  selectInput_h(inputId = ns("state"),
-                label = "Choose state:",
-                choices = c("CD160", "CD160_HVEM"),
-                selected = "CD160"),
+  uiOutput(ns("gen_state"))
 )
 
 butterfly_timepoints <- function(ns) HaDeX_plotSettingsSection(
   title = "Timepoints",
   fluidRow(
     column(width = 6,
-           checkboxGroupInput_h(inputId = ns("timepoints"),
-                                label = "Show time points: ",
-                                choices = c(0.167, 1, 5, 25, 120, 1440),
-                                selected = c(0.167, 1, 5, 25, 120, 1440))
+           uiOutput(ns("gen_timepoints"))
     ),
     column(width = 6,
-           div(id = ns("time_0_part"),
-               selectInput_h(inputId = ns("time_0"),
-                             label = "Deut 0%",
-                             choices = c(0, 0.001, 1, 5, 25, 1440),
-                             selected = 0.001)
-           ),
-           div(id = ns("time_100_part"),
-               selectInput_h(inputId = ns("time_100"),
-                             label = "Deut 100%",
-                             choices = c(0, 0.001, 1, 5, 25, 1440),
-                             selected = 1440)
-           )
+           uiOutput(ns("gen_time_0")),
+           uiOutput(ns("gen_time_100"))
     )
   )
 )
@@ -79,18 +62,8 @@ butterfly_visualization <- function(ns) HaDeX_plotSettingsSection(
 
 butterfly_zoom <- function(ns) HaDeX_plotSettingsSection(
   title = "Zoom",
-  sliderInput(inputId = ns("x_range"),
-              label = "Choose x range for butterfly plot:",
-              min = 1,
-              max = 41,
-              value = c(1, 41),
-              step = 1),
-  sliderInput(inputId = ns("y_range"),
-              label = "Choose y range for butterfly plot:",
-              min = 0,
-              max = 100,
-              value = c(0, 100),
-              step = 1)
+  uiOutput(ns("gen_x_range")),
+  uiOutput(ns("gen_y_range"))
 )
 
 butterfly_labels_adjustement <- function(ns) HaDeX_plotSettingsSection(
@@ -103,15 +76,11 @@ butterfly_labels_adjustement <- function(ns) HaDeX_plotSettingsSection(
     id = "HaDeX-butterfly-labels-adjusting-panel",
     fluidRow(
       column(width = 10,
-             textInput(inputId = ns("plot_title"),
-                       label = "Butterfly plot title:",
-                       value = ""),
+             uiOutput(ns("gen_plot_title")),
              textInput(inputId = ns("plot_x_label"),
                        label = "Butterfly plot axis x label:",
                        value = "Peptide ID"),
-             textInput(inputId = ns("plot_y_label"),
-                       label = "Butterfly plot axis y label:",
-                       value = "Deuterium uptake [Da]")),
+             uiOutput("gen_plot_y_label")),
       column(width = 2,
              numericInput_h(inputId = ns("plot_title_size"),
                             label = "Size:",
@@ -145,10 +114,9 @@ butterfly_plot_panel <- function(ns) tabsetPanel(
   )
 )
 
-butterfly_debug <- function(ns) uiOutput(ns("plot_debug"))
-
 #' uptake_butterfly Server Functions
 #'
+#' @import ggplot2
 #' @noRd
 mod_uptake_butterfly_server <- function(
     id, dat,
@@ -164,7 +132,7 @@ mod_uptake_butterfly_server <- function(
       validate(need(input[["state"]] %in% states_chosen_protein(),
                     "Wait for the parameters to be loaded."))
 
-      create_state_uptake_dataset(
+      HaDeX::create_state_uptake_dataset(
         dat(),
         protein = chosen_protein(),
         state = input[["state"]],
@@ -173,6 +141,155 @@ mod_uptake_butterfly_server <- function(
         deut_part = deut_part() / 100
       )
     })
+
+    plot_obj <- reactive({
+      dat_plot() %>%
+        filter(Exposure %in% input[["timepoints"]]) %>%
+        HaDeX::plot_butterfly(
+          theoretical = input[["theoretical"]],
+          fractional = input[["fractional"]],
+          uncertainty_type = input[["uncertainty"]]
+        )
+    })
+
+    plot_out <- reactive({
+      plot_obj() +
+        coord_cartesian(
+          xlim = c(input[["x_range"]][[1]], input[["x_range"]][[2]]),
+          ylim = c(input[["y_range"]][[1]], input[["y_range"]][[2]])) +
+        labs(
+          title = input[["plot_title"]],
+          x = input[["plot_x_label"]],
+          y = input[["plot_y_label"]]) +
+        theme(
+          plot.title = element_text(size = input[["plot_title_size"]]),
+          axis.text.x = element_text(size = input[["plot_x_label_size"]]),
+          axis.title.x = element_text(size = input[["plot_x_label_size"]]),
+          axis.title.y = element_text(size = input[["plot_y_label_size"]]),
+          axis.text.y = element_text(size = input[["plot_y_label_size"]]),
+          legend.text = element_text(size = input[["plot_x_label_size"]]),
+          legend.title = element_text(size = input[["plot_x_label_size"]])
+        )
+    })
+
+    dat_out <- reactive({
+      dat_plot() %>%
+        HaDeX::show_uptake_data(
+          theoretical = input[["theoretical"]],
+          fractional = input[["fractional"]]
+        ) %>%
+        filter(Exposure %in% input[["timepoints"]]) %>%
+        filter(ID >= input[["x_range"]][[1]] & ID <= input[["x_range"]][[2]])
+    })
+
+    output[["gen_state"]] <- renderUI({
+      selectInput_h(
+        inputId = ns("state"),
+        label = "Choose state:",
+        choices = states_chosen_protein(),
+        selected = states_chosen_protein()[1]
+      )
+    })
+
+    output[["gen_time_0"]] <- renderUI({
+      selectInput_h(
+        inputId = ns("time_0"),
+        label = "Deut 0%",
+        choices = times_from_file()[times_from_file() < 99999],
+        selected = times_from_file()[times_from_file() == no_deut_control()]
+      ) %visible if% !input[["theoretical"]]
+    })
+
+    output[["gen_time_100"]] <- renderUI({
+      selectInput_h(
+        inputId = ns("time_100"),
+        label = "Deut 100%",
+        choices = times_with_control(),
+        selected = max(times_with_control()[times_with_control() < 99999])
+      ) %visible if% (!input[["theoretical"]] && input[["fractional"]])
+    })
+
+    output[["gen_timepoints"]] <- renderUI({
+      vec <- if (input[["fractional"]])
+        times_from_file() < as.numeric(input[["time_100"]])
+      else
+        times_from_file() < 99999
+
+      times_t <- times_from_file()[times_from_file() > input[["time_0"]] & vec]
+
+      checkboxGroupInput_h(
+        inputId = ns("timepoints"),
+        label = "Show time points: ",
+        choices = times_t,
+        selected = times_t
+      )
+    })
+
+    output[["gen_x_range"]] <- renderUI({
+      max_x <- max(dat_plot()[["ID"]])
+      min_x <- min(dat_plot()[["ID"]])
+
+      sliderInput(
+        inputId = ns("x_range"),
+        label = "Choose x range for butterfly plot:",
+        min = min_x,
+        max = max_x,
+        value = c(min_x, max_x),
+        step = 1
+      )
+    })
+
+    output[["gen_y_range"]] <- renderUI({
+      if (input[["fractional"]]){
+        max_y <- ceiling(max(dat_plot()[["frac_deut_uptake"]], dat_plot()[["theo_frac_deut_uptake"]], na.rm = TRUE)) + 1
+        min_y <- floor(min(dat_plot()[["frac_deut_uptake"]], dat_plot()[["theo_frac_deut_uptake"]], na.rm = TRUE)) - 1
+      } else {
+        max_y <- ceiling(max(dat_plot()[["deut_uptake"]], dat_plot()[["theo_deut_uptake"]], na.rm = TRUE)) + 1
+        min_y <- floor(min(dat_plot()[["deut_uptake"]], dat_plot()[["theo_deut_uptake"]], na.rm = TRUE)) - 1
+      }
+
+      sliderInput(
+        inputId = ns("y_range"),
+        label = "Choose y range for butterfly plot:",
+        min = min_y,
+        max = max_y,
+        value = c(min_y, max_y),
+        step = 1
+      )
+    })
+
+    output[["gen_plot_title"]] <- renderUI({
+      textInput(
+        inputId = ns("plot_title"),
+        label = "Butterfly plot title:",
+        value = if (input[["theoretical"]])
+          paste0("Theoreotical butterfly plot for ", input[["state"]], " state for ", chosen_protein())
+        else
+          paste0("Butterfly plot for ", input[["state"]], " state for ", chosen_protein())
+      )
+    })
+
+    output[["gen_plot_y_label"]] <- renderUI({
+      textInput(
+        inputId = ns("plot_y_label"),
+        label = "Butterfly plot axis y label:",
+        value = if (input[["fractional"]])
+          "Fractional deuterium uptake [%]"
+        else
+          "Deuterium uptake [Da]"
+      )
+    })
+
+    output[["plot"]] <- renderPlot({ plot_out() })
+
+    output[["data"]] <- renderDataTable({ dat_out() %>% HaDeX_DT_format() })
+
+    output[["plot_download_button"]] <- downloadHandler(
+      "butterfly_plot.svg",
+      content = function(file) {
+        ggsave(file, plot_out(), device = svg,
+               height = 300, width = 400, units = "mm")
+      })
 
   })
 }
