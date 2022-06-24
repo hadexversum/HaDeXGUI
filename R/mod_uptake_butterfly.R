@@ -144,6 +144,8 @@ mod_uptake_butterfly_server <- function(
     })
 
     plot_obj <- reactive({
+      validate(need(input[["timepoints"]], "Wait for parameters to be loaded"))
+
       dat_plot() %>%
         filter(Exposure %in% input[["timepoints"]]) %>%
         HaDeX::plot_butterfly(
