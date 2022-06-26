@@ -75,7 +75,12 @@ display.shiny.tag.list <- function(x) {
 .S3method("display", "shiny.tag", display.shiny.tag)
 .S3method("display", "shiny.tag.list", display.shiny.tag.list)
 
-collapsible_card <- function(title, ..., init_collapsed = FALSE) {
+gen_random_id <- function(prefix = "")
+  paste0(prefix, paste0(sample(c(0:9, letters[1:6]), 16, TRUE), collapse = ''))
+
+collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL) {
+  obj_id = if (!is.null(id)) id else gen_random_id("collapsible_")
+
   tagList(
     singleton(tags$head(tags$script(src = "utils/collapse.js", type = "text/javascript"))),
     singleton(tags$head(tags$link(href = "utils/collapse.css", rel = "stylesheet"))),
@@ -86,12 +91,12 @@ collapsible_card <- function(title, ..., init_collapsed = FALSE) {
         icon(if (init_collapsed) "angle-down" else "angle-up"),
         class = if (init_collapsed) "card-header collapsed" else "card-header",
         `data-toggle` = "collapse",
-        `data-target` = "#demo1",
+        `data-target` = paste0("#", obj_id),
         `aria-expanded` = if (init_collapsed) "false" else "true"
       ),
       div(
         ...,
-        id = "demo1",
+        id = obj_id,
         class = if (init_collapsed) "card-body collapse" else "card-body collapse in",
         `aria-expanded` = if (init_collapsed) "false" else "true"
       ),
