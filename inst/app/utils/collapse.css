@@ -1,0 +1,38 @@
+.collapsible-card {
+  border: solid 1px #cdccd1;
+  border-radius: 3px;
+  margin: -5px;
+}
+
+.collapsible-card > .card-header {
+  display: flex;
+
+  margin: -1px;
+  padding: 10px;
+
+  border: solid 1px #7c7e8a;
+  border-radius: 3px;
+
+  background: #d3d3d7 linear-gradient(180deg, #d3d3d7, #b6b6bd) repeat-x;
+  color: #777;
+
+  text-transform: uppercase;
+}
+
+.collapsible-card > .card-header:hover {
+  background: #b6b6bd linear-gradient(180deg, #b6b6bd, #9a9a9e) repeat-x;
+  color: #fff;
+}
+
+.collapsible-card > .card-header > p {
+  flex-grow: 1;
+  margin-bottom: 0;
+}
+
+.collapsible-card > .card-header > i {
+  flex-grow: 0;
+}
+
+.collapsible-card > .card-body {
+  padding: 10px;
+}

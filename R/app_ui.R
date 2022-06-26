@@ -36,6 +36,10 @@ golem_add_external_resources <- function() {
     "www",
     app_sys("app/www")
   )
+  add_resource_path(
+    "utils",
+    app_sys("app/utils")
+  )
 
   tags$head(
     favicon(),
