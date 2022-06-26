@@ -26,7 +26,8 @@ mod_uptake_butterfly_ui <- function(id) {
   )
 }
 
-butterfly_general_settings <- function(ns) HaDeX_plotSettingsSection(
+butterfly_general_settings <- function(ns) collapsible_card(
+  title = "General settings",
   checkboxInput_h(inputId = ns("theoretical"),
                   label = "Theoretical calculations",
                   value = FALSE),
@@ -35,12 +36,12 @@ butterfly_general_settings <- function(ns) HaDeX_plotSettingsSection(
                   value = FALSE)
 )
 
-butterfly_state <- function(ns) HaDeX_plotSettingsSection(
+butterfly_state <- function(ns) collapsible_card(
   title = "State",
   uiOutput(ns("gen_state"))
 )
 
-butterfly_timepoints <- function(ns) HaDeX_plotSettingsSection(
+butterfly_timepoints <- function(ns) collapsible_card(
   title = "Timepoints",
   fluidRow(
     column(width = 6,
@@ -53,7 +54,7 @@ butterfly_timepoints <- function(ns) HaDeX_plotSettingsSection(
   )
 )
 
-butterfly_visualization <- function(ns) HaDeX_plotSettingsSection(
+butterfly_visualization <- function(ns) collapsible_card(
   title = "Visualization",
   selectInput_h(inputId = ns("uncertainty"),
                 label = "Show uncertainty as:",
@@ -61,44 +62,39 @@ butterfly_visualization <- function(ns) HaDeX_plotSettingsSection(
                 selected = "ribbon")
 )
 
-butterfly_zoom <- function(ns) HaDeX_plotSettingsSection(
+butterfly_zoom <- function(ns) collapsible_card(
   title = "Zoom",
   uiOutput(ns("gen_x_range")),
-  uiOutput(ns("gen_y_range"))
+  uiOutput(ns("gen_y_range")),
+  init_collapsed = TRUE
 )
 
-butterfly_labels_adjustement <- function(ns) HaDeX_plotSettingsSection(
-  HaDeX_collapseButton(
-    title = "Adjust labels",
-    target = "#HaDeX-butterfly-labels-adjusting-panel"
+butterfly_labels_adjustement <- function(ns) collapsible_card(
+  title = "Adjust labels",
+  fluidRow(
+    column(width = 10,
+           uiOutput(ns("gen_plot_title")),
+           textInput(inputId = ns("plot_x_label"),
+                     label = "Butterfly plot axis x label:",
+                     value = "Peptide ID"),
+           uiOutput(ns("gen_plot_y_label"))),
+    column(width = 2,
+           numericInput_h(inputId = ns("plot_title_size"),
+                          label = "Size:",
+                          value = 15,
+                          min = 5),
+           numericInput_h(inputId = ns("plot_x_label_size"),
+                          label = "Size:",
+                          value = 15,
+                          min = 5),
+           numericInput_h(inputId = ns("plot_y_label_size"),
+                          label = "Size:",
+                          value = 15,
+                          min = 5))
   ),
-
-  HaDeX_collapsablePanel(
-    id = "HaDeX-butterfly-labels-adjusting-panel",
-    fluidRow(
-      column(width = 10,
-             uiOutput(ns("gen_plot_title")),
-             textInput(inputId = ns("plot_x_label"),
-                       label = "Butterfly plot axis x label:",
-                       value = "Peptide ID"),
-             uiOutput(ns("gen_plot_y_label"))),
-      column(width = 2,
-             numericInput_h(inputId = ns("plot_title_size"),
-                            label = "Size:",
-                            value = 15,
-                            min = 5),
-             numericInput_h(inputId = ns("plot_x_label_size"),
-                            label = "Size:",
-                            value = 15,
-                            min = 5),
-             numericInput_h(inputId = ns("plot_y_label_size"),
-                            label = "Size:",
-                            value = 15,
-                            min = 5))
-    ),
-    p("The axis ticks have the same size as the axis label.
-      The legend text size is the same as the x axis label.")
-  )
+  p("The axis ticks have the same size as the axis label.
+      The legend text size is the same as the x axis label."),
+  init_collapsed = TRUE
 )
 
 butterfly_plot_panel <- function(ns) tabsetPanel(
