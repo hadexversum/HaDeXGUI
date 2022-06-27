@@ -20,8 +20,12 @@ mod_uptake_butterfly_ui <- function(id) {
       butterfly_zoom(ns),
       butterfly_labels_adjustement(ns)
     ),
-    displayPanel = HaDeX_plotDisplayPanel(
-      butterfly_plot_panel(ns)
+    displayPanel = mod_plot_and_data_section_ui(
+      ns("butterfly_plot_and_data"),
+      plot_label = "Butterfly plot",
+      "The empty values (e.q. `Frac DU`) means there was not sufficient data
+       for this peptide. Abbreviations from the table: DU - deuterium uptake,
+       Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
     )
   )
 }
@@ -95,20 +99,6 @@ butterfly_labels_adjustement <- function(ns) collapsible_card(
   p("The axis ticks have the same size as the axis label.
       The legend text size is the same as the x axis label."),
   init_collapsed = TRUE
-)
-
-butterfly_plot_panel <- function(ns) tabsetPanel(
-  tabPanel("Butterfly plot",
-           girafeOutput_h(ns("plot")),
-           downloadButton(ns("plot_download_button"),
-                          "Save chart (.svg)")),
-  tabPanel("Data",
-           DT::dataTableOutput(ns("plot_data")),
-           p(
-             "The empty values (e.q. `Frac DU`) means there was not sufficient data for this peptide.",
-             "Abbreviations from the table: DU - deuterium uptake, Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
-           )
-  )
 )
 
 #' uptake_butterfly Server Functions
@@ -287,22 +277,6 @@ mod_uptake_butterfly_server <- function(
       )
     })
 
-    output[["plot"]] <- renderGirafe({ girafe(ggobj = plot_out(), width_svg = 12, height_svg = 7) })
-
-    output[["data"]] <- renderDataTable({ HaDeX_DT_format(dat_out()) })
-
-    output[["plot_download_button"]] <- downloadHandler(
-      "butterfly_plot.svg",
-      content = function(file) {
-        ggsave(file, plot_out(), device = svg,
-               height = 300, width = 400, units = "mm")
-      })
-
+    mod_plot_and_data_section_server("butterfly_plot_and_data", plot_out, dat_out)
   })
 }
-
-## To be copied in the UI
-# mod_uptake_butterfly_ui("uptake_butterfly_1")
-
-## To be copied in the server
-# mod_uptake_butterfly_server("uptake_butterfly_1")
