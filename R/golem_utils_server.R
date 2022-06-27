@@ -37,6 +37,18 @@ drop_nulls <- function(x) {
   }
 }
 
+
+#' If x is `NULL`, return `NULL`, otherwise return f(x)
+#'
+#' @param x [any] \n Element to test, potentially `NULL`
+#' @param f [function] \n A function to be applied to x.
+#'
+#' @noRd
+#'
+#' @examples
+#' NULL %||% 1
+"%?>%" <- function(x, f) if (is.null(x)) NULL else f(x)
+
 #' If x is `NA`, return y, otherwise return x
 #'
 #' @param x,y Two elements to test, one potentially `NA`

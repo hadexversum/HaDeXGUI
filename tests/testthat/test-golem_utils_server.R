@@ -33,6 +33,17 @@ test_that("%||% works", {
   )
 })
 
+test_that("%?>% works", {
+  expect_equal(
+    NULL %?>% exp,
+    NULL
+  )
+  expect_equal(
+    1 %?>% exp,
+    exp(1)
+  )
+})
+
 test_that("%|NA|% works", {
   expect_equal(
     NA %|NA|% 1,
