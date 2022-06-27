@@ -4,12 +4,12 @@
 #'     DO NOT REMOVE.
 #' @import shiny
 #' @importFrom icecream ic_disable ic_enable
+#' @importFrom reactlog reactlog_module_server
 #' @noRd
 app_server <- function(input, output, session) {
   apply_server_settings()
 
   dat_source <- mod_source_reading_server("source_reading")
-
 
   mod_uptake_butterfly_server("uptake_butterfly",
     dat = dat_source[["dat"]],
@@ -20,4 +20,6 @@ app_server <- function(input, output, session) {
     deut_part = dat_source[["deut_part"]],
     no_deut_control = dat_source[["no_deut_control"]]
   )
+
+  if (!getOption("golem.app.prod")) reactlog_module_server()
 }

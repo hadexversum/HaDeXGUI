@@ -3,6 +3,7 @@
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @importFrom reactlog reactlog_module_ui
 #' @noRd
 app_ui <- function(request) {
   tagList(
@@ -17,7 +18,9 @@ app_ui <- function(request) {
       navbarMenu(
         title = "Deuterium uptake",
         mod_uptake_butterfly_ui("uptake_butterfly")
-      )
+      ),
+
+      if (!getOption("golem.app.prod")) tabPanel(title = "debug", reactlog_module_ui())
     )
   )
 }
