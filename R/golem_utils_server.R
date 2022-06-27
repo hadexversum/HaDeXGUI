@@ -46,8 +46,9 @@ drop_nulls <- function(x) {
 #' @noRd
 #'
 #' @examples
-#' NULL %||% 1
-"%?>%" <- function(x, f) if (is.null(x)) NULL else f(x)
+#' 5 %?>% exp
+#' NULL %?>% exp
+`%?>%` <- function(x, f) if (is.null(x)) NULL else f(x)
 
 #' If x is `NA`, return y, otherwise return x
 #'
