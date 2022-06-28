@@ -230,10 +230,10 @@ mod_uptake_butterfly_server <- function(
 
     labels = mod_settings_labels_server(
       id = "butterfly_labels",
-      chosen_protein = reactive({ input[["chosen_protein"]] }),
-      state = reactive({ input[["state"]] }),
-      theoretical = reactive({ input[["theoretical"]] }),
-      fractional = reactive({ input[["fractional"]] })
+      chosen_protein = chosen_protein,
+      state = input_r("state"),
+      theoretical = input_r("theoretical"),
+      fractional = input_r("fractional")
     )
 
     mod_plot_and_data_section_server("butterfly_plot_and_data", plot_out, dat_out)

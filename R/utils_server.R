@@ -13,3 +13,15 @@ apply_server_settings <- function() {
 
   theme_set(HaDeX_ggtheme)
 }
+
+
+#' Get input as a reactive value
+#'
+#' @param name name of the input value
+#'
+#' @importFrom shiny getDefaultReactiveDomain reactive
+#' @importFrom rlang expr
+input_r <- function(name) {
+  eval(rlang::expr(reactive({ input[[!!name]] }, env = parent.frame(3))))
+}
+

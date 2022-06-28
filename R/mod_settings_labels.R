@@ -71,12 +71,12 @@ mod_settings_labels_server <- function(id, chosen_protein, state, theoretical, f
 
     return(
       list(
-        plot_title = reactive({ input[["plot_title"]] }),
-        plot_x_label = reactive({ input[["plot_x_label"]] }),
-        plot_y_label = reactive({ input[["plot_y_label"]] }),
-        plot_title_size = reactive({ input[["plot_title_size"]] }),
-        plot_x_label_size = reactive({ input[["plot_x_label_size"]] }),
-        plot_y_label_size = reactive({ input[["plot_y_label_size"]] })
+        plot_title = input_r("plot_title"),
+        plot_x_label = input_r("plot_x_label"),
+        plot_y_label = input_r("plot_y_label"),
+        plot_title_size = input_r("plot_title_size"),
+        plot_x_label_size = input_r("plot_x_label_size"),
+        plot_y_label_size = input_r("plot_y_label_size")
       )
     )
   })
