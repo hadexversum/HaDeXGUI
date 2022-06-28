@@ -18,7 +18,7 @@ mod_uptake_butterfly_ui <- function(id) {
       butterfly_timepoints(ns),
       butterfly_visualization(ns),
       butterfly_zoom(ns),
-      butterfly_labels_adjustement(ns)
+      mod_settings_labels_ui(ns("butterfly_labels"))
     ),
     displayPanel = mod_plot_and_data_section_ui(
       ns("butterfly_plot_and_data"),
@@ -73,34 +73,6 @@ butterfly_zoom <- function(ns) collapsible_card(
   init_collapsed = TRUE
 )
 
-butterfly_labels_adjustement <- function(ns) collapsible_card(
-  title = "Adjust labels",
-  fluidRow(
-    column(width = 10,
-           uiOutput(ns("gen_plot_title")),
-           textInput(inputId = ns("plot_x_label"),
-                     label = "Butterfly plot axis x label:",
-                     value = "Peptide ID"),
-           uiOutput(ns("gen_plot_y_label"))),
-    column(width = 2,
-           numericInput_h(inputId = ns("plot_title_size"),
-                          label = "Size:",
-                          value = 15,
-                          min = 5),
-           numericInput_h(inputId = ns("plot_x_label_size"),
-                          label = "Size:",
-                          value = 15,
-                          min = 5),
-           numericInput_h(inputId = ns("plot_y_label_size"),
-                          label = "Size:",
-                          value = 15,
-                          min = 5))
-  ),
-  p("The axis ticks have the same size as the axis label.
-      The legend text size is the same as the x axis label."),
-  init_collapsed = TRUE
-)
-
 #' uptake_butterfly Server Functions
 #'
 #' @import ggplot2
@@ -149,22 +121,23 @@ mod_uptake_butterfly_server <- function(
     })
 
     plot_out <- reactive({
+
       plot_obj() +
         coord_cartesian(
           xlim = c(input[["x_range"]][[1]], input[["x_range"]][[2]]),
           ylim = c(input[["y_range"]][[1]], input[["y_range"]][[2]])) +
         labs(
-          title = input[["plot_title"]],
-          x = input[["plot_x_label"]],
-          y = input[["plot_y_label"]]) +
+          title = labels[["plot_title"]](),
+          x = labels[["plot_x_label"]](),
+          y = labels[["plot_y_label"]]()) +
         theme(
-          plot.title = element_text(size = input[["plot_title_size"]]),
-          axis.text.x = element_text(size = input[["plot_x_label_size"]]),
-          axis.title.x = element_text(size = input[["plot_x_label_size"]]),
-          axis.title.y = element_text(size = input[["plot_y_label_size"]]),
-          axis.text.y = element_text(size = input[["plot_y_label_size"]]),
-          legend.text = element_text(size = input[["plot_x_label_size"]]),
-          legend.title = element_text(size = input[["plot_x_label_size"]])
+          plot.title = element_text(size = labels[["plot_title_size"]]()),
+          axis.text.x = element_text(size = labels[["plot_x_label_size"]]()),
+          axis.title.x = element_text(size = labels[["plot_x_label_size"]]()),
+          axis.title.y = element_text(size = labels[["plot_y_label_size"]]()),
+          axis.text.y = element_text(size = labels[["plot_y_label_size"]]()),
+          legend.text = element_text(size = labels[["plot_x_label_size"]]()),
+          legend.title = element_text(size = labels[["plot_x_label_size"]]())
         )
     })
 
@@ -255,27 +228,13 @@ mod_uptake_butterfly_server <- function(
       )
     })
 
-    output[["gen_plot_title"]] <- renderUI({
-      textInput(
-        inputId = ns("plot_title"),
-        label = "Butterfly plot title:",
-        value = if (input[["theoretical"]])
-          paste0("Theoreotical butterfly plot for ", input[["state"]], " state for ", chosen_protein())
-        else
-          paste0("Butterfly plot for ", input[["state"]], " state for ", chosen_protein())
-      )
-    })
-
-    output[["gen_plot_y_label"]] <- renderUI({
-      textInput(
-        inputId = ns("plot_y_label"),
-        label = "Butterfly plot axis y label:",
-        value = if (input[["fractional"]])
-          "Fractional deuterium uptake [%]"
-        else
-          "Deuterium uptake [Da]"
-      )
-    })
+    labels = mod_settings_labels_server(
+      id = "butterfly_labels",
+      chosen_protein = reactive({ input[["chosen_protein"]] }),
+      state = reactive({ input[["state"]] }),
+      theoretical = reactive({ input[["theoretical"]] }),
+      fractional = reactive({ input[["fractional"]] })
+    )
 
     mod_plot_and_data_section_server("butterfly_plot_and_data", plot_out, dat_out)
   })
