@@ -21,8 +21,14 @@ apply_server_settings <- function() {
 #'
 #' @importFrom shiny getDefaultReactiveDomain reactive
 #' @importFrom rlang expr
-input_r <- function(name) {
-  eval(rlang::expr(reactive({ input[[!!name]] }, env = parent.frame(3))))
+input_r <- function(name, env = parent.frame()) {
+  env <- new.env(parent = env)
+  eval(rlang::expr(reactive({ input[[!!name]] }, env = env)))
+}
+
+input_rv <- function(...) {
+  names <- unlist(list(...))
+  setNames(lapply(names, input_r, env = parent.frame()), names)
 }
 
 update_axes_and_labels <- function(plt, zoom, labels) {

@@ -4,7 +4,7 @@
 \alias{input_r}
 \title{Get input as a reactive value}
 \usage{
-input_r(name)
+input_r(name, env = parent.frame())
 }
 \arguments{
 \item{name}{name of the input value}

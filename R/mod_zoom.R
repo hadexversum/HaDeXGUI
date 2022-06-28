@@ -70,10 +70,7 @@ mod_zoom_server <- function(id, dat_plot, fractional){
     })
 
     return(
-      list(
-        y_range = input_r("y_range"),
-        x_range = input_r("x_range")
-      )
+      input_rv("y_range", "x_range")
     )
   })
 }

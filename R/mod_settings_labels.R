@@ -87,20 +87,7 @@ mod_settings_labels_server <- function(id, chosen_protein, state, theoretical, f
     })
 
     return(
-      list(
-        title = input_r("title"),
-        x_lab = input_r("x_lab"),
-        y_lab = input_r("y_lab"),
-        title_size = input_r("title_size"),
-        x_lab_size = input_r("x_lab_size"),
-        y_lab_size = input_r("y_lab_size")
-      )
+      input_rv("title", "x_lab", "y_lab", "title_size", "x_lab_size", "y_lab_size")
     )
   })
 }
-
-## To be copied in the UI
-# mod_settings_labels_ui("settings_labels_1")
-
-## To be copied in the server
-# mod_settings_labels_server("settings_labels_1")
