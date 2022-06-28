@@ -88,12 +88,12 @@ mod_settings_labels_server <- function(id, chosen_protein, state, theoretical, f
 
     return(
       list(
-        plot_title = input_r("title"),
-        plot_x_label = input_r("x_lab"),
-        plot_y_label = input_r("y_lab"),
-        plot_title_size = input_r("title_size"),
-        plot_x_label_size = input_r("x_lab_size"),
-        plot_y_label_size = input_r("y_lab_size")
+        title = input_r("title"),
+        x_lab = input_r("x_lab"),
+        y_lab = input_r("y_lab"),
+        title_size = input_r("title_size"),
+        x_lab_size = input_r("x_lab_size"),
+        y_lab_size = input_r("y_lab_size")
       )
     )
   })

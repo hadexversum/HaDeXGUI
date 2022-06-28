@@ -94,10 +94,10 @@ mod_uptake_butterfly_server <- function(
       )
     })
 
-    plot_obj <- reactive({
+    plot_out <- reactive({
       validate(need(input[["timepoints"]], "Wait for parameters to be loaded"))
 
-      dat_plot() %>%
+      (dat_plot() %>%
         filter(Exposure %in% input[["timepoints"]]) %>%
         HaDeX::plot_butterfly(
           theoretical = input[["theoretical"]],
@@ -111,27 +111,7 @@ mod_uptake_butterfly_server <- function(
             "<br/> Exposure: ", Exposure
           ))
         )
-    })
-
-    plot_out <- reactive({
-
-      plot_obj() +
-        coord_cartesian(
-          xlim = c(zoom[["x_range"]]()[[1]], zoom[["x_range"]]()[[2]]),
-          ylim = c(zoom[["y_range"]]()[[1]], zoom[["y_range"]]()[[2]])) +
-        labs(
-          title = labels[["plot_title"]](),
-          x = labels[["plot_x_label"]](),
-          y = labels[["plot_y_label"]]()) +
-        theme(
-          plot.title = element_text(size = labels[["plot_title_size"]]()),
-          axis.text.x = element_text(size = labels[["plot_x_label_size"]]()),
-          axis.title.x = element_text(size = labels[["plot_x_label_size"]]()),
-          axis.title.y = element_text(size = labels[["plot_y_label_size"]]()),
-          axis.text.y = element_text(size = labels[["plot_y_label_size"]]()),
-          legend.text = element_text(size = labels[["plot_x_label_size"]]()),
-          legend.title = element_text(size = labels[["plot_x_label_size"]]())
-        )
+      ) %>% update_axes_and_labels(zoom, labels)
     })
 
     dat_out <- reactive({
