@@ -18,7 +18,7 @@ mod_uptake_butterfly_ui <- function(id) {
       butterfly_timepoints(ns),
       butterfly_visualization(ns),
       butterfly_zoom(ns),
-      mod_settings_labels_ui(ns("butterfly_labels"))
+      mod_settings_labels_ui(ns("butterfly_labels"), label_prefix = "Butterfly")
     ),
     displayPanel = mod_plot_and_data_section_ui(
       ns("butterfly_plot_and_data"),
