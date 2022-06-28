@@ -17,7 +17,7 @@ mod_uptake_butterfly_ui <- function(id) {
       butterfly_state(ns),
       butterfly_timepoints(ns),
       butterfly_visualization(ns),
-      butterfly_zoom(ns),
+      mod_zoom_ui(ns("zoom")),
       mod_settings_labels_ui(ns("butterfly_labels"), label_prefix = "Butterfly")
     ),
     displayPanel = mod_plot_and_data_section_ui(
@@ -64,13 +64,6 @@ butterfly_visualization <- function(ns) collapsible_card(
                 label = "Show uncertainty as:",
                 choices = c("ribbon", "bars", "bars + line"),
                 selected = "ribbon")
-)
-
-butterfly_zoom <- function(ns) collapsible_card(
-  title = "Zoom",
-  uiOutput(ns("gen_x_range")),
-  uiOutput(ns("gen_y_range")),
-  init_collapsed = TRUE
 )
 
 #' uptake_butterfly Server Functions
@@ -124,8 +117,8 @@ mod_uptake_butterfly_server <- function(
 
       plot_obj() +
         coord_cartesian(
-          xlim = c(input[["x_range"]][[1]], input[["x_range"]][[2]]),
-          ylim = c(input[["y_range"]][[1]], input[["y_range"]][[2]])) +
+          xlim = c(zoom[["x_range"]]()[[1]], zoom[["x_range"]]()[[2]]),
+          ylim = c(zoom[["y_range"]]()[[1]], zoom[["y_range"]]()[[2]])) +
         labs(
           title = labels[["plot_title"]](),
           x = labels[["plot_x_label"]](),
@@ -148,8 +141,8 @@ mod_uptake_butterfly_server <- function(
           fractional = input[["fractional"]]
         ) %>%
         filter(Exposure %in% input[["timepoints"]]) %>%
-        filter(ID >= input[["x_range"]][[1]] &
-               ID <= input[["x_range"]][[2]])
+        filter(ID >= zoom[["x_range"]]()[[1]] &
+               ID <= zoom[["x_range"]]()[[2]])
     })
 
     output[["gen_state"]] <- renderUI({
@@ -195,38 +188,11 @@ mod_uptake_butterfly_server <- function(
       )
     })
 
-    output[["gen_x_range"]] <- renderUI({
-      max_x <- max(dat_plot()[["ID"]])
-      min_x <- min(dat_plot()[["ID"]])
-
-      sliderInput(
-        inputId = ns("x_range"),
-        label = "Choose x range for butterfly plot:",
-        min = min_x,
-        max = max_x,
-        value = c(min_x, max_x),
-        step = 1
-      )
-    })
-
-    output[["gen_y_range"]] <- renderUI({
-      if (input[["fractional"]]){
-        max_y <- ceiling(max(dat_plot()[["frac_deut_uptake"]], dat_plot()[["theo_frac_deut_uptake"]], na.rm = TRUE)) + 1
-        min_y <- floor(min(dat_plot()[["frac_deut_uptake"]], dat_plot()[["theo_frac_deut_uptake"]], na.rm = TRUE)) - 1
-      } else {
-        max_y <- ceiling(max(dat_plot()[["deut_uptake"]], dat_plot()[["theo_deut_uptake"]], na.rm = TRUE)) + 1
-        min_y <- floor(min(dat_plot()[["deut_uptake"]], dat_plot()[["theo_deut_uptake"]], na.rm = TRUE)) - 1
-      }
-
-      sliderInput(
-        inputId = ns("y_range"),
-        label = "Choose y range for butterfly plot:",
-        min = min_y,
-        max = max_y,
-        value = c(min_y, max_y),
-        step = 1
-      )
-    })
+    zoom =  mod_zoom_server(
+      id = "zoom",
+      dat_plot = dat_plot,
+      fractional = input_r("fractional")
+    )
 
     labels = mod_settings_labels_server(
       id = "butterfly_labels",
