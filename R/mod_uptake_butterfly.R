@@ -14,7 +14,7 @@ mod_uptake_butterfly_ui <- function(id, differential) {
     title = if (differential) "Butterfly Differential Plot" else "Butterfly Plot",
     settingsPanel = HaDeX_plotSettingsPanel(
       butterfly_general_settings(ns),
-      butterfly_state(ns, differential),
+      mod_settings_state_ui(ns("state"), differential),
       butterfly_timepoints(ns),
       butterfly_diff_test(ns) %nullify if% (!differential),
       butterfly_visualization(ns),
@@ -59,36 +59,6 @@ butterfly_general_settings <- function(ns) collapsible_card(
     value = FALSE
   )
 )
-
-butterfly_state <- function(ns, differential) {
-  if (differential)
-    collapsible_card(
-      title = "States",
-      p("Differential plot presents the uptake difference between State 1 and State 2."),
-      splitLayout(
-        selectInput_h(
-          inputId = ns("state_1"),
-          label = "State 1",
-          choices = ""
-        ),
-        selectInput_h(
-          inputId = ns("state_2"),
-          label = "State 2",
-          choices = ""
-        )
-      )
-    )
-  else
-    collapsible_card(
-      title = "State",
-      selectInput_h(
-        inputId = ns("state"),
-        label = "Choose state:",
-        choices = "",
-        selected = ""
-      )
-    )
-}
 
 butterfly_timepoints <- function(ns) collapsible_card(
   title = "Timepoints",
@@ -190,11 +160,11 @@ mod_uptake_butterfly_server <- function(
 
     dat_processed <- if (differential) reactive({
       # TODO: check which validates are really needed
-      validate(need(input[["state_1"]] != input[["state_2"]],
+      validate(need(state[["state_1"]]() != state[["state_2"]](),
                     "There is no difference between the same state, choose two distinct states."))
       validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
-      validate(need(input[["state_1"]] %in% states_chosen_protein(),
+      validate(need(state[["state_1"]]() %in% states_chosen_protein(),
                     "Wait for the parameters to be loaded."))
       validate(need(input[["timepoints"]],
                     "Wait for parameters to be loaded"))
@@ -202,8 +172,8 @@ mod_uptake_butterfly_server <- function(
       HaDeX::create_diff_uptake_dataset(
         dat(),
         protein = chosen_protein(),
-        state_1 = input[["state_1"]],
-        state_2 = input[["state_2"]],
+        state_1 = state[["state_1"]](),
+        state_2 = state[["state_2"]](),
         time_0 = as.numeric(input[["time_0"]]),
         time_100 = as.numeric(input[["time_100"]]),
         deut_part = deut_part() / 100
@@ -213,7 +183,7 @@ mod_uptake_butterfly_server <- function(
       # TODO: check which validates are really needed
       validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
-      validate(need(input[["state"]] %in% states_chosen_protein(),
+      validate(need(state[["state"]]() %in% states_chosen_protein(),
                     "Wait for the parameters to be loaded."))
       validate(need(input[["timepoints"]],
                     "Wait for parameters to be loaded"))
@@ -221,7 +191,7 @@ mod_uptake_butterfly_server <- function(
       HaDeX::create_state_uptake_dataset(
         dat(),
         protein = chosen_protein(),
-        state = input[["state"]],
+        state = state[["state"]](),
         time_0 = as.numeric(input[["time_0"]]),
         time_100 = as.numeric(input[["time_100"]]),
         deut_part = deut_part() / 100
@@ -234,8 +204,8 @@ mod_uptake_butterfly_server <- function(
          HaDeX::create_p_diff_uptake_dataset(
            diff_uptake_dat = dat_processed(),
            protein = chosen_protein(),
-           state_1 = input[["state_1"]],
-           state_2 = input[["state_2"]],
+           state_1 = state[["state_1"]](),
+           state_2 = state[["state_2"]](),
            confidence_level = as.numeric(input[["confidence_level"]]),
            p_adjustment_method = input[["p_adjustment_method"]],
            time_0 = as.numeric(input[["time_0"]]),
@@ -296,35 +266,6 @@ mod_uptake_butterfly_server <- function(
                ID <= zoom[["x_range"]]()[[2]])
     })
 
-    if (differential) {
-      observe({
-        updateSelectInput(
-          session,
-          inputId = "state_1",
-          choices = states_chosen_protein(),
-          selected = states_chosen_protein()[1]
-        )
-      })
-
-      observe({
-        updateSelectInput(
-          session,
-          inputId = "state_2",
-          choices = states_chosen_protein(),
-          selected = states_chosen_protein()[2]
-        )
-      })
-    } else {
-      observe({
-        updateSelectInput(
-          session,
-          inputId = "state",
-          choices = states_chosen_protein(),
-          selected = states_chosen_protein()[1]
-        )
-      })
-    }
-
     observe({
       updateSelectInput(
         session,
@@ -378,6 +319,12 @@ mod_uptake_butterfly_server <- function(
       )
     })
 
+    state = mod_settings_state_server(
+      id = "state",
+      differential = differential,
+      states_chosen_protein = states_chosen_protein
+    )
+
     zoom =  mod_zoom_server(
       id = "zoom",
       dat_processed = dat_processed,
@@ -389,13 +336,13 @@ mod_uptake_butterfly_server <- function(
       paste0(
         if (input[["theoretical"]]) "Theoreotical b" else "B",
         "utterfly differential plot between ",
-        input[["state_1"]], " and ", input[["state_2"]]
+        state[["state_1"]](), " and ", state[["state_2"]]()
       )
     }) else reactive({
       paste0(
         if (input[["theoretical"]]) "Theoreotical b" else "B",
         "utterfly plot for ",
-        input[["state"]], " state for ", chosen_protein()
+        state[["state"]](), " state for ", chosen_protein()
       )
     })
 
