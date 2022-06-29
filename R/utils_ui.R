@@ -73,6 +73,7 @@ display.shiny.tag.list <- function(x) {
 wrap_id <- function(id, type) paste0(type, "-", id)
 wrap_div <- function(..., id, type) div(..., id = wrap_id(id, type))
 
+`%nullify if%` <- function(x, condition) if (condition) NULL else x
 
 .S3method("undisplay", "shiny.tag", undisplay.shiny.tag)
 .S3method("undisplay", "shiny.tag.list", undisplay.shiny.tag.list)
