@@ -11,7 +11,8 @@ app_server <- function(input, output, session) {
 
   dat_source <- mod_source_reading_server("source_reading")
 
-  mod_uptake_butterfly_server("uptake_butterfly",
+  mod_uptake_butterfly_server(
+    id = "butterfly",
     dat = dat_source[["dat"]],
     chosen_protein = dat_source[["chosen_protein"]],
     states_chosen_protein = dat_source[["states_chosen_protein"]],

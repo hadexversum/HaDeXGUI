@@ -17,7 +17,8 @@ app_ui <- function(request) {
       mod_source_reading_ui("source_reading"),
       navbarMenu(
         title = "Deuterium uptake",
-        mod_uptake_butterfly_ui("uptake_butterfly", differential = FALSE)
+        mod_uptake_butterfly_ui("butterfly", differential = FALSE),
+        mod_uptake_butterfly_ui("butterfly_diff", differential = TRUE)
       ),
 
       if (getOption("shiny.reactlog")) tabPanel(title = "reactlog", reactlog_module_ui())
