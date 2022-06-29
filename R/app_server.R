@@ -35,5 +35,5 @@ app_server <- function(input, output, session) {
     no_deut_control = dat_source[["no_deut_control"]]
   )
 
-  if (getOption("shiny.reactlog")) reactlog_module_server()
+  if (getOption("shiny.reactlog", default = FALSE)) reactlog_module_server()
 }

@@ -21,7 +21,8 @@ app_ui <- function(request) {
         mod_uptake_butterfly_ui("butterfly_diff", differential = TRUE)
       ),
 
-      if (getOption("shiny.reactlog")) tabPanel(title = "reactlog", reactlog_module_ui())
+      if (getOption("shiny.reactlog", default = FALSE))
+        tabPanel(title = "reactlog", reactlog_module_ui())
     )
   )
 }
