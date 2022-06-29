@@ -20,7 +20,7 @@ app_ui <- function(request) {
         mod_uptake_butterfly_ui("uptake_butterfly")
       ),
 
-      if (!getOption("golem.app.prod")) tabPanel(title = "debug", reactlog_module_ui())
+      if (getOption("shiny.reactlog")) tabPanel(title = "reactlog", reactlog_module_ui())
     )
   )
 }
