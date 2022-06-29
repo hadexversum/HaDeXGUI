@@ -11,12 +11,15 @@
 mod_uptake_butterfly_ui <- function(id, differential) {
   ns <- NS(id)
   HaDeX_plotTab(
-    title = "Butterfly Plot",
+    title = if (differential) "Butterfly Differential Plot" else "Butterfly Plot",
     settingsPanel = HaDeX_plotSettingsPanel(
       butterfly_general_settings(ns),
       butterfly_state(ns, differential),
       butterfly_timepoints(ns),
+      butterfly_diff_test(ns) %nullify if% (!differential),
       butterfly_visualization(ns),
+
+      # collapsed by default
       mod_zoom_ui(ns("zoom")),
       mod_settings_labels_ui(
         ns("labels"),
@@ -25,22 +28,36 @@ mod_uptake_butterfly_ui <- function(id, differential) {
     ),
     displayPanel = mod_plot_and_data_section_ui(
       ns("plot_and_data"),
-      plot_label = "Butterfly plot",
-      "The empty values (e.q. `Frac DU`) means there was not sufficient data
-       for this peptide. Abbreviations from the table: DU - deuterium uptake,
-       Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
+      plot_label = if (differential) "Butterfly differential plot" else "Butterfly plot",
+      additional_data_info = if (differential) {
+        "The table presents data from the chosen x plot range.
+        The empty values (e.q. `Frac Diff DU`) mean there was not sufficient
+        data for this peptide. There is a possibility that the measurement
+        result is available for only one state of the peptide.
+        Abbreviations from the table: Diff DU - differential deuterium uptake,
+        Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
+      } else {
+        "The table presents data from the chosen x plot range.
+        The empty values (e.q. `Frac DU`) means there was not sufficient data
+        for this peptide. Abbreviations from the table: DU - deuterium uptake,
+        Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
+      }
     )
   )
 }
 
 butterfly_general_settings <- function(ns) collapsible_card(
   title = "General settings",
-  checkboxInput_h(inputId = ns("theoretical"),
-                  label = "Theoretical calculations",
-                  value = FALSE),
-  checkboxInput_h(inputId = ns("fractional"),
-                  label = "Fractional values",
-                  value = FALSE)
+  checkboxInput_h(
+    inputId = ns("theoretical"),
+    label = "Theoretical calculations",
+    value = FALSE
+  ),
+  checkboxInput_h(
+    inputId = ns("fractional"),
+    label = "Fractional values",
+    value = FALSE
+  )
 )
 
 butterfly_state <- function(ns, differential) {
