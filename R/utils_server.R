@@ -52,3 +52,10 @@ update_axes_and_labels <- function(plt, zoom, labels) {
       legend.title = element_text(size = labels[["x_lab_size"]]())
     )
 }
+
+toggle_id <- function(condition, id) {
+  golem::invoke_js(
+    if (condition) "showid" else "hideid",
+    id
+  )
+}

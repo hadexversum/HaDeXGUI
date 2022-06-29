@@ -70,6 +70,10 @@ display.shiny.tag.list <- function(x) {
 `%visible if%` <- function(tag, condition)
   (if (condition) display else undisplay)(tag)
 
+wrap_id <- function(id, type) paste0(type, "-", id)
+wrap_div <- function(..., id, type) div(..., id = wrap_id(id, type))
+
+
 .S3method("undisplay", "shiny.tag", undisplay.shiny.tag)
 .S3method("undisplay", "shiny.tag.list", undisplay.shiny.tag.list)
 .S3method("display", "shiny.tag", display.shiny.tag)
