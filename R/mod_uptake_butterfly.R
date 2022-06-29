@@ -42,18 +42,48 @@ butterfly_general_settings <- function(ns) collapsible_card(
 
 butterfly_state <- function(ns) collapsible_card(
   title = "State",
-  uiOutput(ns("gen_state"))
+  selectInput_h(
+    inputId = ns("state"),
+    label = "Choose state:",
+    choices = "",
+    selected = ""
+  )
 )
 
 butterfly_timepoints <- function(ns) collapsible_card(
   title = "Timepoints",
   fluidRow(
-    column(width = 6,
-           uiOutput(ns("gen_timepoints"))
+    column(
+      width = 6,
+      checkboxGroupInput_h(
+        inputId = ns("timepoints"),
+        label = "Show time points: ",
+        choices = "",
+        selected = ""
+      )
     ),
-    column(width = 6,
-           uiOutput(ns("gen_time_0")),
-           uiOutput(ns("gen_time_100"))
+    column(
+      width = 6,
+      wrap_div(
+        selectInput_h(
+          inputId = ns("time_0"),
+          label = "Deut 0%",
+          choices = "",
+          selected = ""
+        ),
+        id = ns("time_0"),
+        type = "visswitch"
+      ),
+      wrap_div(
+        selectInput_h(
+          inputId = ns("time_100"),
+          label = "Deut 100%",
+          choices = "",
+          selected = ""
+        ),
+        id = ns("time_0"),
+        type = "visswitch"
+      )
     )
   )
 )
@@ -125,34 +155,44 @@ mod_uptake_butterfly_server <- function(
                ID <= zoom[["x_range"]]()[[2]])
     })
 
-    output[["gen_state"]] <- renderUI({
-      selectInput_h(
-        inputId = ns("state"),
-        label = "Choose state:",
+    observe({
+      updateSelectInput(
+        session,
+        inputId = "state",
         choices = states_chosen_protein(),
         selected = states_chosen_protein()[1]
       )
     })
 
-    output[["gen_time_0"]] <- renderUI({
-      selectInput_h(
-        inputId = ns("time_0"),
-        label = "Deut 0%",
+    observe({
+      updateSelectInput(
+        session,
+        inputId = "time_0",
         choices = times_from_file()[times_from_file() < 99999],
         selected = times_from_file()[times_from_file() == no_deut_control()]
-      ) %visible if% !input[["theoretical"]]
+      )
+
+      toggle_id(
+        !input[["theoretical"]],
+        wrap_id(ns("time_0"), "visswitch")
+      )
     })
 
-    output[["gen_time_100"]] <- renderUI({
-      selectInput_h(
-        inputId = ns("time_100"),
-        label = "Deut 100%",
+    observe({
+      updateSelectInput(
+        session,
+        inputId = "time_100",
         choices = times_with_control(),
         selected = max(times_with_control()[times_with_control() < 99999])
-      ) %visible if% (!input[["theoretical"]] && input[["fractional"]])
+      )
+
+      toggle_id(
+        !input[["theoretical"]] && input[["fractional"]],
+        wrap_id(ns("time_100"), "visswitch")
+      )
     })
 
-    output[["gen_timepoints"]] <- renderUI({
+    observe({
       vec <- if (input[["fractional"]])
         times_from_file() < as.numeric(input[["time_100"]])
       else
@@ -160,9 +200,9 @@ mod_uptake_butterfly_server <- function(
 
       times_t <- times_from_file()[times_from_file() > input[["time_0"]] & vec]
 
-      checkboxGroupInput_h(
-        inputId = ns("timepoints"),
-        label = "Show time points: ",
+      updateCheckboxGroupInput(
+        session,
+        inputId = "timepoints",
         choices = times_t,
         selected = times_t
       )
