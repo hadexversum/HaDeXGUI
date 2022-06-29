@@ -41,20 +41,11 @@ mod_source_reading_ui <- function(id){
       )
     ),
 
-    fillRow(
-      id = "HaDeX-file-requirements-section",
-      flex = c(1, NA),
-      p("For the program to behave correctly, please make sure supplied file fulfills all requirements.",
-        "Requirements can be displayed by clicking the button."),
-      HaDeX_collapseButton(
-        title = "Show requirements",
-        target = "#HaDeX-file-requirements-table"
-      )
-    ),
-
-    HaDeX_collapsablePanel(
-      id = "HaDeX-file-requirements-table",
-      htmlize_data("file_req")
+    p("For the program to behave correctly, please make sure supplied file fulfills all requirements."),
+    collapsible_card(
+      title = "Show requirements",
+      htmlize_data("file_req"),
+      init_collapsed = TRUE
     ),
 
     h3("Upload settings"),
@@ -126,15 +117,6 @@ mod_source_reading_server <- function(id) {
         if (data_source() == "HDeXaminer")
           ". User action needed below!"
         else "."
-      )
-    })
-
-    ### observer
-
-    observe({
-      golem::invoke_js(
-        if (data_source() == "HDeXaminer") "show" else "hide",
-        "#HaDeX-examiner-settings-panel"
       )
     })
 
