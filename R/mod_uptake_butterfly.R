@@ -273,12 +273,14 @@ mod_uptake_butterfly_server <- function(
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
+    .show_fun <- if (differential) HaDeX::show_diff_uptake_data else HaDeX::show_uptake_data
+
     dat_out <- reactive({
       dat_processed() %>%
-        ((if (differential) HaDeX::show_diff_uptake_data else HaDeX::show_uptake_data) (
+        .show_fun(
           theoretical = input[["theoretical"]],
           fractional = input[["fractional"]]
-        )) %>%
+        ) %>%
         filter(ID >= zoom[["x_range"]]()[[1]] &
                ID <= zoom[["x_range"]]()[[2]])
     })
