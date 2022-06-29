@@ -230,28 +230,38 @@ mod_uptake_butterfly_server <- function(
     })
 
     plot_out <- if (differential) reactive({
-      dat() %>%
-        HaDeX::create_p_diff_uptake_dataset(
-          diff_uptake_dat = dat_processed(),
-          protein = chosen_protein(),
-          state_1 = input[["state_1"]],
-          state_2 = input[["state_2"]],
-          confidence_level = as.numeric(input[["confidence_level"]]),
-          p_adjustment_method = input[["p_adjustment_method"]],
-          time_0 = as.numeric(input[["time_0"]]),
-          time_100 = as.numeric(input[["time_100"]]),
-          deut_part = deut_part() / 100
-        ) %>%
-        HaDeX::plot_differential_butterfly(
-          diff_uptake_dat = dat_processed(),
-          diff_p_uptake_dat = .,
-          theoretical = input[["theoretical"]],
-          fractional = input[["fractional"]],
-          uncertainty_type = input[["uncertainty"]],
-          show_houde_interval = input[["show_houde"]],
-          show_tstud_confidence = input[["show_tstud"]],
-          confidence_level = as.numeric(input[["confidence_level"]])
-        )
+      (dat() %>%
+         HaDeX::create_p_diff_uptake_dataset(
+           diff_uptake_dat = dat_processed(),
+           protein = chosen_protein(),
+           state_1 = input[["state_1"]],
+           state_2 = input[["state_2"]],
+           confidence_level = as.numeric(input[["confidence_level"]]),
+           p_adjustment_method = input[["p_adjustment_method"]],
+           time_0 = as.numeric(input[["time_0"]]),
+           time_100 = as.numeric(input[["time_100"]]),
+           deut_part = deut_part() / 100
+         ) %>% HaDeX::plot_differential_butterfly(
+           diff_uptake_dat = dat_processed(),
+           diff_p_uptake_dat = .,
+           theoretical = input[["theoretical"]],
+           fractional = input[["fractional"]],
+           uncertainty_type = input[["uncertainty"]],
+           show_houde_interval = input[["show_houde"]],
+           show_tstud_confidence = input[["show_tstud"]],
+           confidence_level = as.numeric(input[["confidence_level"]])
+         ) +
+         geom_point_interactive(
+           data = dat_processed(),
+           aes(x = ID, y = 10, tooltip = paste0( #PLACEHOLDER
+             Sequence,
+             "<br/>Position: ", Start, "-", End,
+             "<br/>Value: PLACEHOLDER", #TODO: find a way of obtaining this value seamlessly
+             "<br/>Exposure: ", Exposure, " min"
+           ))
+         )
+      ) %>% #update_axes_and_labels(zoom, labels) %>%
+        suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
       validate(need(input[["timepoints"]],
                     "Wait for parameters to be loaded"))
@@ -261,14 +271,15 @@ mod_uptake_butterfly_server <- function(
           theoretical = input[["theoretical"]],
           fractional = input[["fractional"]],
           uncertainty_type = input[["uncertainty"]]
-        ) + geom_point_interactive(
-          aes(tooltip = paste0(
-            Sequence,
-            "<br/>Position: ", Start, "-", End,
-            "<br/>Value: ", round(value, 2),
-            "<br/>Exposure: ", Exposure
-          ))
-        )
+        ) +
+          geom_point_interactive( #TODO: fix this redundancy?
+            aes(tooltip = paste0(
+              Sequence,
+              "<br/>Position: ", Start, "-", End,
+              "<br/>Value: ", round(value, 2),
+              "<br/>Exposure: ", Exposure, " min"
+            ))
+          )
       ) %>% update_axes_and_labels(zoom, labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
