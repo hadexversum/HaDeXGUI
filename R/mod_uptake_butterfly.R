@@ -8,20 +8,23 @@
 #'
 #' @importFrom shiny NS tagList
 #' @import ggiraph
-mod_uptake_butterfly_ui <- function(id) {
+mod_uptake_butterfly_ui <- function(id, differential) {
   ns <- NS(id)
   HaDeX_plotTab(
     title = "Butterfly Plot",
     settingsPanel = HaDeX_plotSettingsPanel(
       butterfly_general_settings(ns),
-      butterfly_state(ns),
+      butterfly_state(ns, differential),
       butterfly_timepoints(ns),
       butterfly_visualization(ns),
       mod_zoom_ui(ns("zoom")),
-      mod_settings_labels_ui(ns("butterfly_labels"), label_prefix = "Butterfly")
+      mod_settings_labels_ui(
+        ns("labels"),
+        label_prefix = if (differential) "Butterfly differential" else "Butterfly"
+      )
     ),
     displayPanel = mod_plot_and_data_section_ui(
-      ns("butterfly_plot_and_data"),
+      ns("plot_and_data"),
       plot_label = "Butterfly plot",
       "The empty values (e.q. `Frac DU`) means there was not sufficient data
        for this peptide. Abbreviations from the table: DU - deuterium uptake,
@@ -40,15 +43,35 @@ butterfly_general_settings <- function(ns) collapsible_card(
                   value = FALSE)
 )
 
-butterfly_state <- function(ns) collapsible_card(
-  title = "State",
-  selectInput_h(
-    inputId = ns("state"),
-    label = "Choose state:",
-    choices = "",
-    selected = ""
-  )
-)
+butterfly_state <- function(ns, differential) {
+  if (differential)
+    collapsible_card(
+      title = "States",
+      p("Differential plot presents the uptake difference between State 1 and State 2."),
+      splitLayout(
+        selectInput_h(
+          inputId = ns("state_1"),
+          label = "State 1",
+          choices = ""
+        ),
+        selectInput_h(
+          inputId = ns("state_2"),
+          label = "State 2",
+          choices = ""
+        )
+      )
+    )
+  else
+    collapsible_card(
+      title = "State",
+      selectInput_h(
+        inputId = ns("state"),
+        label = "Choose state:",
+        choices = "",
+        selected = ""
+      )
+    )
+}
 
 butterfly_timepoints <- function(ns) collapsible_card(
   title = "Timepoints",
@@ -88,12 +111,52 @@ butterfly_timepoints <- function(ns) collapsible_card(
   )
 )
 
+butterfly_diff_test <- function(ns) collapsible_card(
+  title = "Test",
+  fluidRow(
+    column(
+      width = 6,
+      checkboxInput_h(
+        inputId = ns("show_houde"),
+        label = "Houde test",
+        value = FALSE
+      ),
+      checkboxInput_h(
+        inputId = ns("show_tstud"),
+        label = "t-Student test",
+        value = FALSE
+      )
+    ),
+    column(
+      width = 6,
+      selectInput_h(
+        inputId = ns("confidence_level"),
+        label = "Select confidence level:",
+        choices = c("80%" = 0.8, "90%" = 0.9, "95%" = 0.95, "98%" = 0.98, "99%" = 0.99, "99.9%" = 0.999),
+        selected = 0.98
+      ),
+      wrap_div(
+        selectInput_h(
+          inputId = ns("p_adjustment_method"),
+          label = "Choose method of adjustment:",
+          choices = c("none", "BH", "bonferroni"),
+          selected = "none"
+        ),
+        id = ns("p_adjustment_method"),
+        type = "visswitch"
+      )
+    )
+  )
+)
+
 butterfly_visualization <- function(ns) collapsible_card(
   title = "Visualization",
-  selectInput_h(inputId = ns("uncertainty"),
-                label = "Show uncertainty as:",
-                choices = c("ribbon", "bars", "bars + line"),
-                selected = "ribbon")
+  selectInput_h(
+    inputId = ns("uncertainty"),
+    label = "Show uncertainty as:",
+    choices = c("ribbon", "bars", "bars + line"),
+    selected = "ribbon"
+  )
 )
 
 #' uptake_butterfly Server Functions
@@ -216,13 +279,13 @@ mod_uptake_butterfly_server <- function(
     )
 
     labels = mod_settings_labels_server(
-      id = "butterfly_labels",
+      id = "labels",
       chosen_protein = chosen_protein,
       state = input_r("state"),
       theoretical = input_r("theoretical"),
       fractional = input_r("fractional")
     )
 
-    mod_plot_and_data_section_server("butterfly_plot_and_data", plot_out, dat_out)
+    mod_plot_and_data_section_server("plot_and_data", plot_out, dat_out)
   })
 }
