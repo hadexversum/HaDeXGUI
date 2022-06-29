@@ -109,3 +109,11 @@ collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL) {
     )
   )
 }
+
+construct_var_name <- function(diff, theo, frac, var)
+  paste0(
+    "diff_" %nullify if% (!diff),
+    "theo_" %nullify if% (!theo),
+    "frac_" %nullify if% (!frac),
+    var
+  )

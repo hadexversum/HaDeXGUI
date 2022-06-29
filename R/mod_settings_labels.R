@@ -62,7 +62,7 @@ mod_settings_labels_ui <- function(id, label_prefix){
 #' settings_labels Server Functions
 #'
 #' @noRd
-mod_settings_labels_server <- function(id, chosen_protein, state, theoretical, fractional){
+mod_settings_labels_server <- function(id, chosen_protein, default_title, default_lab_y){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -70,19 +70,13 @@ mod_settings_labels_server <- function(id, chosen_protein, state, theoretical, f
       updateTextInput(
         session,
         inputId = "title",
-        value = ic( if (theoretical())
-          paste0("Theoreotical butterfly plot for ", state(), " state for ", chosen_protein())
-          else
-            paste0("Butterfly plot for ", state(), " state for ", chosen_protein()))
+        value = default_title()
       )
 
       updateTextInput(
         session,
         inputId = "y_lab",
-        value = if (fractional())
-          "Fractional deuterium uptake [%]"
-        else
-          "Deuterium uptake [Da]"
+        value = default_lab_y()
       )
     })
 

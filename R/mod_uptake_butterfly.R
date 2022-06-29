@@ -260,7 +260,7 @@ mod_uptake_butterfly_server <- function(
              "<br/>Exposure: ", Exposure, " min"
            ))
          )
-      ) %>% #update_axes_and_labels(zoom, labels) %>%
+      ) %>% update_axes_and_labels(zoom, labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
       validate(need(input[["timepoints"]],
@@ -381,15 +381,36 @@ mod_uptake_butterfly_server <- function(
     zoom =  mod_zoom_server(
       id = "zoom",
       dat_processed = dat_processed,
-      fractional = input_r("fractional")
+      fractional = input_r("fractional"),
+      differential = differential
     )
+
+    default_title <- if (differential) reactive({
+      paste0(
+        if (input[["theoretical"]]) "Theoreotical b" else "B",
+        "utterfly differential plot between ",
+        input[["state_1"]], " and ", input[["state_2"]]
+      )
+    }) else reactive({
+      paste0(
+        if (input[["theoretical"]]) "Theoreotical b" else "B",
+        "utterfly plot for ",
+        input[["state"]], " state for ", chosen_protein()
+      )
+    })
+
+    default_lab_y <- if (differential) reactive({
+      if (input[["fractional"]]) "Fractional deuterium uptake difference [%]"
+      else "Deuterium uptake difference [Da]"
+    }) else reactive({
+      if (input[["fractional"]]) "Fractional deuterium uptake [%]"
+      else "Deuterium uptake [Da]"
+    })
 
     labels = mod_settings_labels_server(
       id = "labels",
-      chosen_protein = chosen_protein,
-      state = input_r("state"),
-      theoretical = input_r("theoretical"),
-      fractional = input_r("fractional")
+      default_title = default_title,
+      default_lab_y = default_lab_y
     )
 
     mod_plot_and_data_section_server("plot_and_data", plot_out, dat_out)
