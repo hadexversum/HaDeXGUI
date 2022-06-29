@@ -181,18 +181,42 @@ butterfly_visualization <- function(ns) collapsible_card(
 #' @import ggplot2
 #' @noRd
 mod_uptake_butterfly_server <- function(
-    id, dat,
+    id, differential,
+    dat,
     chosen_protein, states_chosen_protein, times_from_file, times_with_control,
     deut_part, no_deut_control){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    dat_plot <- reactive({
+    dat_processed <- if (differential) reactive({
+      # TODO: check which validates are really needed
+      validate(need(input[["state_1"]] != input[["state_2"]],
+                    "There is no difference between the same state, choose two distinct states."))
+      validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
+                    "Wait for the parameters to be loaded."))
+      validate(need(input[["state_1"]] %in% states_chosen_protein(),
+                    "Wait for the parameters to be loaded."))
+      validate(need(input[["timepoints"]],
+                    "Wait for parameters to be loaded"))
+
+      HaDeX::create_diff_uptake_dataset(
+        dat(),
+        protein = chosen_protein(),
+        state_1 = input[["state_1"]],
+        state_2 = input[["state_2"]],
+        time_0 = as.numeric(input[["time_0"]]),
+        time_100 = as.numeric(input[["time_100"]]),
+        deut_part = deut_part() / 100
+      ) %>%
+        filter(Exposure %in% input[["timepoints"]])
+    }) else reactive({
       # TODO: check which validates are really needed
       validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
       validate(need(input[["state"]] %in% states_chosen_protein(),
                     "Wait for the parameters to be loaded."))
+      validate(need(input[["timepoints"]],
+                    "Wait for parameters to be loaded"))
 
       HaDeX::create_state_uptake_dataset(
         dat(),
@@ -201,14 +225,38 @@ mod_uptake_butterfly_server <- function(
         time_0 = as.numeric(input[["time_0"]]),
         time_100 = as.numeric(input[["time_100"]]),
         deut_part = deut_part() / 100
-      )
+      ) %>%
+        filter(Exposure %in% input[["timepoints"]])
     })
 
-    plot_out <- reactive({
-      validate(need(input[["timepoints"]], "Wait for parameters to be loaded"))
+    plot_out <- if (differential) reactive({
+      dat() %>%
+        HaDeX::create_p_diff_uptake_dataset(
+          diff_uptake_dat = dat_processed(),
+          protein = chosen_protein(),
+          state_1 = input[["state_1"]],
+          state_2 = input[["state_2"]],
+          confidence_level = as.numeric(input[["confidence_level"]]),
+          p_adjustment_method = input[["p_adjustment_method"]],
+          time_0 = as.numeric(input[["time_0"]]),
+          time_100 = as.numeric(input[["time_100"]]),
+          deut_part = deut_part() / 100
+        ) %>%
+        HaDeX::plot_differential_butterfly(
+          diff_uptake_dat = dat_processed(),
+          diff_p_uptake_dat = .,
+          theoretical = input[["theoretical"]],
+          fractional = input[["fractional"]],
+          uncertainty_type = input[["uncertainty"]],
+          show_houde_interval = input[["show_houde"]],
+          show_tstud_confidence = input[["show_tstud"]],
+          confidence_level = as.numeric(input[["confidence_level"]])
+        )
+    }) else reactive({
+      validate(need(input[["timepoints"]],
+                    "Wait for parameters to be loaded"))
 
-      (dat_plot() %>%
-        filter(Exposure %in% input[["timepoints"]]) %>%
+      (dat_processed() %>%
         HaDeX::plot_butterfly(
           theoretical = input[["theoretical"]],
           fractional = input[["fractional"]],
@@ -218,7 +266,7 @@ mod_uptake_butterfly_server <- function(
             Sequence,
             "<br/>Position: ", Start, "-", End,
             "<br/>Value: ", round(value, 2),
-            "<br/> Exposure: ", Exposure
+            "<br/>Exposure: ", Exposure
           ))
         )
       ) %>% update_axes_and_labels(zoom, labels) %>%
@@ -226,24 +274,43 @@ mod_uptake_butterfly_server <- function(
     })
 
     dat_out <- reactive({
-      dat_plot() %>%
-        HaDeX::show_uptake_data(
+      dat_processed() %>%
+        ((if (differential) HaDeX::show_diff_uptake_data else HaDeX::show_uptake_data) (
           theoretical = input[["theoretical"]],
           fractional = input[["fractional"]]
-        ) %>%
-        filter(Exposure %in% input[["timepoints"]]) %>%
+        )) %>%
         filter(ID >= zoom[["x_range"]]()[[1]] &
                ID <= zoom[["x_range"]]()[[2]])
     })
 
-    observe({
-      updateSelectInput(
-        session,
-        inputId = "state",
-        choices = states_chosen_protein(),
-        selected = states_chosen_protein()[1]
-      )
-    })
+    if (differential) {
+      observe({
+        updateSelectInput(
+          session,
+          inputId = "state_1",
+          choices = states_chosen_protein(),
+          selected = states_chosen_protein()[1]
+        )
+      })
+
+      observe({
+        updateSelectInput(
+          session,
+          inputId = "state_2",
+          choices = states_chosen_protein(),
+          selected = states_chosen_protein()[2]
+        )
+      })
+    } else {
+      observe({
+        updateSelectInput(
+          session,
+          inputId = "state",
+          choices = states_chosen_protein(),
+          selected = states_chosen_protein()[1]
+        )
+      })
+    }
 
     observe({
       updateSelectInput(
@@ -273,6 +340,15 @@ mod_uptake_butterfly_server <- function(
       )
     })
 
+    if (differential) {
+      observe({
+        toggle_id(
+          input[["show_tstud"]],
+          wrap_id(ns("p_adjustment_method"), "visswitch")
+        )
+      })
+    }
+
     observe({
       vec <- if (input[["fractional"]])
         times_from_file() < as.numeric(input[["time_100"]])
@@ -291,7 +367,7 @@ mod_uptake_butterfly_server <- function(
 
     zoom =  mod_zoom_server(
       id = "zoom",
-      dat_plot = dat_plot,
+      dat_processed = dat_processed,
       fractional = input_r("fractional")
     )
 

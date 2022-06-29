@@ -34,13 +34,14 @@ mod_zoom_ui <- function(id){
 #' zoom Server Functions
 #'
 #' @noRd
-mod_zoom_server <- function(id, dat_plot, fractional){
+mod_zoom_server <- function(id, dat_processed, fractional){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
     observe({
-      max_x <- max(dat_plot()[["ID"]])
-      min_x <- min(dat_plot()[["ID"]])
+      validate(need(dat_processed(), "Wait for data to be processed"))
+      max_x <- max(dat_processed()[["ID"]])
+      min_x <- min(dat_processed()[["ID"]])
 
       updateSliderInput(
         session,
@@ -52,12 +53,13 @@ mod_zoom_server <- function(id, dat_plot, fractional){
     })
 
     observe({
+      validate(need(dat_processed(), "Wait for data to be processed"))
       if (fractional()){
-        max_y <- ceiling(max(dat_plot()[["frac_deut_uptake"]], dat_plot()[["theo_frac_deut_uptake"]], na.rm = TRUE)) + 1
-        min_y <- floor(min(dat_plot()[["frac_deut_uptake"]], dat_plot()[["theo_frac_deut_uptake"]], na.rm = TRUE)) - 1
+        max_y <- ceiling(max(dat_processed()[["frac_deut_uptake"]], dat_processed()[["theo_frac_deut_uptake"]], na.rm = TRUE)) + 1
+        min_y <- floor(min(dat_processed()[["frac_deut_uptake"]], dat_processed()[["theo_frac_deut_uptake"]], na.rm = TRUE)) - 1
       } else {
-        max_y <- ceiling(max(dat_plot()[["deut_uptake"]], dat_plot()[["theo_deut_uptake"]], na.rm = TRUE)) + 1
-        min_y <- floor(min(dat_plot()[["deut_uptake"]], dat_plot()[["theo_deut_uptake"]], na.rm = TRUE)) - 1
+        max_y <- ceiling(max(dat_processed()[["deut_uptake"]], dat_processed()[["theo_deut_uptake"]], na.rm = TRUE)) + 1
+        min_y <- floor(min(dat_processed()[["deut_uptake"]], dat_processed()[["theo_deut_uptake"]], na.rm = TRUE)) - 1
       }
 
       updateSliderInput(
