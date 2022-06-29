@@ -168,7 +168,7 @@ mod_uptake_butterfly_server <- function(
       updateSelectInput(
         session,
         inputId = "time_0",
-        choices = times_from_file()[times_from_file() < 99999],
+        choices = times_from_file()[times_from_file() < MAX_TIME],
         selected = times_from_file()[times_from_file() == no_deut_control()]
       )
 
@@ -183,7 +183,7 @@ mod_uptake_butterfly_server <- function(
         session,
         inputId = "time_100",
         choices = times_with_control(),
-        selected = max(times_with_control()[times_with_control() < 99999])
+        selected = max(times_with_control()[times_with_control() < MAX_TIME])
       )
 
       toggle_id(
@@ -196,7 +196,7 @@ mod_uptake_butterfly_server <- function(
       vec <- if (input[["fractional"]])
         times_from_file() < as.numeric(input[["time_100"]])
       else
-        times_from_file() < 99999
+        times_from_file() < MAX_TIME
 
       times_t <- times_from_file()[times_from_file() > input[["time_0"]] & vec]
 

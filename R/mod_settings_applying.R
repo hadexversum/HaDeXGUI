@@ -67,7 +67,7 @@ mod_settings_applying_server <- function(id, dat_adjusted){
 
     # TODO: -\\-, i'm using times_from_file() bc of that
     times_with_control <- reactive({ setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
-    times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < 99999] })
+    times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < MAX_TIME] })
     max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
 
     states_chosen_protein <- reactive({

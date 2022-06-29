@@ -21,3 +21,5 @@ HaDeX_DT_format <- function(dat, cols = colnames(dat)) {
     rownames = FALSE
   )
 }
+
+MAX_TIME <- 99999
