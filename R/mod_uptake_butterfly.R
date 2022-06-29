@@ -121,7 +121,7 @@ butterfly_timepoints <- function(ns) collapsible_card(
           choices = "",
           selected = ""
         ),
-        id = ns("time_0"),
+        id = ns("time_100"),
         type = "visswitch"
       )
     )
