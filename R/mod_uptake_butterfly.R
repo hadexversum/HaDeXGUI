@@ -141,7 +141,8 @@ mod_uptake_butterfly_server <- function(
             "<br/> Exposure: ", Exposure
           ))
         )
-      ) %>% update_axes_and_labels(zoom, labels)
+      ) %>% update_axes_and_labels(zoom, labels) %>%
+        suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
     dat_out <- reactive({
