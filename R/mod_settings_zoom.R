@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_zoom_ui <- function(id){
+mod_settings_zoom_ui <- function(id){
   ns <- NS(id)
   collapsible_card(
     title = "Zoom",
@@ -34,7 +34,7 @@ mod_zoom_ui <- function(id){
 #' zoom Server Functions
 #'
 #' @noRd
-mod_zoom_server <- function(id, dat_processed, fractional, differential){
+mod_settings_zoom_server <- function(id, dat_processed, fractional, differential){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 

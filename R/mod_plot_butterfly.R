@@ -20,7 +20,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
       butterfly_visualization(ns),
 
       # collapsed by default
-      mod_zoom_ui(ns("zoom")),
+      mod_settings_zoom_ui(ns("zoom")),
       mod_settings_labels_ui(
         ns("labels"),
         label_prefix = if (differential) "Butterfly differential" else "Butterfly"
@@ -313,7 +313,7 @@ mod_plot_butterfly_server <- function(
       states_chosen_protein = states_chosen_protein
     )
 
-    zoom =  mod_zoom_server(
+    zoom =  mod_settings_zoom_server(
       id = "zoom",
       dat_processed = dat_processed,
       fractional = general[["fractional"]],

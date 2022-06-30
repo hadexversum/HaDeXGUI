@@ -1,5 +1,5 @@
 testServer(
-  mod_zoom_server,
+  mod_settings_zoom_server,
   # Add here your module params
   args = list()
   , {
@@ -27,10 +27,10 @@ testServer(
 })
  
 test_that("module ui works", {
-  ui <- mod_zoom_ui(id = "test")
+  ui <- mod_settings_zoom_ui(id = "test")
   golem::expect_shinytaglist(ui)
   # Check that formals have not been removed
-  fmls <- formals(mod_zoom_ui)
+  fmls <- formals(mod_settings_zoom_ui)
   for (i in c("id")){
     expect_true(i %in% names(fmls))
   }
