@@ -77,9 +77,9 @@ mod_settings_state_server <- function(id, differential, states_chosen_protein){
 
     return(
       if (differential)
-        input_rv(c("state_1", "state_2"))
+        input_r_list("state_1", "state_2")
       else
-        input_rv("state")
+        input_r_list("state")
     )
   })
 }

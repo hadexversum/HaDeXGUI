@@ -102,7 +102,7 @@ mod_settings_zoom_server <- function(id, dat_processed, fractional, differential
     })
 
     return(
-      input_rv("y_range", "x_range")
+      input_r_list("y_range", "x_range")
     )
   })
 }

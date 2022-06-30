@@ -33,7 +33,7 @@ mod_settings_general_server <- function(id){
     ns <- session$ns
 
     return(
-      input_rv("theoretical", "fractional")
+      input_r_list("theoretical", "fractional")
     )
   })
 }

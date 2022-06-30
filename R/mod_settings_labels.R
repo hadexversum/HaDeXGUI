@@ -81,7 +81,7 @@ mod_settings_labels_server <- function(id, chosen_protein, default_title, defaul
     })
 
     return(
-      input_rv("title", "x_lab", "y_lab", "title_size", "x_lab_size", "y_lab_size")
+      input_r_list("title", "x_lab", "y_lab", "title_size", "x_lab_size", "y_lab_size")
     )
   })
 }
