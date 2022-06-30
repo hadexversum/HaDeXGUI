@@ -164,7 +164,7 @@ mod_data_setup_server <- function(id, dat_adjusted){
     return(
       list(
         proteins = proteins_from_file,
-        chosen_protein = reactive({ input[["chosen_protein"]] }),
+        chosen_protein = input_r("chosen_protein"),
 
         states = states_from_file,
         has_modifications = file_has_modifications,
@@ -176,8 +176,8 @@ mod_data_setup_server <- function(id, dat_adjusted){
 
         max_range = max_range,
 
-        deut_part = reactive({ as.numeric(input[["deut_part"]]) }),
-        no_deut_control = reactive({ as.numeric(input[["no_deut_control"]]) }),
+        deut_part = inpur_r_numeric("deut_part"),
+        no_deut_control = inpur_r_numeric("no_deut_control"),
 
         dat = dat
       )
