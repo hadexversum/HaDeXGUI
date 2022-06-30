@@ -16,7 +16,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
       mod_settings_general_ui(ns("general")),
       mod_settings_state_ui(ns("state"), differential),
       mod_settings_timepoints_ui(ns("timepoints")),
-      butterfly_diff_test(ns) %nullify if% (!differential),
+      mod_settings_diff_test_ui(ns("diff_test")) %nullify if% (!differential),
       butterfly_visualization(ns),
 
       # collapsed by default
@@ -46,44 +46,6 @@ mod_plot_butterfly_ui <- function(id, differential) {
   )
 }
 
-
-butterfly_diff_test <- function(ns) collapsible_card(
-  title = "Test",
-  fluidRow(
-    column(
-      width = 6,
-      checkboxInput_h(
-        inputId = ns("show_houde"),
-        label = "Houde test",
-        value = FALSE
-      ),
-      checkboxInput_h(
-        inputId = ns("show_tstud"),
-        label = "t-Student test",
-        value = FALSE
-      )
-    ),
-    column(
-      width = 6,
-      selectInput_h(
-        inputId = ns("confidence_level"),
-        label = "Select confidence level:",
-        choices = c("80%" = 0.8, "90%" = 0.9, "95%" = 0.95, "98%" = 0.98, "99%" = 0.99, "99.9%" = 0.999),
-        selected = 0.98
-      ),
-      wrap_div(
-        selectInput_h(
-          inputId = ns("p_adjustment_method"),
-          label = "Choose method of adjustment:",
-          choices = c("none", "BH", "bonferroni"),
-          selected = "none"
-        ),
-        id = ns("p_adjustment_method"),
-        type = "visswitch"
-      )
-    )
-  )
-)
 
 butterfly_visualization <- function(ns) collapsible_card(
   title = "Visualization",
@@ -155,8 +117,8 @@ mod_plot_butterfly_server <- function(
            protein = chosen_protein(),
            state_1 = state[["state_1"]](),
            state_2 = state[["state_2"]](),
-           confidence_level = as.numeric(input[["confidence_level"]]),
-           p_adjustment_method = input[["p_adjustment_method"]],
+           confidence_level = diff_test[["confidence_level"]](),
+           p_adjustment_method = diff_test[["p_adjustment_method"]](),
            time_0 = timepoints[["time_0"]](),
            time_100 = timepoints[["time_100"]](),
            deut_part = deut_part() / 100
@@ -166,9 +128,9 @@ mod_plot_butterfly_server <- function(
            theoretical = general[["theoretical"]](),
            fractional = general[["fractional"]](),
            uncertainty_type = input[["uncertainty"]],
-           show_houde_interval = input[["show_houde"]],
-           show_tstud_confidence = input[["show_tstud"]],
-           confidence_level = as.numeric(input[["confidence_level"]])
+           show_houde_interval = diff_test[["show_houde"]](),
+           show_tstud_confidence = diff_test[["show_tstud"]](),
+           confidence_level = diff_test[["confidence_level"]]()
          ) +
          geom_point_interactive(
            data = dat_processed(),
@@ -215,14 +177,10 @@ mod_plot_butterfly_server <- function(
                ID <= zoom[["x_range"]]()[[2]])
     })
 
-
     if (differential) {
-      observe({
-        toggle_id(
-          input[["show_tstud"]],
-          wrap_id(ns("p_adjustment_method"), "visswitch")
-        )
-      })
+      diff_test <- mod_settings_diff_test_server(
+        id = "diff_test"
+      )
     }
 
     general <- mod_settings_general_server(id = "general")
