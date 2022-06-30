@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_start_page_ui <- function(id){
+mod_page_start_ui <- function(id){
   HaDeX_nonplotTab(
     title = "Start",
     h1("Welcome to HaDeX GUI!"),

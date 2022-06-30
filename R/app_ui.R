@@ -13,7 +13,7 @@ app_ui <- function(request) {
     navbarPage(
       title = "HaDeX",
 
-      mod_start_page_ui("start_page"),
+      mod_page_start_ui("start_page"),
       mod_source_reading_ui("source_reading"),
       navbarMenu(
         title = "Deuterium uptake",
