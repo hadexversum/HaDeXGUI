@@ -8,7 +8,7 @@
 #'
 #' @import dplyr
 #' @importFrom shiny NS tagList
-mod_source_reading_ui <- function(id){
+mod_data_load_ui <- function(id){
   ns <- NS(id)
 
   HaDeX_nonplotTab(
@@ -76,7 +76,7 @@ mod_source_reading_ui <- function(id){
 #' @importFrom icecream ic
 #' @importFrom shinyvalidate InputValidator sv_gte sv_lte compose_rules
 #' @noRd
-mod_source_reading_server <- function(id) {
+mod_data_load_server <- function(id) {
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 

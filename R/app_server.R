@@ -9,7 +9,7 @@
 app_server <- function(input, output, session) {
   apply_server_settings()
 
-  dat_source <- mod_source_reading_server("source_reading")
+  dat_source <- mod_data_load_server("source_reading")
 
   mod_plot_butterfly_server(
     id = "butterfly",
