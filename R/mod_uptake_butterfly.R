@@ -13,7 +13,7 @@ mod_uptake_butterfly_ui <- function(id, differential) {
   HaDeX_plotTab(
     title = if (differential) "Butterfly Differential Plot" else "Butterfly Plot",
     settingsPanel = HaDeX_plotSettingsPanel(
-      butterfly_general_settings(ns),
+      mod_settings_general_ui(ns("general")),
       mod_settings_state_ui(ns("state"), differential),
       butterfly_timepoints(ns),
       butterfly_diff_test(ns) %nullify if% (!differential),
@@ -45,20 +45,6 @@ mod_uptake_butterfly_ui <- function(id, differential) {
     )
   )
 }
-
-butterfly_general_settings <- function(ns) collapsible_card(
-  title = "General settings",
-  checkboxInput_h(
-    inputId = ns("theoretical"),
-    label = "Theoretical calculations",
-    value = FALSE
-  ),
-  checkboxInput_h(
-    inputId = ns("fractional"),
-    label = "Fractional values",
-    value = FALSE
-  )
-)
 
 butterfly_timepoints <- function(ns) collapsible_card(
   title = "Timepoints",
@@ -214,8 +200,8 @@ mod_uptake_butterfly_server <- function(
          ) %>% HaDeX::plot_differential_butterfly(
            diff_uptake_dat = dat_processed(),
            diff_p_uptake_dat = .,
-           theoretical = input[["theoretical"]],
-           fractional = input[["fractional"]],
+           theoretical = general[["theoretical"]](),
+           fractional = general[["fractional"]](),
            uncertainty_type = input[["uncertainty"]],
            show_houde_interval = input[["show_houde"]],
            show_tstud_confidence = input[["show_tstud"]],
@@ -238,8 +224,8 @@ mod_uptake_butterfly_server <- function(
 
       (dat_processed() %>%
         HaDeX::plot_butterfly(
-          theoretical = input[["theoretical"]],
-          fractional = input[["fractional"]],
+          theoretical = general[["theoretical"]](),
+          fractional = general[["fractional"]](),
           uncertainty_type = input[["uncertainty"]]
         ) +
           geom_point_interactive( #TODO: fix this redundancy?
@@ -259,8 +245,8 @@ mod_uptake_butterfly_server <- function(
     dat_out <- reactive({
       dat_processed() %>%
         .show_fun(
-          theoretical = input[["theoretical"]],
-          fractional = input[["fractional"]]
+          theoretical = general[["theoretical"]](),
+          fractional = general[["fractional"]]()
         ) %>%
         filter(ID >= zoom[["x_range"]]()[[1]] &
                ID <= zoom[["x_range"]]()[[2]])
@@ -275,7 +261,7 @@ mod_uptake_butterfly_server <- function(
       )
 
       toggle_id(
-        !input[["theoretical"]],
+        !general[["theoretical"]](),
         wrap_id(ns("time_0"), "visswitch")
       )
     })
@@ -289,7 +275,7 @@ mod_uptake_butterfly_server <- function(
       )
 
       toggle_id(
-        !input[["theoretical"]] && input[["fractional"]],
+        !general[["theoretical"]]() && general[["fractional"]](),
         wrap_id(ns("time_100"), "visswitch")
       )
     })
@@ -304,7 +290,7 @@ mod_uptake_butterfly_server <- function(
     }
 
     observe({
-      vec <- if (input[["fractional"]])
+      vec <- if (general[["fractional"]]())
         times_from_file() < as.numeric(input[["time_100"]])
       else
         times_from_file() < MAX_TIME
@@ -319,6 +305,8 @@ mod_uptake_butterfly_server <- function(
       )
     })
 
+    general = mod_settings_general_server(id = "general")
+
     state = mod_settings_state_server(
       id = "state",
       differential = differential,
@@ -328,29 +316,29 @@ mod_uptake_butterfly_server <- function(
     zoom =  mod_zoom_server(
       id = "zoom",
       dat_processed = dat_processed,
-      fractional = input_r("fractional"),
+      fractional = general[["fractional"]],
       differential = differential
     )
 
     default_title <- if (differential) reactive({
       paste0(
-        if (input[["theoretical"]]) "Theoreotical b" else "B",
+        if (general[["theoretical"]]()) "Theoreotical b" else "B",
         "utterfly differential plot between ",
         state[["state_1"]](), " and ", state[["state_2"]]()
       )
     }) else reactive({
       paste0(
-        if (input[["theoretical"]]) "Theoreotical b" else "B",
+        if (general[["theoretical"]]()) "Theoreotical b" else "B",
         "utterfly plot for ",
         state[["state"]](), " state for ", chosen_protein()
       )
     })
 
     default_lab_y <- if (differential) reactive({
-      if (input[["fractional"]]) "Fractional deuterium uptake difference [%]"
+      if (general[["fractional"]]()) "Fractional deuterium uptake difference [%]"
       else "Deuterium uptake difference [Da]"
     }) else reactive({
-      if (input[["fractional"]]) "Fractional deuterium uptake [%]"
+      if (general[["fractional"]]()) "Fractional deuterium uptake [%]"
       else "Deuterium uptake [Da]"
     })
 

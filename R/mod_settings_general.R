@@ -4,28 +4,36 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList
 mod_settings_general_ui <- function(id){
   ns <- NS(id)
-  tagList(
- 
+
+  collapsible_card(
+    title = "General settings",
+    checkboxInput_h(
+      inputId = ns("theoretical"),
+      label = "Theoretical calculations",
+      value = FALSE
+    ),
+    checkboxInput_h(
+      inputId = ns("fractional"),
+      label = "Fractional values",
+      value = FALSE
+    )
   )
 }
-    
+
 #' settings_general Server Functions
 #'
-#' @noRd 
+#' @noRd
 mod_settings_general_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
- 
+
+    return(
+      input_rv("theoretical", "fractional")
+    )
   })
 }
-    
-## To be copied in the UI
-# mod_settings_general_ui("settings_general_1")
-    
-## To be copied in the server
-# mod_settings_general_server("settings_general_1")
