@@ -13,8 +13,8 @@ app_ui <- function(request) {
     navbarPage(
       title = "HaDeX",
 
-      mod_page_start_ui("start_page"),
-      mod_data_load_ui("source_reading"),
+      mod_page_start_ui("page_start"),
+      mod_data_load_ui("data_load"),
       navbarMenu(
         title = "Deuterium uptake",
         mod_plot_butterfly_ui("butterfly", differential = FALSE),

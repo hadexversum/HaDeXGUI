@@ -27,7 +27,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
       )
     ),
     displayPanel = mod_display_plot_section_ui(
-      ns("plot_and_data"),
+      ns("display_plot"),
       plot_label = if (differential) "Butterfly differential plot" else "Butterfly plot",
       additional_data_info = if (differential) {
         "The table presents data from the chosen x plot range.
@@ -348,6 +348,6 @@ mod_plot_butterfly_server <- function(
       default_lab_y = default_lab_y
     )
 
-    mod_display_plot_section_server("plot_and_data", plot_out, dat_out)
+    mod_display_plot_section_server("display_plot", plot_out, dat_out)
   })
 }
