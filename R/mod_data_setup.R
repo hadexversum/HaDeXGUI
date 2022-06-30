@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_applying_ui <- function(id){
+mod_data_setup_ui <- function(id){
   ns <- NS(id)
   HaDeX_plotSettingsSection(
     title = "Select the parameters:",
@@ -41,7 +41,7 @@ mod_settings_applying_ui <- function(id){
 #' settings_applying Server Functions
 #'
 #' @noRd
-mod_settings_applying_server <- function(id, dat_adjusted){
+mod_data_setup_server <- function(id, dat_adjusted){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 

@@ -56,7 +56,7 @@ mod_data_load_ui <- function(id){
 
       wellPanel(
         id = "HaDeX-standard-settings-panel",
-        mod_settings_applying_ui(ns("settings_applying"))
+        mod_data_setup_ui(ns("settings_applying"))
       ),
 
       undisplay(
@@ -123,7 +123,7 @@ mod_data_load_server <- function(id) {
     ### return values
 
     return(
-      mod_settings_applying_server("settings_applying", dat_adjusted = dat_adjusted)
+      mod_data_setup_server("settings_applying", dat_adjusted = dat_adjusted)
     )
   })
 }
