@@ -11,7 +11,7 @@ app_server <- function(input, output, session) {
 
   dat_source <- mod_source_reading_server("source_reading")
 
-  mod_uptake_butterfly_server(
+  mod_plot_butterfly_server(
     id = "butterfly",
     differential = FALSE,
     dat = dat_source[["dat"]],
@@ -23,7 +23,7 @@ app_server <- function(input, output, session) {
     no_deut_control = dat_source[["no_deut_control"]]
   )
 
-  mod_uptake_butterfly_server(
+  mod_plot_butterfly_server(
     id = "butterfly_diff",
     differential = TRUE,
     dat = dat_source[["dat"]],

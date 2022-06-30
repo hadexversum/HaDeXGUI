@@ -1,4 +1,4 @@
-#' uptake_butterfly UI Function
+#' plot_butterfly UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -8,7 +8,7 @@
 #'
 #' @importFrom shiny NS tagList
 #' @import ggiraph
-mod_uptake_butterfly_ui <- function(id, differential) {
+mod_plot_butterfly_ui <- function(id, differential) {
   ns <- NS(id)
   HaDeX_plotTab(
     title = if (differential) "Butterfly Differential Plot" else "Butterfly Plot",
@@ -132,11 +132,11 @@ butterfly_visualization <- function(ns) collapsible_card(
   )
 )
 
-#' uptake_butterfly Server Functions
+#' plot_butterfly Server Functions
 #'
 #' @import ggplot2
 #' @noRd
-mod_uptake_butterfly_server <- function(
+mod_plot_butterfly_server <- function(
     id, differential,
     dat,
     chosen_protein, states_chosen_protein, times_from_file, times_with_control,
