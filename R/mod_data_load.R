@@ -120,6 +120,12 @@ mod_data_load_server <- function(id) {
       )
     })
 
+    ### observer
+
+    observe({
+      toggle_id(data_source() == "HDeXaminer", "HaDeX-examiner-settings-panel")
+    })
+
     ### return values
 
     return(
