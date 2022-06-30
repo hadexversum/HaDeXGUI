@@ -225,15 +225,15 @@ mod_plot_butterfly_server <- function(
       })
     }
 
-    general = mod_settings_general_server(id = "general")
+    general <- mod_settings_general_server(id = "general")
 
-    state = mod_settings_state_server(
+    state <- mod_settings_state_server(
       id = "state",
       differential = differential,
       states_chosen_protein = states_chosen_protein
     )
 
-    timepoints = mod_settings_timepoints_server(
+    timepoints <- mod_settings_timepoints_server(
       id = "timepoints",
       times_from_file = times_from_file,
       times_with_control = times_with_control,
@@ -241,7 +241,7 @@ mod_plot_butterfly_server <- function(
       settings_general = general
     )
 
-    zoom =  mod_settings_zoom_server(
+    zoom <- mod_settings_zoom_server(
       id = "zoom",
       dat_processed = dat_processed,
       fractional = general[["fractional"]],
@@ -270,7 +270,7 @@ mod_plot_butterfly_server <- function(
       else "Deuterium uptake [Da]"
     })
 
-    labels = mod_settings_labels_server(
+    labels <- mod_settings_labels_server(
       id = "labels",
       default_title = default_title,
       default_lab_y = default_lab_y
