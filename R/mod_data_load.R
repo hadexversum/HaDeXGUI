@@ -62,7 +62,7 @@ mod_data_load_ui <- function(id){
       undisplay(
         wellPanel(
           id = "HaDeX-examiner-settings-panel",
-          mod_hdexaminer_adjustment_ui(ns("hdexaminer_adjustment"))
+          mod_data_hdexaminer_ui(ns("hdexaminer_adjustment"))
         )
       ),
       flex = c(NA, 1)
@@ -97,7 +97,7 @@ mod_data_load_server <- function(id) {
 
     data_source <- reactive({ attr(dat_raw(), "source") })
 
-    dat_exam <- mod_hdexaminer_adjustment_server("hdexaminer_adjustment", dat_raw = dat_raw)
+    dat_exam <- mod_data_hdexaminer_server("hdexaminer_adjustment", dat_raw = dat_raw)
 
     dat_adjusted <- reactive({
       switch(data_source(),

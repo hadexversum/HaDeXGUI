@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_hdexaminer_adjustment_ui <- function(id) {
+mod_data_hdexaminer_ui <- function(id) {
   ns <- NS(id)
   tagList(
     h3("File from HDeXaminer detected!"),
@@ -45,7 +45,7 @@ mod_hdexaminer_adjustment_ui <- function(id) {
 #' @param dat_raw raw data file passed from source_reading module
 #'
 #' @noRd
-mod_hdexaminer_adjustment_server <- function(id, dat_raw) {
+mod_data_hdexaminer_server <- function(id, dat_raw) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
