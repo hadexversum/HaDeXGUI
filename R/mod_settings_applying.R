@@ -153,6 +153,7 @@ mod_settings_applying_server <- function(id, dat_adjusted){
     iv$add_rule("sequence_start_shift", sv_gte(0))
     iv$add_rule("deut_part", sv_lte(100))
     iv$add_rule("sequence_length", compose_rules(
+      ~ if (length(.) == 0) "Wait for parameters to be loaded... ",
       ~ if (any(is.na(.))) "Must not contain `NA` values.",
       ~ if (. < max_range_from_file()) "Must be no shorther than any max end position in the file."
     ))
