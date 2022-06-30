@@ -15,7 +15,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
     settingsPanel = HaDeX_plotSettingsPanel(
       mod_settings_general_ui(ns("general")),
       mod_settings_state_ui(ns("state"), differential),
-      butterfly_timepoints(ns),
+      mod_settings_timepoints_ui(ns("timepoints")),
       butterfly_diff_test(ns) %nullify if% (!differential),
       butterfly_visualization(ns),
 
@@ -46,43 +46,6 @@ mod_plot_butterfly_ui <- function(id, differential) {
   )
 }
 
-butterfly_timepoints <- function(ns) collapsible_card(
-  title = "Timepoints",
-  fluidRow(
-    column(
-      width = 6,
-      checkboxGroupInput_h(
-        inputId = ns("timepoints"),
-        label = "Show time points: ",
-        choices = "",
-        selected = ""
-      )
-    ),
-    column(
-      width = 6,
-      wrap_div(
-        selectInput_h(
-          inputId = ns("time_0"),
-          label = "Deut 0%",
-          choices = "",
-          selected = ""
-        ),
-        id = ns("time_0"),
-        type = "visswitch"
-      ),
-      wrap_div(
-        selectInput_h(
-          inputId = ns("time_100"),
-          label = "Deut 100%",
-          choices = "",
-          selected = ""
-        ),
-        id = ns("time_100"),
-        type = "visswitch"
-      )
-    )
-  )
-)
 
 butterfly_diff_test <- function(ns) collapsible_card(
   title = "Test",
@@ -152,7 +115,7 @@ mod_plot_butterfly_server <- function(
                     "Wait for the parameters to be loaded."))
       validate(need(state[["state_1"]]() %in% states_chosen_protein(),
                     "Wait for the parameters to be loaded."))
-      validate(need(input[["timepoints"]],
+      validate(need(timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
       HaDeX::create_diff_uptake_dataset(
@@ -160,29 +123,29 @@ mod_plot_butterfly_server <- function(
         protein = chosen_protein(),
         state_1 = state[["state_1"]](),
         state_2 = state[["state_2"]](),
-        time_0 = as.numeric(input[["time_0"]]),
-        time_100 = as.numeric(input[["time_100"]]),
+        time_0 = timepoints[["time_0"]](),
+        time_100 = timepoints[["time_100"]](),
         deut_part = deut_part() / 100
       ) %>%
-        filter(Exposure %in% input[["timepoints"]])
+        filter(Exposure %in% timepoints[["timepoints"]]())
     }) else reactive({
       # TODO: check which validates are really needed
       validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
       validate(need(state[["state"]]() %in% states_chosen_protein(),
                     "Wait for the parameters to be loaded."))
-      validate(need(input[["timepoints"]],
+      validate(need(timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
       HaDeX::create_state_uptake_dataset(
         dat(),
         protein = chosen_protein(),
         state = state[["state"]](),
-        time_0 = as.numeric(input[["time_0"]]),
-        time_100 = as.numeric(input[["time_100"]]),
+        time_0 = timepoints[["time_0"]](),
+        time_100 = timepoints[["time_100"]](),
         deut_part = deut_part() / 100
       ) %>%
-        filter(Exposure %in% input[["timepoints"]])
+        filter(Exposure %in% timepoints[["timepoints"]]())
     })
 
     plot_out <- if (differential) reactive({
@@ -194,8 +157,8 @@ mod_plot_butterfly_server <- function(
            state_2 = state[["state_2"]](),
            confidence_level = as.numeric(input[["confidence_level"]]),
            p_adjustment_method = input[["p_adjustment_method"]],
-           time_0 = as.numeric(input[["time_0"]]),
-           time_100 = as.numeric(input[["time_100"]]),
+           time_0 = timepoints[["time_0"]](),
+           time_100 = timepoints[["time_100"]](),
            deut_part = deut_part() / 100
          ) %>% HaDeX::plot_differential_butterfly(
            diff_uptake_dat = dat_processed(),
@@ -219,7 +182,7 @@ mod_plot_butterfly_server <- function(
       ) %>% update_axes_and_labels(zoom, labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
-      validate(need(input[["timepoints"]],
+      validate(need(timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
       (dat_processed() %>%
@@ -252,33 +215,6 @@ mod_plot_butterfly_server <- function(
                ID <= zoom[["x_range"]]()[[2]])
     })
 
-    observe({
-      updateSelectInput(
-        session,
-        inputId = "time_0",
-        choices = times_from_file()[times_from_file() < MAX_TIME],
-        selected = times_from_file()[times_from_file() == no_deut_control()]
-      )
-
-      toggle_id(
-        !general[["theoretical"]](),
-        wrap_id(ns("time_0"), "visswitch")
-      )
-    })
-
-    observe({
-      updateSelectInput(
-        session,
-        inputId = "time_100",
-        choices = times_with_control(),
-        selected = max(times_with_control()[times_with_control() < MAX_TIME])
-      )
-
-      toggle_id(
-        !general[["theoretical"]]() && general[["fractional"]](),
-        wrap_id(ns("time_100"), "visswitch")
-      )
-    })
 
     if (differential) {
       observe({
@@ -289,28 +225,20 @@ mod_plot_butterfly_server <- function(
       })
     }
 
-    observe({
-      vec <- if (general[["fractional"]]())
-        times_from_file() < as.numeric(input[["time_100"]])
-      else
-        times_from_file() < MAX_TIME
-
-      times_t <- times_from_file()[times_from_file() > input[["time_0"]] & vec]
-
-      updateCheckboxGroupInput(
-        session,
-        inputId = "timepoints",
-        choices = times_t,
-        selected = times_t
-      )
-    })
-
     general = mod_settings_general_server(id = "general")
 
     state = mod_settings_state_server(
       id = "state",
       differential = differential,
       states_chosen_protein = states_chosen_protein
+    )
+
+    timepoints = mod_settings_timepoints_server(
+      id = "timepoints",
+      times_from_file = times_from_file,
+      times_with_control = times_with_control,
+      no_deut_control = no_deut_control,
+      settings_general = general
     )
 
     zoom =  mod_settings_zoom_server(
