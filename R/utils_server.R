@@ -1,4 +1,4 @@
-#' @importFrom ggplot2 theme_bw element_rect `%+replace%`
+#' @importFrom ggplot2 theme_bw theme element_rect %+replace%
 HaDeX_ggtheme <- theme_bw() %+replace%
   theme(plot.background = element_rect(fill = NA, color = NA))
 
