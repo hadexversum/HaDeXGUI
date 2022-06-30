@@ -26,6 +26,11 @@ input_r <- function(name, env = parent.frame()) {
   eval(rlang::expr(reactive({ input[[!!name]] }, env = env)))
 }
 
+input_r_numeric <- function(name, env = parent.frame()) {
+  env <- new.env(parent = env)
+  eval(rlang::expr(reactive({ as.numeric(input[[!!name]]) }, env = env)))
+}
+
 input_rv <- function(...) {
   names <- unlist(list(...))
   setNames(lapply(names, input_r, env = parent.frame()), names)
