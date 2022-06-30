@@ -1,5 +1,5 @@
 testServer(
-  mod_plot_and_data_section_server,
+  mod_display_plot_section_server,
   # Add here your module params
   args = list()
   , {
@@ -27,10 +27,10 @@ testServer(
 })
  
 test_that("module ui works", {
-  ui <- mod_plot_and_data_section_ui(id = "test")
+  ui <- mod_display_plot_section_ui(id = "test")
   golem::expect_shinytaglist(ui)
   # Check that formals have not been removed
-  fmls <- formals(mod_plot_and_data_section_ui)
+  fmls <- formals(mod_display_plot_section_ui)
   for (i in c("id")){
     expect_true(i %in% names(fmls))
   }

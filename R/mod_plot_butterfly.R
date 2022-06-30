@@ -26,7 +26,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
         label_prefix = if (differential) "Butterfly differential" else "Butterfly"
       )
     ),
-    displayPanel = mod_plot_and_data_section_ui(
+    displayPanel = mod_display_plot_section_ui(
       ns("plot_and_data"),
       plot_label = if (differential) "Butterfly differential plot" else "Butterfly plot",
       additional_data_info = if (differential) {
@@ -348,6 +348,6 @@ mod_plot_butterfly_server <- function(
       default_lab_y = default_lab_y
     )
 
-    mod_plot_and_data_section_server("plot_and_data", plot_out, dat_out)
+    mod_display_plot_section_server("plot_and_data", plot_out, dat_out)
   })
 }

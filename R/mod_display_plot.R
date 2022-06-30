@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_plot_and_data_section_ui <- function(id, plot_label, additional_data_info = NULL) {
+mod_display_plot_section_ui <- function(id, plot_label, additional_data_info = NULL) {
   ns <- NS(id)
   div(
     class = "HaDeX-tab-content-element HaDeX-plot-display-panel",
@@ -34,7 +34,7 @@ mod_plot_and_data_section_ui <- function(id, plot_label, additional_data_info = 
 #' @importFrom ggiraph renderGirafe
 #' @importFrom DT renderDataTable
 #' @noRd
-mod_plot_and_data_section_server <- function(id, plot_out, dat_out) {
+mod_display_plot_section_server <- function(id, plot_out, dat_out) {
   moduleServer(id, function(input, output, session) {
     output[["plot"]] <- renderGirafe({ girafe(ggobj = plot_out(), width_svg = 17, height_svg = 9) })
 
@@ -51,7 +51,7 @@ mod_plot_and_data_section_server <- function(id, plot_out, dat_out) {
 }
 
 ## To be copied in the UI
-# mod_plot_and_data_section_ui("plot_and_data_section_1")
+# mod_display_plot_section_ui("plot_and_data_section_1")
 
 ## To be copied in the server
-# mod_plot_and_data_section_server("plot_and_data_section_1")
+# mod_display_plot_section_server("plot_and_data_section_1")
