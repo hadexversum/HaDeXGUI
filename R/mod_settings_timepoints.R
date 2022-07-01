@@ -63,7 +63,11 @@ mod_settings_timepoints_server <- function(id,
     ### reactive values from inputs
 
     time_0 <- input_r_numeric("time_0")
-    time_100 <- input_r_numeric("time_100")
+    time_100 <- reactive({
+      # this input is possibly missing due to not updating when it's hidden
+      val <- as.numeric(input[["time_100"]])
+      if (non_na(val)) val else NULL
+    })
 
     ### observers updating inputs
 
@@ -82,6 +86,8 @@ mod_settings_timepoints_server <- function(id,
     })
 
     observe({
+      validate(need(length(times_from_file()) > 1, "Wait for parameters to be loaded"))
+
       updateSelectInput(
         session,
         inputId = "time_100",
@@ -96,9 +102,12 @@ mod_settings_timepoints_server <- function(id,
     })
 
     observe({
-      vec <- if (settings_general[["fractional"]]())
+      vec <- if (settings_general[["fractional"]]()){
+        validate(need(not_null(time_100()),
+                      "Wait for parameters to be loaded"))
+
         times_from_file() < time_100()
-      else
+      } else
         times_from_file() < MAX_TIME
 
       times_t <- times_from_file()[times_from_file() > time_0() & vec]
@@ -123,8 +132,3 @@ mod_settings_timepoints_server <- function(id,
   })
 }
 
-## To be copied in the UI
-# mod_settings_timepoints_ui("settings_timepoints_1")
-
-## To be copied in the server
-# mod_settings_timepoints_server("settings_timepoints_1")
