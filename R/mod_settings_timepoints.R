@@ -66,7 +66,7 @@ mod_settings_timepoints_server <- function(id,
     time_100 <- reactive({
       # this input is possibly missing due to not updating when it's hidden
       val <- as.numeric(input[["time_100"]])
-      if (non_na(val)) val else NULL
+      if (not_na(val)) val else NULL
     })
 
     ### observers updating inputs
