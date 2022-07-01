@@ -17,8 +17,8 @@ apply_server_settings <- function() {
 update_axes_and_labels <- function(plt, zoom, labels) {
   plt +
     coord_cartesian(
-      xlim = c(zoom[["x_range"]]()[[1]], zoom[["x_range"]]()[[2]]),
-      ylim = c(zoom[["y_range"]]()[[1]], zoom[["y_range"]]()[[2]])
+      xlim = c(zoom[["x_range"]]()[[1]], zoom[["x_range"]]()[[2]]) %nullify if% is.null(zoom[["x_range"]]),
+      ylim = c(zoom[["y_range"]]()[[1]], zoom[["y_range"]]()[[2]]) %nullify if% is.null(zoom[["y_range"]])
     ) +
     labs(
       title = labels[["title"]](),
