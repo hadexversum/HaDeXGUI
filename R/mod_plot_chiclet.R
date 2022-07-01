@@ -155,7 +155,7 @@ mod_plot_chiclet_server <- function(
       times_from_file = times_from_file,
       times_with_control = times_with_control,
       no_deut_control = no_deut_control,
-      settings_general = general
+      s_general = general
     )
 
     zoom <- mod_settings_zoom_server(

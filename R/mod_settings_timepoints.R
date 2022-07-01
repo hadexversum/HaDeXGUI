@@ -56,7 +56,7 @@ mod_settings_timepoints_server <- function(id,
                                            times_from_file,
                                            times_with_control,
                                            no_deut_control,
-                                           settings_general) {
+                                           s_general) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -80,7 +80,7 @@ mod_settings_timepoints_server <- function(id,
       )
 
       toggle_id(
-        !settings_general[["theoretical"]](),
+        !s_general[["theoretical"]](),
         wrap_id(ns("time_0"), "visswitch")
       )
     })
@@ -96,13 +96,13 @@ mod_settings_timepoints_server <- function(id,
       )
 
       toggle_id(
-        !settings_general[["theoretical"]]() && settings_general[["fractional"]](),
+        !s_general[["theoretical"]]() && s_general[["fractional"]](),
         wrap_id(ns("time_100"), "visswitch")
       )
     })
 
     observe({
-      vec <- if (settings_general[["fractional"]]()){
+      vec <- if (s_general[["fractional"]]()){
         validate(need(not_null(time_100()),
                       "Wait for parameters to be loaded"))
 
