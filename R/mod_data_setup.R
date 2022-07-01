@@ -176,8 +176,8 @@ mod_data_setup_server <- function(id, dat_adjusted){
 
         max_range = max_range,
 
-        deut_part = inpur_r_numeric("deut_part"),
-        no_deut_control = inpur_r_numeric("no_deut_control"),
+        deut_part = input_r_numeric("deut_part"),
+        no_deut_control = input_r_numeric("no_deut_control"),
 
         dat = dat
       )
