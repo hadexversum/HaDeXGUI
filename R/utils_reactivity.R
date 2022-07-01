@@ -28,3 +28,20 @@ input_r_list <- function(...) {
   names <- unlist(list(...))
   setNames(lapply(names, input_r, env = parent.frame()), names)
 }
+
+invoke_settings_servers <- function(names, ...,
+                           env = parent.frame()) {
+  for (name in names) {
+    server_fun <- getFromNamespace(paste0("mod_settings_", name, "_server"), "HaDeXGUI")
+    arg_names <- names(formals(server_fun))
+
+    args <- setNames(lapply(
+      arg_names,
+      function(arg) get(arg, envir = env)
+    ), arg_names)
+
+    args[["id"]] <- name
+
+    assign(paste0("s_", name), do.call(server_fun, args = args), envir = env)
+  }
+}
