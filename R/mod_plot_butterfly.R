@@ -86,7 +86,7 @@ mod_plot_butterfly_server <- function(
         state_1 = state[["state_1"]](),
         state_2 = state[["state_2"]](),
         time_0 = timepoints[["time_0"]](),
-        time_100 = timepoints[["time_100"]](),
+        time_100 = timepoints[["time_100"]]() %||% max(dat()[["Exposure"]]),
         deut_part = deut_part() / 100
       ) %>%
         filter(Exposure %in% timepoints[["timepoints"]]())
@@ -104,7 +104,7 @@ mod_plot_butterfly_server <- function(
         protein = chosen_protein(),
         state = state[["state"]](),
         time_0 = timepoints[["time_0"]](),
-        time_100 = timepoints[["time_100"]](),
+        time_100 = ic(timepoints[["time_100"]]()),
         deut_part = deut_part() / 100
       ) %>%
         filter(Exposure %in% timepoints[["timepoints"]]())
@@ -120,7 +120,7 @@ mod_plot_butterfly_server <- function(
            confidence_level = diff_test[["confidence_level"]](),
            p_adjustment_method = diff_test[["p_adjustment_method"]](),
            time_0 = timepoints[["time_0"]](),
-           time_100 = timepoints[["time_100"]](),
+           time_100 = timepoints[["time_100"]]()  %||% max(dat()[["Exposure"]]),
            deut_part = deut_part() / 100
          ) %>% HaDeX::plot_differential_butterfly(
            diff_uptake_dat = dat_processed(),
@@ -177,6 +177,62 @@ mod_plot_butterfly_server <- function(
                ID <= zoom[["x_range"]]()[[2]])
     })
 
+    ### server reactives
+
+    default_title <- if (differential) reactive({
+      paste0(
+        if (general[["theoretical"]]()) "Theoreotical b" else "B",
+        "utterfly differential plot between ",
+        state[["state_1"]](), " and ", state[["state_2"]]()
+      )
+    }) else reactive({
+      paste0(
+        if (general[["theoretical"]]()) "Theoreotical b" else "B",
+        "utterfly plot for ",
+        state[["state"]](), " state for ", chosen_protein()
+      )
+    })
+
+    default_lab_y <- if (differential) reactive({
+      if (general[["fractional"]]()) "Fractional deuterium uptake difference [%]"
+      else "Deuterium uptake difference [Da]"
+    }) else reactive({
+      if (general[["fractional"]]()) "Fractional deuterium uptake [%]"
+      else "Deuterium uptake [Da]"
+    })
+
+    full_range_x <- reactive({
+      validate(need(!is.null(dat_processed()[["ID"]]), "Wait for data to be processed"))
+
+      c(min(dat_processed()[["ID"]]), max(dat_processed()[["ID"]]))
+    })
+
+    full_range_y <- reactive({
+      validate(need(dat_processed(), "Wait for data to be processed"))
+
+      theo <- dat_processed()[[
+        construct_var_name(
+          differential,
+          TRUE,
+          general[["fractional"]](),
+          "deut_uptake"
+        )
+      ]]
+      ntheo <- dat_processed()[[
+        construct_var_name(
+          differential,
+          FALSE,
+          general[["fractional"]](),
+          "deut_uptake"
+        )
+      ]]
+
+      c(floor(min(theo, ntheo, na.rm = TRUE)) - 1,
+        ceiling(max(theo, ntheo, na.rm = TRUE)) + 1)
+    })
+
+    ### server settings
+
     if (differential) {
       diff_test <- mod_settings_diff_test_server(
         id = "diff_test"
@@ -201,32 +257,9 @@ mod_plot_butterfly_server <- function(
 
     zoom <- mod_settings_zoom_server(
       id = "zoom",
-      dat_processed = dat_processed,
-      fractional = general[["fractional"]],
-      differential = differential
+      full_range_x = full_range_x,
+      full_range_y = full_range_y
     )
-
-    default_title <- if (differential) reactive({
-      paste0(
-        if (general[["theoretical"]]()) "Theoreotical b" else "B",
-        "utterfly differential plot between ",
-        state[["state_1"]](), " and ", state[["state_2"]]()
-      )
-    }) else reactive({
-      paste0(
-        if (general[["theoretical"]]()) "Theoreotical b" else "B",
-        "utterfly plot for ",
-        state[["state"]](), " state for ", chosen_protein()
-      )
-    })
-
-    default_lab_y <- if (differential) reactive({
-      if (general[["fractional"]]()) "Fractional deuterium uptake difference [%]"
-      else "Deuterium uptake difference [Da]"
-    }) else reactive({
-      if (general[["fractional"]]()) "Fractional deuterium uptake [%]"
-      else "Deuterium uptake [Da]"
-    })
 
     labels <- mod_settings_labels_server(
       id = "labels",
