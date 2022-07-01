@@ -7,26 +7,26 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_zoom_ui <- function(id){
+mod_settings_zoom_ui <- function(id, hide_x = FALSE, hide_y = FALSE){
   ns <- NS(id)
   collapsible_card(
     title = "Zoom",
     sliderInput(
       inputId = ns("x_range"),
-      label = "Choose x range for butterfly plot:",
+      label = "Choose x range for plot:",
       min = 0,
       max = 1,
       value = c(0, 1),
       step = 1
-    ),
+    ) %nullify if% hide_x,
     sliderInput(
       inputId = ns("y_range"),
-      label = "Choose y range for butterfly plot:",
+      label = "Choose y range for plot:",
       min = 0,
       max = 1,
       value = c(0, 1),
       step = 1
-    ),
+    ) %nullify if% hide_y,
     init_collapsed = TRUE
   )
 }
@@ -34,75 +34,43 @@ mod_settings_zoom_ui <- function(id){
 #' zoom Server Functions
 #'
 #' @noRd
-mod_settings_zoom_server <- function(id, dat_processed, fractional, differential){
+mod_settings_zoom_server <- function(id,
+                                     full_range_x = NULL,
+                                     full_range_y = NULL){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    observe({
-      validate(need(dat_processed(), "Wait for data to be processed"))
-      max_x <- max(dat_processed()[["ID"]])
-      min_x <- min(dat_processed()[["ID"]])
-
-      updateSliderInput(
-        session,
-        inputId = "x_range",
-        min = min_x,
-        max = max_x,
-        value = c(min_x, max_x),
-      )
-    })
-
-    y_var_theo <- reactive({
-      construct_var_name(
-        "diff" %nullify if% (!differential),
-        "theo",
-        "frac" %nullify if% (!fractional()),
-        "deut_uptake"
-      )
-    })
-
-    y_var_ntheo <- reactive({
-      construct_var_name(
-        "diff" %nullify if% (!differential),
-        "frac" %nullify if% (!fractional()),
-        "deut_uptake"
-      )
-    })
-
-    observe({
-      validate(need(dat_processed(), "Wait for data to be processed"))
-
-      theo <- dat_processed()[[
-        construct_var_name(
-          differential,
-          TRUE,
-          fractional(),
-          "deut_uptake"
+    if (!is.null(full_range_x)) {
+      observe({
+        updateSliderInput(
+          session,
+          inputId = "x_range",
+          min = full_range_x()[1],
+          max = full_range_x()[2],
+          value = full_range_x(),
         )
-      ]]
-      ntheo <- dat_processed()[[
-        construct_var_name(
-          differential,
-          FALSE,
-          fractional(),
-          "deut_uptake"
+      })
+    }
+
+    if (!is.null(full_range_y)) {
+      observe({
+        updateSliderInput(
+          session,
+          inputId = "y_range",
+          min = full_range_y()[1],
+          max = full_range_y()[2],
+          value = full_range_y(),
         )
-      ]]
-
-      max_y <- ceiling(max(theo, ntheo, na.rm = TRUE)) + 1
-      min_y <- floor(min(theo, ntheo, na.rm = TRUE)) - 1
-
-      updateSliderInput(
-        session,
-        inputId = "y_range",
-        min = min_y,
-        max = max_y,
-        value = c(min_y, max_y),
-      )
-    })
+      })
+    }
 
     return(
-      input_r_list("y_range", "x_range")
+      if (is.null(full_range_x))
+        list(y_range = input_r("y_range"))
+      else if (is.null(full_range_y))
+        list(x_range = input_r("x_range"))
+      else
+        input_r_list("x_range", "y_range")
     )
   })
 }
