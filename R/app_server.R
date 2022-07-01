@@ -2,7 +2,6 @@
 #'
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
-#' @import shiny
 #' @importFrom icecream ic_disable ic_enable
 #' @importFrom reactlog reactlog_module_server
 #' @noRd
