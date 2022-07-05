@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_diff_test_ui <- function(id){
+mod_settings_diff_test_ui <- function(id, differential){
   ns <- NS(id)
 
   collapsible_card(
@@ -46,7 +46,7 @@ mod_settings_diff_test_ui <- function(id){
         )
       )
     )
-  )
+  ) %nullify if% !differential
 }
 
 #' settings_diff_test Server Functions

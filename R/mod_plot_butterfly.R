@@ -16,7 +16,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
       mod_settings_general_ui(ns("general")),
       mod_settings_state_ui(ns("state"), differential),
       mod_settings_timepoints_ui(ns("timepoints")),
-      mod_settings_diff_test_ui(ns("diff_test")) %nullify if% (!differential),
+      mod_settings_diff_test_ui(ns("diff_test"), differential),
       butterfly_visualization(ns),
 
       # collapsed by default
