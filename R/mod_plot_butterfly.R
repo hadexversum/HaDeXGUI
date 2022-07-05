@@ -11,7 +11,8 @@
 mod_plot_butterfly_ui <- function(id, differential) {
   ns <- NS(id)
   HaDeX_plotTab(
-    title = if (differential) "Butterfly Differential Plot" else "Butterfly Plot",
+    title = construct_plot_label("Butterfly", differential, capitalize = TRUE),
+
     settingsPanel = rlang::exec(
       .fn = HaDeX_plotSettingsPanel,
 
@@ -21,27 +22,15 @@ mod_plot_butterfly_ui <- function(id, differential) {
           differential = differential,
           uncertainty_switch = "select",
           range_ids = c("x", "y"),
-          label_prefix = "Butterfly"
+          plot_type = "Butterfly"
         ),
         ns = ns
       )
     ),
     displayPanel = mod_display_plot_section_ui(
       ns("display_plot"),
-      plot_label = if (differential) "Butterfly differential plot" else "Butterfly plot",
-      additional_data_info = if (differential) {
-        "The table presents data from the chosen x plot range.
-        The empty values (e.q. `Frac Diff DU`) mean there was not sufficient
-        data for this peptide. There is a possibility that the measurement
-        result is available for only one state of the peptide.
-        Abbreviations from the table: Diff DU - differential deuterium uptake,
-        Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
-      } else {
-        "The table presents data from the chosen x plot range.
-        The empty values (e.q. `Frac DU`) means there was not sufficient data
-        for this peptide. Abbreviations from the table: DU - deuterium uptake,
-        Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
-      }
+      plot_label = construct_plot_label("Butterfly", differential),
+      additional_data_info = cosntruct_uptake_plots_data_info(differential)
     )
   )
 }

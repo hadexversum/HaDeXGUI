@@ -23,3 +23,25 @@ HaDeX_DT_format <- function(dat, cols = colnames(dat)) {
 }
 
 MAX_TIME <- 99999
+
+cosntruct_uptake_plots_data_info <- function(differential) {
+  if (differential) {
+    "The table presents data from the chosen x plot range.
+     The empty values (e.q. `Frac Diff DU`) mean there was not sufficient
+     data for this peptide. There is a possibility that the measurement
+     result is available for only one state of the peptide.
+     Abbreviations from the table: Diff DU - differential deuterium uptake,
+     Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
+  } else {
+    "The table presents data from the chosen x plot range.
+     The empty values (e.q. `Frac DU`) means there was not sufficient data
+     for this peptide. Abbreviations from the table: DU - deuterium uptake,
+     Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
+  }
+}
+
+construct_plot_label <- function(plot_type, differential, capitalize = FALSE) {
+  diff_text <- if (capitalize) " Differential" else " differential"
+  plt_text <- if (capitalize) " Plot" else " plot"
+  paste0(plot_type, diff_text %nullify if% !differential, plt_text)
+}
