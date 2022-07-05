@@ -12,11 +12,14 @@ mod_plot_chiclet_ui <- function(id, differential){
 
   HaDeX_plotTab(
     title = if (differential) "Chiclet Differential Plot" else "Chiclet Plot",
-    settingsPanel = HaDeX_plotSettingsPanel(
-      mod_settings_general_ui(ns("general")),
-      mod_settings_state_ui(ns("state"), differential),
-      mod_settings_timepoints_ui(ns("timepoints")),
-      mod_settings_diff_test_ui(ns("diff_test"), differential),
+    settingsPanel = rlang::exec(
+      .fn = HaDeX_plotSettingsPanel,
+
+      !!!install_settings_ui(
+        names = c("general", "state", "timepoints", "diff_test"),
+        params = list(differential = differential),
+        ns = ns
+      ),
       chiclet_visualization(ns),
 
       # collapsed by default
