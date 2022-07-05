@@ -71,30 +71,30 @@ mod_plot_chiclet_server <- function(
     dat_processed <- if (differential) reactive({}) else reactive({
       validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
-      validate(need(state[["state"]]() %in% states_chosen_protein(),
+      validate(need(s_state[["state"]]() %in% states_chosen_protein(),
                     "Wait for the parameters to be loaded."))
-      validate(need(timepoints[["timepoints"]](),
+      validate(need(s_timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
       dt <- HaDeX::create_state_uptake_dataset(
         dat(),
         protein = chosen_protein(),
-        state = state[["state"]](),
-        time_0 = timepoints[["time_0"]](),
-        time_100 = timepoints[["time_100"]]() %||% max(dat()[["Exposure"]]),
+        state = s_state[["state"]](),
+        time_0 = s_timepoints[["time_0"]](),
+        time_100 = s_timepoints[["time_100"]]() %||% max(dat()[["Exposure"]]),
         deut_part = deut_part() / 100
       ) %>%
-        filter(Exposure %in% timepoints[["timepoints"]]())
+        filter(Exposure %in% s_timepoints[["timepoints"]]())
     })
 
     plot_out <- if (differential) reactive({}) else reactive({
       (dat_processed() %>%
          HaDeX::plot_chiclet(
-           theoretical = general[["theoretical"]](),
-           fractional = general[["fractional"]](),
+           theoretical = s_general[["theoretical"]](),
+           fractional = s_general[["fractional"]](),
            show_uncertainty = input[["uncertainty"]]
          )
-      ) %>% update_axes_and_labels(range[["x"]], labels = labels) %>%
+      ) %>% update_axes_and_labels(s_range[["x"]], labels = labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
@@ -103,26 +103,26 @@ mod_plot_chiclet_server <- function(
     dat_out <- reactive({
       dat_processed() %>%
         .show_fun(
-          theoretical = general[["theoretical"]](),
-          fractional = general[["fractional"]]()
+          theoretical = s_general[["theoretical"]](),
+          fractional = s_general[["fractional"]]()
         ) %>%
-        filter(ID >= range[["x"]]()[[1]] &
-               ID <= range[["x"]]()[[2]])
+        filter(ID >= s_range[["x"]]()[[1]] &
+               ID <= s_range[["x"]]()[[2]])
     })
 
     ### reactives for settings servers
 
     default_title <- if (differential) reactive({
       paste0(
-        if (general[["theoretical"]]()) "Theoreotical c" else "C",
+        if (s_general[["theoretical"]]()) "Theoreotical c" else "C",
         "hiclet differential plot between ",
-        state[["state_1"]](), " and ", state[["state_2"]]()
+        s_state[["state_1"]](), " and ", s_state[["state_2"]]()
       )
     }) else reactive({
       paste0(
-        if (general[["theoretical"]]()) "Theoreotical c" else "C",
+        if (s_general[["theoretical"]]()) "Theoreotical c" else "C",
         "hiclet plot for ",
-        state[["state"]](), " state for ", chosen_protein()
+        s_state[["state"]](), " state for ", chosen_protein()
       )
     })
 
@@ -144,32 +144,13 @@ mod_plot_chiclet_server <- function(
       )
     }
 
-    general <- mod_settings_general_server(id = "general")
-
-    state <- mod_settings_state_server(
-      id = "state",
-      differential = differential,
-      states_chosen_protein = states_chosen_protein
-    )
-
-    timepoints <- mod_settings_timepoints_server(
-      id = "timepoints",
-      times_from_file = times_from_file,
-      times_with_control = times_with_control,
-      no_deut_control = no_deut_control,
-      s_general = general
-    )
-
-    range <- mod_settings_range_server(
-      id = "range",
-      range_specs = range_specs
-    )
-
-    labels <- mod_settings_labels_server(
-      id = "labels",
-      default_title = default_title,
-      default_lab_y = default_lab_y
-    )
+    invoke_settings_servers(c(
+      "general",
+      "state",
+      "timepoints",
+      "range",
+      "labels"
+    ))
 
     ### plot server
 
