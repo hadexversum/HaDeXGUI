@@ -20,7 +20,7 @@ mod_plot_chiclet_ui <- function(id, differential){
       chiclet_visualization(ns),
 
       # collapsed by default
-      mod_settings_zoom_ui(ns("zoom"), hide_y = TRUE),
+      mod_settings_range_ui(ns("range"), range_ids = "x"),
       mod_settings_labels_ui(
         ns("labels"),
         label_prefix = if (differential) "Chiclet differential" else "Chiclet"
@@ -94,7 +94,7 @@ mod_plot_chiclet_server <- function(
            fractional = general[["fractional"]](),
            show_uncertainty = input[["uncertainty"]]
          )
-      ) %>% update_axes_and_labels(zoom, labels) %>%
+      ) %>% update_axes_and_labels(range[["x"]], labels = labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
@@ -106,8 +106,8 @@ mod_plot_chiclet_server <- function(
           theoretical = general[["theoretical"]](),
           fractional = general[["fractional"]]()
         ) %>%
-        filter(ID >= zoom[["x_range"]]()[[1]] &
-               ID <= zoom[["x_range"]]()[[2]])
+        filter(ID >= range[["x"]]()[[1]] &
+               ID <= range[["x"]]()[[2]])
     })
 
     ### reactives for settings servers
@@ -128,11 +128,13 @@ mod_plot_chiclet_server <- function(
 
     default_lab_y <- reactive({ "Exposure [min]" })
 
-    full_range_x <- reactive({
-      validate(need(dat_processed(), "Wait for data to be processed"))
+    range_specs <- list(
+      range_spec({
+        validate(need(dat_processed(), "Wait for data to be processed"))
 
-      c(min(dat_processed()[["ID"]]), max(dat_processed()[["ID"]]))
-    })
+        c(min(dat_processed()[["ID"]]), max(dat_processed()[["ID"]]))
+      }, id = "x")
+    )
 
     ### settings servers
 
@@ -158,9 +160,9 @@ mod_plot_chiclet_server <- function(
       s_general = general
     )
 
-    zoom <- mod_settings_zoom_server(
-      id = "zoom",
-      full_range_x = full_range_x
+    range <- mod_settings_range_server(
+      id = "range",
+      range_specs = range_specs
     )
 
     labels <- mod_settings_labels_server(

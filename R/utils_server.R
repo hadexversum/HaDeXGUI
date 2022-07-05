@@ -14,11 +14,13 @@ apply_server_settings <- function() {
   theme_set(HaDeX_ggtheme)
 }
 
-update_axes_and_labels <- function(plt, zoom, labels) {
+extract_limits_from_range <- function(range) c(range()[[1]], range()[[2]])
+
+update_axes_and_labels <- function(plt, range_x = NULL, range_y = NULL, labels) {
   plt +
     coord_cartesian(
-      xlim = c(zoom[["x_range"]]()[[1]], zoom[["x_range"]]()[[2]]) %nullify if% is.null(zoom[["x_range"]]),
-      ylim = c(zoom[["y_range"]]()[[1]], zoom[["y_range"]]()[[2]]) %nullify if% is.null(zoom[["y_range"]])
+      xlim = ic(range_x %?>% extract_limits_from_range),
+      ylim = ic(range_y %?>% extract_limits_from_range)
     ) +
     labs(
       title = labels[["title"]](),

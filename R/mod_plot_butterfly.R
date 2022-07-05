@@ -20,7 +20,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
       butterfly_visualization(ns),
 
       # collapsed by default
-      mod_settings_zoom_ui(ns("zoom")),
+      mod_settings_range_ui(ns("range"), range_ids = c("x", "y")),
       mod_settings_labels_ui(
         ns("labels"),
         label_prefix = if (differential) "Butterfly differential" else "Butterfly"
@@ -141,7 +141,7 @@ mod_plot_butterfly_server <- function(
              "<br/>Exposure: ", Exposure, " min"
            ))
          )
-      ) %>% update_axes_and_labels(zoom, labels) %>%
+      ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
       validate(need(s_timepoints[["timepoints"]](),
@@ -161,7 +161,7 @@ mod_plot_butterfly_server <- function(
               "<br/>Exposure: ", Exposure, " min"
             ))
           )
-      ) %>% update_axes_and_labels(s_zoom, s_labels) %>%
+      ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
@@ -173,8 +173,8 @@ mod_plot_butterfly_server <- function(
           theoretical = s_general[["theoretical"]](),
           fractional = s_general[["fractional"]]()
         ) %>%
-        filter(ID >= s_zoom[["x_range"]]()[[1]] &
-               ID <= s_zoom[["x_range"]]()[[2]])
+        filter(ID >= s_range[["x"]]()[[1]] &
+               ID <= s_range[["x"]]()[[2]])
     })
 
     ### server reactives
@@ -201,35 +201,36 @@ mod_plot_butterfly_server <- function(
       else "Deuterium uptake [Da]"
     })
 
-    full_range_x <- reactive({
-      validate(need(!is.null(dat_processed()[["ID"]]), "Wait for data to be processed"))
+    range_specs <- list(
+      range_spec({
+        validate(need(!is.null(dat_processed()[["ID"]]), "Wait for data to be processed"))
 
-      c(min(dat_processed()[["ID"]]), max(dat_processed()[["ID"]]))
-    })
+        c(min(dat_processed()[["ID"]]), max(dat_processed()[["ID"]]))
+      }, id = "x"),
+      range_spec({
+        validate(need(dat_processed(), "Wait for data to be processed"))
 
-    full_range_y <- reactive({
-      validate(need(dat_processed(), "Wait for data to be processed"))
+        theo <- dat_processed()[[
+          construct_var_name(
+            differential,
+            TRUE,
+            s_general[["fractional"]](),
+            "deut_uptake"
+          )
+        ]]
+        ntheo <- dat_processed()[[
+          construct_var_name(
+            differential,
+            FALSE,
+            s_general[["fractional"]](),
+            "deut_uptake"
+          )
+        ]]
 
-      theo <- dat_processed()[[
-        construct_var_name(
-          differential,
-          TRUE,
-          s_general[["fractional"]](),
-          "deut_uptake"
-        )
-      ]]
-      ntheo <- dat_processed()[[
-        construct_var_name(
-          differential,
-          FALSE,
-          s_general[["fractional"]](),
-          "deut_uptake"
-        )
-      ]]
-
-      c(floor(min(theo, ntheo, na.rm = TRUE)) - 1,
-        ceiling(max(theo, ntheo, na.rm = TRUE)) + 1)
-    })
+        c(floor(min(theo, ntheo, na.rm = TRUE)) - 1,
+          ceiling(max(theo, ntheo, na.rm = TRUE)) + 1)
+      }, id = "y")
+    )
 
     ### server settings
 
@@ -244,7 +245,7 @@ mod_plot_butterfly_server <- function(
         "general",
         "state",
         "timepoints",
-        "zoom",
+        "range",
         "labels"
       )
     )
