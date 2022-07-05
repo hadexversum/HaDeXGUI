@@ -94,7 +94,7 @@ mod_plot_chiclet_server <- function(
            fractional = s_general[["fractional"]](),
            show_uncertainty = input[["uncertainty"]]
          )
-      ) %>% update_axes_and_labels(s_range[["x"]], labels = labels) %>%
+      ) %>% update_axes_and_labels(s_range[["x"]], labels = s_labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
