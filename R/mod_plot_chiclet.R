@@ -71,7 +71,28 @@ mod_plot_chiclet_server <- function(
 
     ### reactives for data processing
 
-    dat_processed <- if (differential) reactive({}) else reactive({
+    dat_processed <- if (differential) reactive({
+      # TODO: check which validates are really needed
+      validate(need(s_state[["state_1"]]() != s_state[["state_2"]](),
+                    "There is no difference between the same state, choose two distinct states."))
+      validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
+                    "Wait for the parameters to be loaded."))
+      validate(need(s_state[["state_1"]]() %in% states_chosen_protein(),
+                    "Wait for the parameters to be loaded."))
+      validate(need(s_timepoints[["timepoints"]](),
+                    "Wait for parameters to be loaded"))
+
+      HaDeX::create_diff_uptake_dataset(
+        dat(),
+        protein = chosen_protein(),
+        state_1 = s_state[["state_1"]](),
+        state_2 = s_state[["state_2"]](),
+        time_0 = s_timepoints[["time_0"]](),
+        time_100 = s_timepoints[["time_100"]]() %||% max(dat()[["Exposure"]]),
+        deut_part = deut_part() / 100
+      ) %>%
+        filter(Exposure %in% s_timepoints[["timepoints"]]())
+    }) else reactive({
       validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
       validate(need(s_state[["state"]]() %in% states_chosen_protein(),
@@ -90,7 +111,31 @@ mod_plot_chiclet_server <- function(
         filter(Exposure %in% s_timepoints[["timepoints"]]())
     })
 
-    plot_out <- if (differential) reactive({}) else reactive({
+    plot_out <- if (differential) reactive({
+      (dat() %>%
+         HaDeX::create_p_diff_uptake_dataset(
+           diff_uptake_dat = dat_processed(),
+           protein = chosen_protein(),
+           state_1 = s_state[["state_1"]](),
+           state_2 = s_state[["state_2"]](),
+           confidence_level = s_diff_test[["confidence_level"]](),
+           p_adjustment_method = s_diff_test[["p_adjustment_method"]](),
+           time_0 = s_timepoints[["time_0"]](),
+           time_100 = s_timepoints[["time_100"]]()  %||% max(dat()[["Exposure"]]),
+           deut_part = deut_part() / 100
+         ) %>% HaDeX::plot_differential_chiclet(
+           diff_uptake_dat = dat_processed(),
+           diff_p_uptake_dat = .,
+           theoretical = s_general[["theoretical"]](),
+           fractional = s_general[["fractional"]](),
+           show_uncertainty = input[["uncertainty"]],
+           show_houde_interval = s_diff_test[["show_houde"]](),
+           show_tstud_confidence = s_diff_test[["show_tstud"]](),
+           confidence_level = s_diff_test[["confidence_level"]]()
+         )
+      ) %>% update_axes_and_labels(range_x = s_range[["x"]], labels = s_labels) %>%
+        suppressMessages() # suppressing annoying coordinate system replacement msg
+    }) else reactive({
       (dat_processed() %>%
          HaDeX::plot_chiclet(
            theoretical = s_general[["theoretical"]](),
@@ -142,7 +187,7 @@ mod_plot_chiclet_server <- function(
     ### settings servers
 
     if (differential) {
-      diff_test <- mod_settings_diff_test_server(
+      s_diff_test <- mod_settings_diff_test_server(
         id = "diff_test"
       )
     }
