@@ -21,7 +21,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
           differential = differential,
           uncertainty_switch = "select",
           range_ids = c("x", "y"),
-          label_prefix = if (differential) "Butterfly differential" else "Butterfly"
+          label_prefix = "Butterfly"
         ),
         ns = ns
       )

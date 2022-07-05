@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_labels_ui <- function(id, label_prefix){
+mod_settings_labels_ui <- function(id, label_prefix, differential){
   ns <- NS(id)
 
   collapsible_card(
@@ -17,17 +17,17 @@ mod_settings_labels_ui <- function(id, label_prefix){
         width = 10,
         textInput(
           inputId = ns("title"),
-          label = paste0(label_prefix, " plot title:"),
+          label = paste0(label_prefix, if (differential) " differential" else NULL, " plot title:"),
           value = "" # updatable by observer
         ),
         textInput(
           inputId = ns("x_lab"),
-          label = paste0(label_prefix, " plot axis x label:"),
+          label = paste0(label_prefix, if (differential) " differential" else NULL, " plot axis x label:"),
           value = "Peptide ID"
         ),
         textInput(
           inputId = ns("y_lab"),
-          label = paste0(label_prefix, " plot axis y label:"),
+          label = paste0(label_prefix, if (differential) " differential" else NULL, " plot axis y label:"),
           value = "" # updatable by observer
         )
       ),

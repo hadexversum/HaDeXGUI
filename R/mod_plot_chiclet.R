@@ -21,7 +21,7 @@ mod_plot_chiclet_ui <- function(id, differential){
           differential = differential,
           uncertainty_switch = "binary",
           range_ids = "x",
-          label_prefix = if (differential) "Chiclet differential" else "Chiclet"
+          label_prefix = "Chiclet"
         ),
         ns = ns
       ),
