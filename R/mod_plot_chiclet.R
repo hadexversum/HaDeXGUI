@@ -16,18 +16,15 @@ mod_plot_chiclet_ui <- function(id, differential){
       .fn = HaDeX_plotSettingsPanel,
 
       !!!install_settings_ui(
-        names = c("general", "state", "timepoints", "diff_test"),
-        params = list(differential = differential),
+        names = c("general", "state", "timepoints", "diff_test", "visualization", "range", "labels"),
+        params = list(
+          differential = differential,
+          uncertainty_switch = "binary",
+          range_ids = "x",
+          label_prefix = if (differential) "Chiclet differential" else "Chiclet"
+        ),
         ns = ns
       ),
-      chiclet_visualization(ns),
-
-      # collapsed by default
-      mod_settings_range_ui(ns("range"), range_ids = "x"),
-      mod_settings_labels_ui(
-        ns("labels"),
-        label_prefix = if (differential) "Chiclet differential" else "Chiclet"
-      )
     ),
     displayPanel = mod_display_plot_section_ui(
       ns("display_plot"),
@@ -48,15 +45,6 @@ mod_plot_chiclet_ui <- function(id, differential){
     )
   )
 }
-
-chiclet_visualization <- function(ns) collapsible_card(
-  title = "Visualization",
-  checkboxInput_h(
-    inputId = ns("uncertainty"),
-    label = "Show uncertainty",
-    value = TRUE
-  )
-)
 
 #' plot_chiclet Server Functions
 #'
@@ -128,7 +116,7 @@ mod_plot_chiclet_server <- function(
            diff_p_uptake_dat = .,
            theoretical = s_general[["theoretical"]](),
            fractional = s_general[["fractional"]](),
-           show_uncertainty = input[["uncertainty"]],
+           show_uncertainty = s_visualization[["show_uncertainty"]](),
            show_houde_interval = s_diff_test[["show_houde"]](),
            show_tstud_confidence = s_diff_test[["show_tstud"]](),
            confidence_level = s_diff_test[["confidence_level"]]()
@@ -140,7 +128,7 @@ mod_plot_chiclet_server <- function(
          HaDeX::plot_chiclet(
            theoretical = s_general[["theoretical"]](),
            fractional = s_general[["fractional"]](),
-           show_uncertainty = input[["uncertainty"]]
+           show_uncertainty = s_visualization[["show_uncertainty"]]()
          )
       ) %>% update_axes_and_labels(s_range[["x"]], labels = s_labels) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
@@ -184,6 +172,8 @@ mod_plot_chiclet_server <- function(
       }, id = "x")
     )
 
+    uncertainty_switch <- "binary"
+
     ### settings servers
 
     if (differential) {
@@ -196,6 +186,7 @@ mod_plot_chiclet_server <- function(
       "general",
       "state",
       "timepoints",
+      "visualization",
       "range",
       "labels"
     ))

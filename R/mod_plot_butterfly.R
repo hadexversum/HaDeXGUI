@@ -16,17 +16,14 @@ mod_plot_butterfly_ui <- function(id, differential) {
       .fn = HaDeX_plotSettingsPanel,
 
       !!!install_settings_ui(
-        names = c("general", "state", "timepoints", "diff_test"),
-        params = list(differential = differential),
+        names = c("general", "state", "timepoints", "diff_test", "visualization", "range", "labels"),
+        params = list(
+          differential = differential,
+          uncertainty_switch = "select",
+          range_ids = c("x", "y"),
+          label_prefix = if (differential) "Butterfly differential" else "Butterfly"
+        ),
         ns = ns
-      ),
-      butterfly_visualization(ns),
-
-      # collapsed by default
-      mod_settings_range_ui(ns("range"), range_ids = c("x", "y")),
-      mod_settings_labels_ui(
-        ns("labels"),
-        label_prefix = if (differential) "Butterfly differential" else "Butterfly"
       )
     ),
     displayPanel = mod_display_plot_section_ui(
@@ -48,17 +45,6 @@ mod_plot_butterfly_ui <- function(id, differential) {
     )
   )
 }
-
-
-butterfly_visualization <- function(ns) collapsible_card(
-  title = "Visualization",
-  selectInput_h(
-    inputId = ns("uncertainty"),
-    label = "Show uncertainty as:",
-    choices = c("ribbon", "bars", "bars + line"),
-    selected = "ribbon"
-  )
-)
 
 #' plot_butterfly Server Functions
 #'
@@ -130,7 +116,7 @@ mod_plot_butterfly_server <- function(
            diff_p_uptake_dat = .,
            theoretical = s_general[["theoretical"]](),
            fractional = s_general[["fractional"]](),
-           uncertainty_type = input[["uncertainty"]],
+           uncertainty_type = s_visualization[["uncertainty_mode"]](),
            show_houde_interval = s_diff_test[["show_houde"]](),
            show_tstud_confidence = s_diff_test[["show_tstud"]](),
            confidence_level = s_diff_test[["confidence_level"]]()
@@ -154,7 +140,7 @@ mod_plot_butterfly_server <- function(
         HaDeX::plot_butterfly(
           theoretical = s_general[["theoretical"]](),
           fractional = s_general[["fractional"]](),
-          uncertainty_type = input[["uncertainty"]]
+          uncertainty_type = s_visualization[["uncertainty_mode"]]()
         ) +
           geom_point_interactive( #TODO: fix this redundancy?
             aes(tooltip = paste0(
@@ -235,6 +221,8 @@ mod_plot_butterfly_server <- function(
       }, id = "y")
     )
 
+    uncertainty_switch <- "select"
+
     ### server settings
 
     if (differential) {
@@ -248,6 +236,7 @@ mod_plot_butterfly_server <- function(
         "general",
         "state",
         "timepoints",
+        "visualization",
         "range",
         "labels"
       )
