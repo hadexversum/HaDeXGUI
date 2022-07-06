@@ -157,8 +157,6 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       }, id = "x")
     )
 
-    uncertainty_switch <- "binary"
-
     ### settings servers
 
     if (differential) {
@@ -167,14 +165,12 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       )
     }
 
-    invoke_settings_servers(c(
-      "general",
-      "state",
-      "timepoints",
-      "visualization",
-      "range",
-      "labels"
-    ))
+    invoke_settings_servers(
+      names = c(
+        "general", "state", "timepoints", "visualization", "range", "labels"
+      ),
+      const_params = list(uncertainty_switch = "binary")
+    )
 
     ### plot server
 
