@@ -81,9 +81,9 @@ mod_settings_timepoints_ui <- function(id, timepoints_switch = "show and deut"){
 #'
 #' @noRd
 mod_settings_timepoints_server <- function(id,
-                                           times_from_file,
-                                           times_with_control,
-                                           no_deut_control,
+                                           p_times,
+                                           p_times_with_control,
+                                           p_no_deut_control,
                                            s_general) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -103,8 +103,8 @@ mod_settings_timepoints_server <- function(id,
       updateSelectInput(
         session,
         inputId = "time_0",
-        choices = times_from_file()[times_from_file() < MAX_TIME],
-        selected = times_from_file()[times_from_file() == no_deut_control()]
+        choices = p_times()[p_times() < MAX_TIME],
+        selected = p_times()[p_times() == p_no_deut_control()]
       )
 
       toggle_id(
@@ -114,13 +114,13 @@ mod_settings_timepoints_server <- function(id,
     })
 
     observe({
-      validate(need(length(times_from_file()) > 1, "Wait for parameters to be loaded"))
+      validate(need(length(p_times()) > 1, "Wait for parameters to be loaded"))
 
       updateSelectInput(
         session,
         inputId = "time_100",
-        choices = times_with_control(),
-        selected = max(times_with_control()[times_with_control() < MAX_TIME])
+        choices = p_times_with_control(),
+        selected = max(p_times_with_control()[p_times_with_control() < MAX_TIME])
       )
 
       toggle_id(
@@ -134,11 +134,11 @@ mod_settings_timepoints_server <- function(id,
         validate(need(not_null(time_100()),
                       "Wait for parameters to be loaded"))
 
-        times_from_file() < time_100()
+        p_times() < time_100()
       } else
-        times_from_file() < MAX_TIME
+        p_times() < MAX_TIME
 
-      times_t <- times_from_file()[times_from_file() > time_0() & vec]
+      times_t <- p_times()[p_times() > time_0() & vec]
 
       updateCheckboxGroupInput(
         session,

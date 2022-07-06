@@ -62,7 +62,7 @@ mod_settings_labels_ui <- function(id, plot_type, differential){
 #' settings_labels Server Functions
 #'
 #' @noRd
-mod_settings_labels_server <- function(id, chosen_protein, default_title, default_lab_y){
+mod_settings_labels_server <- function(id, default_title, default_lab_y){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 

@@ -42,7 +42,7 @@ mod_settings_state_ui <- function(id, differential){
 #' settings_state Server Functions
 #'
 #' @noRd
-mod_settings_state_server <- function(id, differential, states_chosen_protein){
+mod_settings_state_server <- function(id, differential, p_states_chosen_protein){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -51,8 +51,8 @@ mod_settings_state_server <- function(id, differential, states_chosen_protein){
         updateSelectInput(
           session,
           inputId = "state_1",
-          choices = states_chosen_protein(),
-          selected = states_chosen_protein()[1]
+          choices = p_states_chosen_protein(),
+          selected = p_states_chosen_protein()[1]
         )
       })
 
@@ -60,8 +60,8 @@ mod_settings_state_server <- function(id, differential, states_chosen_protein){
         updateSelectInput(
           session,
           inputId = "state_2",
-          choices = states_chosen_protein(),
-          selected = states_chosen_protein()[2]
+          choices = p_states_chosen_protein(),
+          selected = p_states_chosen_protein()[2]
         )
       })
     } else {
@@ -69,8 +69,8 @@ mod_settings_state_server <- function(id, differential, states_chosen_protein){
         updateSelectInput(
           session,
           inputId = "state",
-          choices = states_chosen_protein(),
-          selected = states_chosen_protein()[1]
+          choices = p_states_chosen_protein(),
+          selected = p_states_chosen_protein()[1]
         )
       })
     }

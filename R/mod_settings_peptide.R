@@ -24,13 +24,13 @@ mod_settings_peptide_ui <- function(id){
 #' settings_peptide Server Functions
 #'
 #' @noRd
-mod_settings_peptide_server <- function(id, dat, chosen_protein){
+mod_settings_peptide_server <- function(id, dat, p_chosen_protein){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
     peptides <- reactive({
       dat() %>%
-        filter(Protein == chosen_protein()) %>%
+        filter(Protein == p_chosen_protein()) %>%
         select(Sequence, State, Start, End) %>%
         unique(.) %>%
         arrange(Start, End)

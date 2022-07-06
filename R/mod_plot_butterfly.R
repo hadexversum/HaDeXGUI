@@ -39,11 +39,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
 #'
 #' @import ggplot2
 #' @noRd
-mod_plot_butterfly_server <- function(
-    id, differential,
-    dat,
-    chosen_protein, states_chosen_protein, times_from_file, times_with_control,
-    deut_part, no_deut_control){
+mod_plot_butterfly_server <- function(id, differential, dat, params){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -51,39 +47,39 @@ mod_plot_butterfly_server <- function(
       # TODO: check which validates are really needed
       validate(need(s_state[["state_1"]]() != s_state[["state_2"]](),
                     "There is no difference between the same state, choose two distinct states."))
-      validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
+      validate(need(params[["chosen_protein"]]() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
-      validate(need(s_state[["state_1"]]() %in% states_chosen_protein(),
+      validate(need(s_state[["state_1"]]() %in% params[["states_chosen_protein"]](),
                     "Wait for the parameters to be loaded."))
       validate(need(s_timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
       HaDeX::create_diff_uptake_dataset(
         dat(),
-        protein = chosen_protein(),
+        protein = params[["chosen_protein"]](),
         state_1 = s_state[["state_1"]](),
         state_2 = s_state[["state_2"]](),
         time_0 = s_timepoints[["time_0"]](),
         time_100 = s_timepoints[["time_100"]]() %||% max(dat()[["Exposure"]]),
-        deut_part = deut_part() / 100
+        deut_part = params[["deut_part"]]() / 100
       ) %>%
         filter(Exposure %in% s_timepoints[["timepoints"]]())
     }) else reactive({
       # TODO: check which validates are really needed
-      validate(need(chosen_protein() %in% unique(dat()[["Protein"]]),
+      validate(need(params[["chosen_protein"]]() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
-      validate(need(s_state[["state"]]() %in% states_chosen_protein(),
+      validate(need(s_state[["state"]]() %in% params[["states_chosen_protein"]](),
                     "Wait for the parameters to be loaded."))
       validate(need(s_timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
       HaDeX::create_state_uptake_dataset(
         dat(),
-        protein = chosen_protein(),
+        protein = params[["chosen_protein"]](),
         state = s_state[["state"]](),
         time_0 = s_timepoints[["time_0"]](),
         time_100 = s_timepoints[["time_100"]](),
-        deut_part = deut_part() / 100
+        deut_part = params[["deut_part"]]() / 100
       ) %>%
         filter(Exposure %in% s_timepoints[["timepoints"]]())
     })
@@ -92,14 +88,14 @@ mod_plot_butterfly_server <- function(
       (dat() %>%
          HaDeX::create_p_diff_uptake_dataset(
            diff_uptake_dat = dat_processed(),
-           protein = chosen_protein(),
+           protein = params[["chosen_protein"]](),
            state_1 = s_state[["state_1"]](),
            state_2 = s_state[["state_2"]](),
            confidence_level = s_diff_test[["confidence_level"]](),
            p_adjustment_method = s_diff_test[["p_adjustment_method"]](),
            time_0 = s_timepoints[["time_0"]](),
            time_100 = s_timepoints[["time_100"]]()  %||% max(dat()[["Exposure"]]),
-           deut_part = deut_part() / 100
+           deut_part = params[["deut_part"]]() / 100
          ) %>% HaDeX::plot_differential_butterfly(
            diff_uptake_dat = dat_processed(),
            diff_p_uptake_dat = .,
@@ -167,7 +163,7 @@ mod_plot_butterfly_server <- function(
       paste0(
         if (s_general[["theoretical"]]()) "Theoreotical b" else "B",
         "utterfly plot for ",
-        s_state[["state"]](), " state for ", chosen_protein()
+        s_state[["state"]](), " state for ", params[["chosen_protein"]]()
       )
     })
 
@@ -215,21 +211,12 @@ mod_plot_butterfly_server <- function(
     ### server settings
 
     if (differential) {
-      s_diff_test <- mod_settings_diff_test_server(
-        id = "diff_test"
-      )
+      s_diff_test <- mod_settings_diff_test_server("diff_test")
     }
 
-    invoke_settings_servers(
-      names = c(
-        "general",
-        "state",
-        "timepoints",
-        "visualization",
-        "range",
-        "labels"
-      )
-    )
+    invoke_settings_servers(c(
+      "general", "state", "timepoints", "visualization", "range", "labels"
+    ))
 
     mod_display_plot_section_server("display_plot", plot_out, dat_out)
   })

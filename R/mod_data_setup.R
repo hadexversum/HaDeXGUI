@@ -163,23 +163,25 @@ mod_data_setup_server <- function(id, dat_adjusted){
 
     return(
       list(
-        proteins = proteins_from_file,
-        chosen_protein = input_r("chosen_protein"),
+        dat = dat,
 
-        states = states_from_file,
-        has_modifications = file_has_modifications,
-        states_chosen_protein = states_chosen_protein,
+        params = list(
+          proteins = proteins_from_file,
+          chosen_protein = input_r("chosen_protein"),
 
-        times = times_from_file,
-        times_t = times_t,
-        times_with_control = times_with_control,
+          states = states_from_file,
+          has_modifications = file_has_modifications,
+          states_chosen_protein = states_chosen_protein,
 
-        max_range = max_range,
+          times = times_from_file,
+          times_t = times_t,
+          times_with_control = times_with_control,
 
-        deut_part = input_r_numeric("deut_part"),
-        no_deut_control = input_r_numeric("no_deut_control"),
+          max_range = max_range,
 
-        dat = dat
+          deut_part = input_r_numeric("deut_part"),
+          no_deut_control = input_r_numeric("no_deut_control")
+        )
       )
     )
   })
