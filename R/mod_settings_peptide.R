@@ -13,9 +13,9 @@ mod_settings_peptide_ui <- function(id){
     title = "Peptide",
 
     p("Choose peptide:"),
-    dataTableOutput_h("peptide_list"),
+    dataTableOutput_h(ns("peptide_list")),
     actionButton(
-      inputId = "reset",
+      inputId = ns("reset"),
       label = "Reset chosen peptides"
     )
   )
@@ -38,7 +38,7 @@ mod_settings_peptide_server <- function(id, dat, p_chosen_protein){
     })
 
     output[["peptide_list"]] <- DT::renderDataTable({
-      datatable(
+      DT::datatable(
         data = peptides(),
         class = "table-bordered table-condensed",
         extensions = "Buttons",
@@ -59,9 +59,3 @@ mod_settings_peptide_server <- function(id, dat, p_chosen_protein){
     )
   })
 }
-
-## To be copied in the UI
-# mod_settings_peptide_ui("settings_peptide_1")
-
-## To be copied in the server
-# mod_settings_peptide_server("settings_peptide_1")
