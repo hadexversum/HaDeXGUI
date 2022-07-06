@@ -19,7 +19,8 @@ app_ui <- function(request) {
         mod_plot_butterfly_ui("butterfly", differential = FALSE),
         mod_plot_butterfly_ui("butterfly_diff", differential = TRUE),
         mod_plot_chiclet_ui("chiclet", differential = FALSE),
-        mod_plot_chiclet_ui("chiclet_diff", differential = TRUE)
+        mod_plot_chiclet_ui("chiclet_diff", differential = TRUE),
+        mod_plot_uptake_ui("uptake", differential = FALSE)
       ),
 
       if (getOption("shiny.reactlog", default = FALSE))
