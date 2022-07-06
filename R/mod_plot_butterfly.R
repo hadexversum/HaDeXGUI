@@ -208,13 +208,10 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
 
     ### server settings
 
-    if (differential) {
-      s_diff_test <- mod_settings_diff_test_server("diff_test")
-    }
-
     invoke_settings_servers(
       names = c(
-        "general", "state", "timepoints", "visualization", "range", "labels"
+        "general", "state", "timepoints", "visualization",
+        "range", "labels", "diff_test"
       ),
       const_params = list(uncertainty_switch = "select")
     )

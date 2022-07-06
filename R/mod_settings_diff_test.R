@@ -52,8 +52,8 @@ mod_settings_diff_test_ui <- function(id, differential){
 #' settings_diff_test Server Functions
 #'
 #' @noRd
-mod_settings_diff_test_server <- function(id){
-  moduleServer( id, function(input, output, session){
+mod_settings_diff_test_server <- function(id, differential){
+  moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     ### observers modifying input
@@ -75,11 +75,6 @@ mod_settings_diff_test_server <- function(id){
         p_adjustment_method = input_r("p_adjustment_method")
       )
     )
-  })
+  }) %nullify if% !differential
 }
 
-## To be copied in the UI
-# mod_settings_diff_test_ui("settings_diff_test_1")
-
-## To be copied in the server
-# mod_settings_diff_test_server("settings_diff_test_1")

@@ -159,15 +159,10 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     ### settings servers
 
-    if (differential) {
-      s_diff_test <- mod_settings_diff_test_server(
-        id = "diff_test"
-      )
-    }
-
     invoke_settings_servers(
       names = c(
-        "general", "state", "timepoints", "visualization", "range", "labels"
+        "general", "state", "timepoints", "visualization",
+        "range", "labels", "diff_test"
       ),
       const_params = list(uncertainty_switch = "binary")
     )
