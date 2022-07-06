@@ -153,27 +153,9 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
 
     ### server reactives
 
-    default_title <- if (differential) reactive({
-      paste0(
-        if (s_general[["theoretical"]]()) "Theoreotical b" else "B",
-        "utterfly differential plot between ",
-        s_state[["state_1"]](), " and ", s_state[["state_2"]]()
-      )
-    }) else reactive({
-      paste0(
-        if (s_general[["theoretical"]]()) "Theoreotical b" else "B",
-        "utterfly plot for ",
-        s_state[["state"]](), " state for ", params[["chosen_protein"]]()
-      )
-    })
+    default_title <- react_construct_uptake_title("butterfly", differential)
 
-    default_lab_y <- if (differential) reactive({
-      if (s_general[["fractional"]]()) "Fractional deuterium uptake difference [%]"
-      else "Deuterium uptake difference [Da]"
-    }) else reactive({
-      if (s_general[["fractional"]]()) "Fractional deuterium uptake [%]"
-      else "Deuterium uptake [Da]"
-    })
+    default_lab_y <- react_construct_uptake_lab_y(differential)
 
     range_specs <- list(
       range_spec({

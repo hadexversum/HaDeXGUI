@@ -133,19 +133,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     ### reactives for settings servers
 
-    default_title <- if (differential) reactive({
-      paste0(
-        if (s_general[["theoretical"]]()) "Theoreotical c" else "C",
-        "hiclet differential plot between ",
-        s_state[["state_1"]](), " and ", s_state[["state_2"]]()
-      )
-    }) else reactive({
-      paste0(
-        if (s_general[["theoretical"]]()) "Theoreotical c" else "C",
-        "hiclet plot for ",
-        s_state[["state"]](), " state for ", params[["chosen_protein"]]()
-      )
-    })
+    default_title <- react_construct_uptake_title("chiclet", differential)
 
     default_lab_y <- reactive({ "Exposure [min]" })
 
