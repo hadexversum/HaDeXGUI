@@ -7,44 +7,72 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_timepoints_ui <- function(id){
+mod_settings_timepoints_ui <- function(id, timepoints_switch = "show and deut"){
   ns <- NS(id)
 
-  collapsible_card(
-    title = "Timepoints",
-    fluidRow(
-      column(
-        width = 6,
-        checkboxGroupInput_h(
-          inputId = ns("timepoints"),
-          label = "Show time points: ",
-          choices = "",
-          selected = ""
+  switch(
+    timepoints_switch,
+    `show and deut` = collapsible_card(
+      title = "Timepoints",
+      fluidRow(
+        column(
+          width = 6,
+          checkboxGroupInput_h(
+            inputId = ns("timepoints"),
+            label = "Show time points: ",
+            choices = "",
+            selected = ""
+          )
+        ),
+        column(
+          width = 6,
+          wrap_div(
+            selectInput_h(
+              inputId = ns("time_0"),
+              label = "Deut 0%",
+              choices = "",
+              selected = ""
+            ),
+            id = ns("time_0"),
+            type = "visswitch"
+          ),
+          wrap_div(
+            selectInput_h(
+              inputId = ns("time_100"),
+              label = "Deut 100%",
+              choices = "",
+              selected = ""
+            ),
+            id = ns("time_100"),
+            type = "visswitch"
+          )
         )
-      ),
-      column(
-        width = 6,
-        wrap_div(
+      )
+    ),
+    `only deut` = wrap_div(
+      collapsible_card(
+        title = "Timepoints",
+        splitLayout(
           selectInput_h(
             inputId = ns("time_0"),
             label = "Deut 0%",
             choices = "",
             selected = ""
           ),
-          id = ns("time_0"),
-          type = "visswitch"
-        ),
-        wrap_div(
-          selectInput_h(
-            inputId = ns("time_100"),
-            label = "Deut 100%",
-            choices = "",
-            selected = ""
-          ),
-          id = ns("time_100"),
-          type = "visswitch"
+          wrap_div(
+            selectInput_h(
+              inputId = ns("time_100"),
+              label = "Deut 100%",
+              choices = "",
+              selected = ""
+            ),
+            id = ns("time_100"),
+            type = "visswitch"
+          )
         )
-      )
+      ),
+      id = ns("time_0"),
+      type = "visswitch"
     )
   )
 }
