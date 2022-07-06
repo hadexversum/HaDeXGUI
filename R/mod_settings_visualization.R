@@ -7,10 +7,16 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_visualization_ui <- function(id, uncertainty_switch){
+mod_settings_visualization_ui <- function(id, uncertainty_switch, log_x_switch = FALSE){
   ns <- NS(id)
   collapsible_card(
     title = "Visualization",
+
+    checkboxInput_h(
+      inputId = ns("log_x"),
+      label = "Logaritmic x scale",
+      value = TRUE
+    ) %nullify if% !log_x_switch,
     switch(
       uncertainty_switch,
       binary = checkboxInput_h(

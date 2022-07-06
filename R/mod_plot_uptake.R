@@ -22,6 +22,7 @@ mod_plot_uptake_ui <- function(id, differential) {
         params = list(
           differential = differential,
           uncertainty_switch = "select",
+          log_x_switch = TRUE,
           range_ids = c("y"),
           plot_type = "Uptake curves"
         ),
