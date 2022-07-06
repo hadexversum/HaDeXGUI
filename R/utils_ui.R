@@ -125,8 +125,12 @@ install_settings_ui <- function(names, params, ns) {
 
     args <- setNames(lapply(
       arg_names,
-      function(arg) params[[arg]]
+      function(arg) {
+        if (arg %in% names(params)) params[[arg]] else NULL
+      }
     ), arg_names)
+
+    args <- args[!sapply(args, is.null)]
 
     args[["id"]] <- ns(name)
 
