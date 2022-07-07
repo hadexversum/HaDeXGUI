@@ -47,8 +47,6 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       # TODO: check which validates are really needed
       validate(need(params[["chosen_protein"]]() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
-      validate(need(s_state[["state_1"]]() %in% params[["states_chosen_protein"]](),
-                    "Wait for the parameters to be loaded."))
       validate(need(s_timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
@@ -65,8 +63,6 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     }) else reactive({
       # TODO: check which validates are really needed
       validate(need(params[["chosen_protein"]]() %in% unique(dat()[["Protein"]]),
-                    "Wait for the parameters to be loaded."))
-      validate(need(s_state[["state"]]() %in% params[["states_chosen_protein"]](),
                     "Wait for the parameters to be loaded."))
       validate(need(s_timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))

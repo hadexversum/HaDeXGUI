@@ -80,7 +80,12 @@ mod_settings_state_server <- function(id, differential, p_states_chosen_protein)
     return(
       if (differential)
         list(
-          state_1 = input_r("state_1"),
+          state_1 = reactive({
+            validate(need(input[["state_1"]] %in% p_states_chosen_protein(),
+                          "Wait for the parameters to be loaded."))
+
+            input[["state_1"]]
+          }),
           state_2 = reactive({
             validate(need(input[["state_1"]] != input[["state_2"]],
                           "Wait for parameters to be processed"))
@@ -88,7 +93,14 @@ mod_settings_state_server <- function(id, differential, p_states_chosen_protein)
           })
         )
       else
-        input_r_list("state")
+        list(
+          state = reactive({
+            validate(need(input[["state"]] %in% p_states_chosen_protein(),
+                          "Wait for the parameters to be loaded."))
+
+            input[["state"]]
+          })
+        )
     )
   })
 }
