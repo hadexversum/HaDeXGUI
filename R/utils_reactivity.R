@@ -80,3 +80,7 @@ invoke_settings_servers <- function(names, const_params = list(), env = parent.f
   }
   invisible()
 }
+
+wait_for <- function(expr, message = "Wait for the parameters to be loaded...") {
+  validate(need(expr, message))
+}
