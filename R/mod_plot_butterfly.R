@@ -144,7 +144,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
 
     range_specs <- list(
       range_spec({
-        wait_for(dat_processed()[["ID"]])
+        wait_for(nrow(dat_processed()) > 0)
 
         list(
           min = min(dat_processed()[["ID"]]),
@@ -152,7 +152,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         )
       }, id = "x"),
       range_spec({
-        wait_for(dat_processed())
+        wait_for(nrow(dat_processed()) > 0)
 
         theo <- dat_processed()[[
           construct_var_name(

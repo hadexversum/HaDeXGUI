@@ -129,7 +129,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     range_specs <- list(
       range_spec({
-        wait_for(dat_processed())
+        wait_for(nrow(dat_processed()) > 0)
 
         list(
           min = min(dat_processed()[["ID"]]),
