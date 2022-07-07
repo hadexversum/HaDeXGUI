@@ -46,8 +46,6 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     dat_processed <- if (differential) reactive({
       # TODO: check which validates are really needed
-      validate(need(params[["chosen_protein"]]() %in% unique(dat()[["Protein"]]),
-                    "Wait for the parameters to be loaded."))
       validate(need(s_timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
@@ -62,8 +60,6 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       ) %>%
         filter(Exposure %in% s_timepoints[["timepoints"]]())
     }) else reactive({
-      validate(need(params[["chosen_protein"]]() %in% unique(dat()[["Protein"]]),
-                    "Wait for the parameters to be loaded."))
       validate(need(s_timepoints[["timepoints"]](),
                     "Wait for parameters to be loaded"))
 
