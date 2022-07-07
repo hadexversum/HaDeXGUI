@@ -90,11 +90,18 @@ mod_settings_timepoints_server <- function(id,
 
     ### reactive values from inputs
 
-    time_0 <- input_r_numeric("time_0")
+    time_0 <- reactive({
+      if (s_general[["theoretical"]]())
+        min(p_times()[p_times() > 0]) # TODO: should there be 0 instead?
+      else
+        as.numeric(input[["time_0"]])
+    })
+
     time_100 <- reactive({
-      # this input is possibly missing due to not updating when it's hidden
-      val <- as.numeric(input[["time_100"]])
-      if (not_na(val)) val else NULL
+      if (s_general[["theoretical"]]() || !s_general[["fractional"]]())
+        MAX_TIME # TODO: should there be max ()[] ... instead?
+      else
+        as.numeric(input[["time_100"]])
     })
 
     ### observers updating inputs
@@ -114,13 +121,17 @@ mod_settings_timepoints_server <- function(id,
     })
 
     observe({
-      validate(need(length(p_times()) > 1, "Wait for parameters to be loaded"))
+      wait_for(length(p_times_with_control()) > 1)
+      wait_for(time_0())
+      wait_for(time_100())
+
+      bigger_than_0 <- p_times_with_control()[p_times_with_control() > time_0()]
 
       updateSelectInput(
         session,
         inputId = "time_100",
-        choices = p_times_with_control(),
-        selected = max(p_times_with_control()[p_times_with_control() < MAX_TIME])
+        choices = bigger_than_0,
+        selected = max(bigger_than_0[bigger_than_0 < MAX_TIME])
       )
 
       toggle_id(
@@ -130,15 +141,10 @@ mod_settings_timepoints_server <- function(id,
     })
 
     observe({
-      vec <- if (s_general[["fractional"]]()){
-        validate(need(not_null(time_100()),
-                      "Wait for parameters to be loaded"))
+      wait_for(time_100())
+      wait_for(time_0())
 
-        p_times() < time_100()
-      } else
-        p_times() < MAX_TIME
-
-      times_t <- p_times()[p_times() > time_0() & vec]
+      times_t <- p_times()[p_times() > time_0() & p_times() < time_100()]
 
       updateCheckboxGroupInput(
         session,
