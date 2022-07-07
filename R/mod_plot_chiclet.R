@@ -46,8 +46,6 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     dat_processed <- if (differential) reactive({
       # TODO: check which validates are really needed
-      validate(need(s_state[["state_1"]]() != s_state[["state_2"]](),
-                    "There is no difference between the same state, choose two distinct states."))
       validate(need(params[["chosen_protein"]]() %in% unique(dat()[["Protein"]]),
                     "Wait for the parameters to be loaded."))
       validate(need(s_state[["state_1"]]() %in% params[["states_chosen_protein"]](),

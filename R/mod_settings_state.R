@@ -57,11 +57,13 @@ mod_settings_state_server <- function(id, differential, p_states_chosen_protein)
       })
 
       observe({
+        not_state_1 <- setdiff(p_states_chosen_protein(), input[["state_1"]])
+
         updateSelectInput(
           session,
           inputId = "state_2",
-          choices = p_states_chosen_protein(),
-          selected = p_states_chosen_protein()[2]
+          choices = not_state_1,
+          selected = not_state_1[1]
         )
       })
     } else {
@@ -77,7 +79,14 @@ mod_settings_state_server <- function(id, differential, p_states_chosen_protein)
 
     return(
       if (differential)
-        input_r_list("state_1", "state_2")
+        list(
+          state_1 = input_r("state_1"),
+          state_2 = reactive({
+            validate(need(input[["state_1"]] != input[["state_2"]],
+                          "Wait for parameters to be processed"))
+            input[["state_2"]]
+          })
+        )
       else
         input_r_list("state")
     )
