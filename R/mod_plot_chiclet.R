@@ -141,7 +141,10 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       range_spec({
         validate(need(dat_processed(), "Wait for data to be processed"))
 
-        c(min(dat_processed()[["ID"]]), max(dat_processed()[["ID"]]))
+        list(
+          min = min(dat_processed()[["ID"]]),
+          max = max(dat_processed()[["ID"]])
+        )
       }, id = "x")
     )
 

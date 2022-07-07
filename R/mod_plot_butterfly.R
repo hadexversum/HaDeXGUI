@@ -161,7 +161,10 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       range_spec({
         validate(need(!is.null(dat_processed()[["ID"]]), "Wait for data to be processed"))
 
-        c(min(dat_processed()[["ID"]]), max(dat_processed()[["ID"]]))
+        list(
+          min = min(dat_processed()[["ID"]]),
+          max = max(dat_processed()[["ID"]])
+        )
       }, id = "x"),
       range_spec({
         validate(need(dat_processed(), "Wait for data to be processed"))
@@ -183,8 +186,10 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
           )
         ]]
 
-        c(floor(min(theo, ntheo, na.rm = TRUE)) - 1,
-          ceiling(max(theo, ntheo, na.rm = TRUE)) + 1)
+        list(
+          min = floor(min(theo, ntheo, na.rm = TRUE)) - 1,
+          max = ceiling(max(theo, ntheo, na.rm = TRUE)) + 1
+        )
       }, id = "y")
     )
 
