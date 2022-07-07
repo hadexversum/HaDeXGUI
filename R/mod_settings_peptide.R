@@ -55,7 +55,9 @@ mod_settings_peptide_server <- function(id, dat, p_chosen_protein){
     }) %>% bindEvent(input[["reset"]])
 
     return(
-      input_r_list("peptide_list_rows_selected")
+      list(
+        selected = input_r("peptide_list_rows_selected")
+      )
     )
   })
 }
