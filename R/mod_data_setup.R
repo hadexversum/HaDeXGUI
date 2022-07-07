@@ -168,7 +168,7 @@ mod_data_setup_server <- function(id, dat_adjusted){
         params = list(
           proteins = proteins_from_file,
           chosen_protein = reactive({
-            wait_for(input[["chosen_protein"]]() %in% proteins_from_file())
+            wait_for(input[["chosen_protein"]] %in% proteins_from_file())
 
             input[["chosen_protein"]]
           }),
