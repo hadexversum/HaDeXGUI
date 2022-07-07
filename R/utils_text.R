@@ -13,14 +13,16 @@ react_construct_uptake_lab_y <- function(differential, env = parent.frame()) rla
 )
 
 #' @importFrom glue glue
-react_construct_uptake_title <- function(plot_type, differential, env = parent.frame()) rlang::inject(
+react_construct_uptake_title <- function(plot_type, differential, include_state = TRUE,
+                                         env = parent.frame()) rlang::inject(
   reactive({
     plot_type <- !!plot_type
     theo_str <- if (s_general[["theoretical"]]()) "Theoreotical " else ""
     states_str <- if (!!differential) {
       glue("between {s_state[['state_1']]()} and {s_state[['state_2']]()}")
     } else {
-      glue("for state {s_state[['state']]()} for {params[['chosen_protein']]()}")
+      state_str <- if (!!include_state) glue("for state {s_state[['state']]()} ") else ""
+      glue("{state_str}for {params[['chosen_protein']]()}")
     }
 
     capitalize(glue("{theo_str}{plot_type} plot {states_str}"))
