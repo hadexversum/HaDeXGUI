@@ -55,7 +55,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         state_1 = s_state[["state_1"]](),
         state_2 = s_state[["state_2"]](),
         time_0 = s_timepoints[["time_0"]](),
-        time_100 = s_timepoints[["time_100"]]() %||% max(dat()[["Exposure"]]),
+        time_100 = s_timepoints[["time_100"]](),
         deut_part = params[["deut_part"]]() / 100
       ) %>%
         filter(Exposure %in% s_timepoints[["timepoints"]]())
@@ -68,7 +68,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         protein = params[["chosen_protein"]](),
         state = s_state[["state"]](),
         time_0 = s_timepoints[["time_0"]](),
-        time_100 = s_timepoints[["time_100"]]() %||% max(dat()[["Exposure"]]),
+        time_100 = s_timepoints[["time_100"]](),
         deut_part = params[["deut_part"]]() / 100
       ) %>%
         filter(Exposure %in% s_timepoints[["timepoints"]]())
@@ -84,7 +84,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
            confidence_level = s_diff_test[["confidence_level"]](),
            p_adjustment_method = s_diff_test[["p_adjustment_method"]](),
            time_0 = s_timepoints[["time_0"]](),
-           time_100 = s_timepoints[["time_100"]]()  %||% max(dat()[["Exposure"]]),
+           time_100 = s_timepoints[["time_100"]](),
            deut_part = params[["deut_part"]]() / 100
          ) %>% HaDeX::plot_differential_chiclet(
            diff_uptake_dat = dat_processed(),
