@@ -46,8 +46,6 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     dat_processed <- if (differential) reactive({
       # TODO: check which validates are really needed
       wait_for(s_timepoints[["timepoints"]]())
-      validate(need(s_timepoints[["timepoints"]](),
-                    "Wait for parameters to be loaded"))
 
       HaDeX::create_diff_uptake_dataset(
         dat(),
@@ -60,10 +58,6 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       ) %>%
         filter(Exposure %in% s_timepoints[["timepoints"]]())
     }) else reactive({
-      # TODO: check which validates are really needed
-      validate(need(s_timepoints[["timepoints"]](),
-                    "Wait for parameters to be loaded"))
-
       HaDeX::create_state_uptake_dataset(
         dat(),
         protein = params[["chosen_protein"]](),
@@ -150,7 +144,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
 
     range_specs <- list(
       range_spec({
-        validate(need(!is.null(dat_processed()[["ID"]]), "Wait for data to be processed"))
+        wait_for(dat_processed()[["ID"]])
 
         list(
           min = min(dat_processed()[["ID"]]),
@@ -158,7 +152,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         )
       }, id = "x"),
       range_spec({
-        validate(need(dat_processed(), "Wait for data to be processed"))
+        wait_for(dat_processed())
 
         theo <- dat_processed()[[
           construct_var_name(
