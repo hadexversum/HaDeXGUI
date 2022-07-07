@@ -56,7 +56,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         state_2 = s_state[["state_2"]](),
         time_0 = s_timepoints[["time_0"]](),
         time_100 = s_timepoints[["time_100"]](),
-        deut_part = params[["deut_part"]]() / 100
+        deut_part = params[["deut_part"]]()
       ) %>%
         filter(Exposure %in% s_timepoints[["timepoints"]]())
     }) else reactive({
@@ -69,7 +69,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         state = s_state[["state"]](),
         time_0 = s_timepoints[["time_0"]](),
         time_100 = s_timepoints[["time_100"]](),
-        deut_part = params[["deut_part"]]() / 100
+        deut_part = params[["deut_part"]]()
       ) %>%
         filter(Exposure %in% s_timepoints[["timepoints"]]())
     })
@@ -85,7 +85,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
            p_adjustment_method = s_diff_test[["p_adjustment_method"]](),
            time_0 = s_timepoints[["time_0"]](),
            time_100 = s_timepoints[["time_100"]](),
-           deut_part = params[["deut_part"]]() / 100
+           deut_part = params[["deut_part"]]()
          ) %>% HaDeX::plot_differential_chiclet(
            diff_uptake_dat = dat_processed(),
            diff_p_uptake_dat = .,

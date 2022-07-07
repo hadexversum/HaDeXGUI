@@ -183,7 +183,10 @@ mod_data_setup_server <- function(id, dat_adjusted){
 
           max_range = max_range,
 
-          deut_part = input_r_numeric("deut_part"),
+          deut_part = reactive({
+            # changing user-provided percent to fraction
+            as.numeric(input[["deut_part"]]) / 100
+          }),
           no_deut_control = input_r_numeric("no_deut_control")
         )
       )
