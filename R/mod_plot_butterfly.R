@@ -187,7 +187,10 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         "general", "state", "timepoints", "visualization",
         "range", "labels", "diff_test"
       ),
-      const_params = list(uncertainty_switch = "select")
+      const_params = list(
+        uncertainty_switch = "select",
+        log_x_switch = FALSE
+      )
     )
 
     mod_display_plot_section_server("display_plot", plot_out, dat_out)

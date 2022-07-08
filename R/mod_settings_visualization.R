@@ -37,14 +37,15 @@ mod_settings_visualization_ui <- function(id, uncertainty_switch, log_x_switch =
 #' settings_visualization Server Functions
 #'
 #' @noRd
-mod_settings_visualization_server <- function(id, uncertainty_switch){
+mod_settings_visualization_server <- function(id, uncertainty_switch, log_x_switch){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     return(
       c(
         if (uncertainty_switch == "binary") list(show_uncertainty = input_r("show_uncertainty")) else NULL,
-        if (uncertainty_switch == "select") list(uncertainty_mode = input_r("uncertainty_mode")) else NULL
+        if (uncertainty_switch == "select") list(uncertainty_mode = input_r("uncertainty_mode")) else NULL,
+        if (log_x_switch) list(log_x = input_r("log_x")) else NULL
       )
     )
   })
