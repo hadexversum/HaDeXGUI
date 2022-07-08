@@ -25,7 +25,8 @@ mod_plot_uptake_ui <- function(id, differential) {
           timepoints_switch = "only deut",
           log_x_switch = TRUE,
           range_ids = c("y"),
-          plot_type = "Uptake curves"
+          plot_type = "Uptake curves",
+          peptide_mode = "peptide and state"
         ),
         ns = ns
       )
@@ -122,7 +123,8 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         "visualization", "range", "labels"),
       const_params = list(
         uncertainty_switch = "select",
-        log_x_switch = TRUE
+        log_x_switch = TRUE,
+        peptide_mode = "peptide and state"
       )
     )
 
