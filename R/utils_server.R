@@ -16,7 +16,9 @@ apply_server_settings <- function() {
 
 extract_limits_from_range <- function(range) c(range()[[1]], range()[[2]])
 
-update_axes_and_labels <- function(plt, range_x = NULL, range_y = NULL, labels) {
+update_axes_and_labels <- function(
+    plt, range_x = NULL, range_y = NULL,
+    labels) {
   plt +
     coord_cartesian(
       xlim = ic(range_x %?>% extract_limits_from_range),
@@ -24,17 +26,17 @@ update_axes_and_labels <- function(plt, range_x = NULL, range_y = NULL, labels) 
     ) +
     labs(
       title = labels[["title"]](),
-      x = labels[["x_lab"]](),
-      y = labels[["y_lab"]]()
+      x = labels[["x"]](),
+      y = labels[["y"]]()
     ) +
     theme(
-      plot.title = element_text(size = labels[["title_size"]]()),
-      axis.text.x = element_text(size = labels[["x_lab_size"]]()),
-      axis.title.x = element_text(size = labels[["x_lab_size"]]()),
-      axis.title.y = element_text(size = labels[["y_lab_size"]]()),
-      axis.text.y = element_text(size = labels[["y_lab_size"]]()),
-      legend.text = element_text(size = labels[["x_lab_size"]]()),
-      legend.title = element_text(size = labels[["x_lab_size"]]())
+      plot.title = element_text(size = labels[["size_title"]]()),
+      axis.text.x = element_text(size = labels[["size_x"]]()),
+      axis.title.x = element_text(size = labels[["size_x"]]()),
+      axis.title.y = element_text(size = labels[["size_y"]]()),
+      axis.text.y = element_text(size = labels[["size_y"]]()),
+      legend.text = element_text(size = labels[["size_x"]]()),
+      legend.title = element_text(size = labels[["size_x"]]())
     )
 }
 

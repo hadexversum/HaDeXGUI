@@ -123,10 +123,6 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     ### reactives for settings servers
 
-    default_title <- react_construct_uptake_title("chiclet", differential)
-
-    default_lab_y <- reactive({ "Exposure [min]" })
-
     range_specs <- list(
       range_spec({
         wait_for(nrow(dat_processed()) > 0)
@@ -136,6 +132,12 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
           max = max(dat_processed()[["ID"]])
         )
       }, id = "x")
+    )
+
+    label_specs <- list(
+      label_spec(react_construct_uptake_title("butterfly", differential), "title"),
+      label_spec("Exposure [min]", "y"),
+      label_spec("Peptide ID", "x")
     )
 
     ### settings servers

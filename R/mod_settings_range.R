@@ -51,7 +51,6 @@ mod_settings_range_server <- function(id,
           )
         })
       )
-
     }
 
     return(

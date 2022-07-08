@@ -21,12 +21,12 @@ mod_settings_labels_ui <- function(id, plot_type, differential){
           value = "" # updatable by observer
         ),
         textInput(
-          inputId = ns("x_lab"),
+          inputId = ns("x"),
           label = paste0(construct_plot_label(plot_type, differential)," axis x label:"),
-          value = "Peptide ID"
+          value = "" # updatable by observer
         ),
         textInput(
-          inputId = ns("y_lab"),
+          inputId = ns("y"),
           label = paste0(construct_plot_label(plot_type, differential), " axis y label:"),
           value = "" # updatable by observer
         )
@@ -34,19 +34,19 @@ mod_settings_labels_ui <- function(id, plot_type, differential){
       column(
         width = 2,
         numericInput_h(
-          inputId = ns("title_size"),
+          inputId = ns("size_title"),
           label = "Size:",
           value = 15,
           min = 5
         ),
         numericInput_h(
-          inputId = ns("x_lab_size"),
+          inputId = ns("size_x"),
           label = "Size:",
           value = 15,
           min = 5
         ),
         numericInput_h(
-          inputId = ns("y_lab_size"),
+          inputId = ns("size_y"),
           label = "Size:",
           value = 15,
           min = 5
@@ -62,26 +62,35 @@ mod_settings_labels_ui <- function(id, plot_type, differential){
 #' settings_labels Server Functions
 #'
 #' @noRd
-mod_settings_labels_server <- function(id, default_title, default_lab_y){
-  moduleServer( id, function(input, output, session){
+mod_settings_labels_server <- function(id, label_specs){
+  moduleServer(id, function(input, output, session){
     ns <- session$ns
 
-    observe({
-      updateTextInput(
-        session,
-        inputId = "title",
-        value = default_title()
+    for (spec in label_specs) {
+      rlang::inject(
+        observe({
+          updateTextInput(
+            session,
+            inputId = (!!spec)[["id"]],
+            value = (!!spec)[["expr_react"]]()
+          )
+        })
       )
-
-      updateTextInput(
-        session,
-        inputId = "y_lab",
-        value = default_lab_y()
-      )
-    })
+    }
 
     return(
-      input_r_list("title", "x_lab", "y_lab", "title_size", "x_lab_size", "y_lab_size")
+      input_r_list("title", "x", "y", "size_title", "size_x", "size_y")
     )
   })
+}
+
+label_spec <- function(expr, id,
+                       env = parent.frame()) {
+  expr_react <- if (is.reactive(expr)) expr
+  else reactive(substitute(expr), quoted = TRUE, env = env)
+
+  list(
+    id = id,
+    expr_react = expr_react
+  )
 }

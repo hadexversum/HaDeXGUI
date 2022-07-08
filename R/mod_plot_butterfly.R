@@ -138,10 +138,6 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
 
     ### server reactives
 
-    default_title <- react_construct_uptake_title("butterfly", differential)
-
-    default_lab_y <- react_construct_uptake_lab_y(differential)
-
     range_specs <- list(
       range_spec({
         wait_for(nrow(dat_processed()) > 0)
@@ -176,6 +172,12 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
           max = ceiling(max(theo, ntheo, na.rm = TRUE)) + 1
         )
       }, id = "y")
+    )
+
+    label_specs <- list(
+      label_spec(react_construct_uptake_title("butterfly", differential), "title"),
+      label_spec("Peptide ID", "x"),
+      label_spec(react_construct_uptake_lab_y(differential), "y")
     )
 
     ### server settings
