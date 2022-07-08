@@ -20,7 +20,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
         names = c("general", "state", "timepoints", "diff_test", "visualization", "range", "labels"),
         params = list(
           differential = differential,
-          uncertainty_switch = "select",
+          uncertainty_mode = "select",
           range_ids = c("x", "y"),
           plot_type = "Butterfly"
         ),
@@ -86,7 +86,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
            diff_p_uptake_dat = .,
            theoretical = s_general[["theoretical"]](),
            fractional = s_general[["fractional"]](),
-           uncertainty_type = s_visualization[["uncertainty_mode"]](),
+           uncertainty_type = s_visualization[["uncertainty_type"]](),
            show_houde_interval = s_diff_test[["show_houde"]](),
            show_tstud_confidence = s_diff_test[["show_tstud"]](),
            confidence_level = s_diff_test[["confidence_level"]]()
@@ -110,7 +110,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         HaDeX::plot_butterfly(
           theoretical = s_general[["theoretical"]](),
           fractional = s_general[["fractional"]](),
-          uncertainty_type = s_visualization[["uncertainty_mode"]]()
+          uncertainty_type = s_visualization[["uncertainty_type"]]()
         ) +
           geom_point_interactive( #TODO: fix this redundancy?
             aes(tooltip = paste0(
@@ -188,7 +188,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         "range", "labels", "diff_test"
       ),
       const_params = list(
-        uncertainty_switch = "select",
+        uncertainty_mode = "select",
         log_x_switch = FALSE
       )
     )

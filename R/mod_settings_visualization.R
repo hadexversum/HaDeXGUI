@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_visualization_ui <- function(id, uncertainty_switch, log_x_switch = FALSE){
+mod_settings_visualization_ui <- function(id, uncertainty_mode, log_x_switch = FALSE){
   ns <- NS(id)
   collapsible_card(
     title = "Visualization",
@@ -18,14 +18,14 @@ mod_settings_visualization_ui <- function(id, uncertainty_switch, log_x_switch =
       value = TRUE
     ) %nullify if% !log_x_switch,
     switch(
-      uncertainty_switch,
+      uncertainty_mode,
       binary = checkboxInput_h(
         inputId = ns("show_uncertainty"),
         label = "Show uncertainty",
         value = TRUE
       ),
       select = selectInput_h(
-        inputId = ns("uncertainty_mode"),
+        inputId = ns("uncertainty_type"),
         label = "Show uncertainty as:",
         choices = c("ribbon", "bars", "bars + line"),
         selected = "ribbon"
@@ -37,14 +37,14 @@ mod_settings_visualization_ui <- function(id, uncertainty_switch, log_x_switch =
 #' settings_visualization Server Functions
 #'
 #' @noRd
-mod_settings_visualization_server <- function(id, uncertainty_switch, log_x_switch){
+mod_settings_visualization_server <- function(id, uncertainty_mode, log_x_switch){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     return(
       c(
-        if (uncertainty_switch == "binary") list(show_uncertainty = input_r("show_uncertainty")) else NULL,
-        if (uncertainty_switch == "select") list(uncertainty_mode = input_r("uncertainty_mode")) else NULL,
+        if (uncertainty_mode == "binary") list(show_uncertainty = input_r("show_uncertainty")) else NULL,
+        if (uncertainty_mode == "select") list(uncertainty_type = input_r("uncertainty_type")) else NULL,
         if (log_x_switch) list(log_x = input_r("log_x")) else NULL
       )
     )

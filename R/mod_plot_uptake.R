@@ -21,8 +21,8 @@ mod_plot_uptake_ui <- function(id, differential) {
                   "visualization", "range", "labels"),
         params = list(
           differential = differential,
-          uncertainty_switch = "select",
-          timepoints_switch = "only deut",
+          uncertainty_mode = "select",
+          timepoints_mode = "only deut",
           log_x_switch = TRUE,
           range_ids = c("y"),
           plot_type = "Uptake curves",
@@ -77,7 +77,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         kin_dat = dat_processed(),
         theoretical = s_general[["theoretical"]](),
         fractional = s_general[["fractional"]](),
-        uncertainty_type = s_visualization[["uncertainty_mode"]](),
+        uncertainty_type = s_visualization[["uncertainty_type"]](),
         log_x = s_visualization[["log_x"]]()
       ) %>% update_axes_and_labels(range_y = s_range[["y"]], labels = s_labels) %>%
         suppressMessages()
@@ -122,7 +122,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       c("general", "timepoints", "peptide",
         "visualization", "range", "labels"),
       const_params = list(
-        uncertainty_switch = "select",
+        uncertainty_mode = "select",
         log_x_switch = TRUE,
         peptide_mode = "peptide and state"
       )

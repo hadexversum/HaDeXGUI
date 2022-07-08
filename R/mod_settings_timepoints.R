@@ -7,11 +7,11 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_timepoints_ui <- function(id, timepoints_switch = "show and deut"){
+mod_settings_timepoints_ui <- function(id, timepoints_mode = "show and deut"){
   ns <- NS(id)
 
   switch(
-    timepoints_switch,
+    timepoints_mode,
     `show and deut` = collapsible_card(
       title = "Timepoints",
       fluidRow(

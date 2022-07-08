@@ -20,7 +20,7 @@ mod_plot_chiclet_ui <- function(id, differential){
         names = c("general", "state", "timepoints", "diff_test", "visualization", "range", "labels"),
         params = list(
           differential = differential,
-          uncertainty_switch = "binary",
+          uncertainty_mode = "binary",
           range_ids = "x",
           plot_type = "Chiclet"
         ),
@@ -148,7 +148,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         "range", "labels", "diff_test"
       ),
       const_params = list(
-        uncertainty_switch = "binary",
+        uncertainty_mode = "binary",
         log_x_switch = FALSE
       )
     )
