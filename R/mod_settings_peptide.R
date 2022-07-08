@@ -24,22 +24,13 @@ mod_settings_peptide_ui <- function(id){
 #' settings_peptide Server Functions
 #'
 #' @noRd
-mod_settings_peptide_server <- function(id, dat, p_chosen_protein){
+mod_settings_peptide_server <- function(id, dat, peptide_table){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    peptides <- reactive({
-      dat() %>%
-        filter(Protein == p_chosen_protein()) %>%
-        select(Sequence, State, Start, End) %>%
-        unique(.) %>%
-        arrange(Start, End)
-
-    })
-
     output[["peptide_list"]] <- DT::renderDataTable({
       DT::datatable(
-        data = peptides(),
+        data = peptide_table(),
         class = "table-bordered table-condensed",
         extensions = "Buttons",
         options = list(pageLength = 10, dom = "tip", autoWidth = TRUE, target = 'cell'),
