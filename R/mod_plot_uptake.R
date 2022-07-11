@@ -189,10 +189,15 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         "timepoints", "peptide", "visualization", "diff_test", "range", "labels"
       ),
       const_params = list(
+        # general:
+        theoretical_switch = TRUE,
+        # visualization:
         uncertainty_mode = "select",
         log_x_switch = TRUE,
-        theoretical_switch = TRUE,
-        peptide_mode = if (differential) "single peptide" else "peptide and state"
+        # peptide:
+        peptide_mode = if (differential) "single peptide" else "peptide and state",
+        # diff_test:
+        test_mode = "select shown"
       )
     )
 

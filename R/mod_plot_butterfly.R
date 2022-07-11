@@ -188,9 +188,13 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         "range", "labels", "diff_test"
       ),
       const_params = list(
+        # general:
+        theoretical_switch = TRUE,
+        # visualization:
         uncertainty_mode = "select",
         log_x_switch = FALSE,
-        theoretical_switch = TRUE
+        # diff_test:
+        test_mode = "select shown"
       )
     )
 
