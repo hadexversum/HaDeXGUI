@@ -16,9 +16,9 @@ mod_settings_subregion_ui <- function(id) {
     sliderInput(
       inputId = ns("subregion"),
       label = "Choose subregion of the protein sequence:",
-      min = 0,
-      max = 1,
-      value = c(0, 1),
+      min = 1,
+      max = 2,
+      value = c(1, 2),
       step = 1
     )
   )
@@ -27,15 +27,26 @@ mod_settings_subregion_ui <- function(id) {
 #' settings_subregion Server Functions
 #'
 #' @noRd
-mod_settings_subregion_server <- function(id) {
+mod_settings_subregion_server <- function(id, p_max_range) {
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 
+    ### observers updating inputs
+
+    observe({
+      updateSliderInput(
+        session = session,
+        inputId = "subregion",
+        max = p_max_range(),
+        value = c(1, p_max_range())
+      )
+    })
+
+    ### return
+
+    return(
+      input_r_list("subregion")
+    )
   })
 }
 
-## To be copied in the UI
-# mod_settings_subregion_ui("settings_subregion_1")
-
-## To be copied in the server
-# mod_settings_subregion_server("settings_subregion_1")
