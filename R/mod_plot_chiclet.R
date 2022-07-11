@@ -149,7 +149,8 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       ),
       const_params = list(
         uncertainty_mode = "binary",
-        log_x_switch = FALSE
+        log_x_switch = FALSE,
+        theoretical_switch = TRUE
       )
     )
 
