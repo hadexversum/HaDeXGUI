@@ -12,26 +12,53 @@ mod_data_setup_ui <- function(id){
   HaDeX_plotSettingsSection(
     title = "Select the parameters:",
 
-    uiOutput(ns("gen_chosen_protein")),
-    uiOutput(ns("gen_chosen_control")),
-    uiOutput(ns("gen_no_deut_control")),
-    numericInput_h(inputId = ns("deut_part"),
-                   label = "Choose D20 concentration [%]: ",
-                   value = 90,
-                   min = 0, max = 100, step = 1,
-                   width = "100%"),
+    selectInput_h(
+      inputId = ns("chosen_protein"),
+      label = "Choose protein: ",
+      choices = "",
+      selected = "",
+      width = "100%"
+    ),
+    selectInput_h(
+      inputId = ns("chosen_control"),
+      label = "Maximal exchange control: ",
+      choices = "",
+      width = "100%"
+    ),
+    selectInput_h(
+      inputId = ns("no_deut_control"),
+      label = "No deuterated time point:",
+      choices = "",
+      selected = ""
+    ),
+    numericInput_h(
+      inputId = ns("deut_part"),
+      label = "Choose D20 concentration [%]: ",
+      value = 90,
+      min = 0, max = 100, step = 1,
+      width = "100%"
+    ),
 
     fluidRow(
       column(
         width = 6,
-        numericInput_h(inputId = ns("sequence_start_shift"),
-                       label = "Sequence start:",
-                       value = 1, step = 1, min = 1,
-                       width = "100%"),
+        numericInput_h(
+          inputId = ns("sequence_start_shift"),
+          label = "Sequence start:",
+          value = 1, step = 1, min = 1,
+          width = "100%"
+        ),
       ),
       column(
         width = 6,
-        uiOutput(ns("gen_sequence_length"))
+        numericInput_h(
+          inputId = ns("sequence_length"),
+          label = "Sequence length:",
+          value = 0,
+          step = 1,
+          min = 0,
+          width = "100%"
+        )
       )
     ),
     verbatimTextOutput(ns("sequence_length_exp_info"))
@@ -90,23 +117,26 @@ mod_data_setup_server <- function(id, dat_adjusted){
         mutate(Start = Start + input[["sequence_start_shift"]] - 1,
                End = End + input[["sequence_start_shift"]] - 1) %>%
         # TODO: this function IS NOT exported from HaDeX due to empty line
-        HaDeX:::create_control_dataset(control_protein = input[["chosen_protein"]],
-                                       control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
-                                       control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3])
+        HaDeX:::create_control_dataset(
+          control_protein = input[["chosen_protein"]],
+          control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
+          control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3]
+        )
     })
 
-    ### ui outputs
+    ### inputs update observers
 
-    output[["gen_chosen_protein"]] <- renderUI({
-      selectInput_h(inputId = ns("chosen_protein"),
-                    label = "Choose protein: ",
-                    choices = proteins_from_file(),
-                    selected = proteins_from_file()[1],
-                    width = "100%")
+    observe({
+      updateSelectInput(
+        session = session,
+        inputId = "chosen_protein",
+        choices = proteins_from_file(),
+        selected = proteins_from_file()[1]
+      )
     })
 
-    output[["gen_chosen_control"]] <- renderUI({
-      req(input[["chosen_protein"]])
+    observe({
+      wait_for(input[["chosen_protein"]])
 
       options_for_control <- dat_adjusted() %>%
           filter(Protein == input[["chosen_protein"]]) %>%
@@ -117,28 +147,33 @@ mod_data_setup_server <- function(id, dat_adjusted){
           mutate(control = paste0(Protein, " | ", State, " | ", Exposure)) %>%
           select(control)
 
-      selectInput_h(inputId = ns("chosen_control"),
-                    label = "Maximal exchange control: ",
-                    choices = options_for_control,
-                    width = "100%")
+      updateSelectInput(
+        session = session,
+        inputId = "chosen_control",
+        choices = options_for_control
+      )
     })
 
-    output[["gen_sequence_length"]] <- renderUI({
-      numericInput_h(inputId = ns("sequence_length"),
-                     label = "Sequence length:",
-                     #TODO: is the hardcoded value relevant for ex. input?
-                     value = max_range_from_file(), step = 1,
-                     min = max_range_from_file(),
-                     width = "100%")
+    observe({
+      updateNumericInput(
+        session = session,
+        inputId = "sequence_length",
+        #TODO: is the hardcoded value relevant for ex. input?
+        value = max_range_from_file(),
+        min = max_range_from_file(),
+      )
     })
 
-    output[["gen_no_deut_control"]] <- renderUI({
-      req(times_from_file())
+    observe({
+      wait_for(times_from_file())
       no_deut_times <- times_from_file()[times_from_file() < 0.1]
-      selectInput_h(inputId = ns("no_deut_control"),
-                    label = "No deuterated time point:",
-                    choices = no_deut_times,
-                    selected = max(no_deut_times))
+      updateSelectInput(
+        session = session,
+        inputId = "no_deut_control",
+        label = "No deuterated time point:",
+        choices = no_deut_times,
+        selected = max(no_deut_times)
+      )
     })
 
     ### other outputs
