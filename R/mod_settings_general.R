@@ -35,7 +35,8 @@ mod_settings_general_server <- function(id, theoretical_switch){
     return(
       c(
         list(fractional = input_r("fractional")),
-        if (theoretical_switch) list(theoretical = input_r("theoretical")) else NULL
+        if (theoretical_switch) list(theoretical = input_r("theoretical"))
+        else list(theoretical = reactive({ FALSE }))
       )
     )
   })
