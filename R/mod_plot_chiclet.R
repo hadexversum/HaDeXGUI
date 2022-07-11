@@ -153,6 +153,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         # visualization:
         uncertainty_mode = "binary",
         log_x_switch = FALSE,
+        volcano_switch = FALSE,
         # diff_test:
         test_mode = "select shown"
       )

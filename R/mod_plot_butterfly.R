@@ -193,6 +193,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         # visualization:
         uncertainty_mode = "select",
         log_x_switch = FALSE,
+        volcano_switch = FALSE,
         # diff_test:
         test_mode = "select shown"
       )

@@ -194,6 +194,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         # visualization:
         uncertainty_mode = "select",
         log_x_switch = TRUE,
+        volcano_switch = FALSE,
         # peptide:
         peptide_mode = if (differential) "single peptide" else "peptide and state",
         # diff_test:
