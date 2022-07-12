@@ -1,4 +1,4 @@
-#' settings_general UI Function
+#' settings_calculation UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,16 +7,17 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_general_ui <- function(id, theoretical_switch = TRUE){
+mod_settings_calculation_ui <- function(id, mode = "frac and theo"){
+  stopifnot(mode %in% c("frac and theo", "only frac"))
   ns <- NS(id)
 
   collapsible_card(
-    title = "General settings",
+    title = "Calculation",
     checkboxInput_h(
       inputId = ns("theoretical"),
       label = "Theoretical calculations",
       value = FALSE
-    ) %nullify if% !theoretical_switch,
+    ) %nullify if% !(mode == "frac and theo"),
     checkboxInput_h(
       inputId = ns("fractional"),
       label = "Fractional values",
@@ -25,17 +26,18 @@ mod_settings_general_ui <- function(id, theoretical_switch = TRUE){
   )
 }
 
-#' settings_general Server Functions
+#' settings_calculation Server Functions
 #'
 #' @noRd
-mod_settings_general_server <- function(id, theoretical_switch){
+mod_settings_calculation_server <- function(id, mode = "frac and theo"){
+  stopifnot(mode %in% c("frac and theo", "only frac"))
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 
     return(
       c(
         list(fractional = input_r("fractional")),
-        if (theoretical_switch) list(theoretical = input_r("theoretical"))
+        if (mode == "frac and theo") list(theoretical = input_r("theoretical"))
         else list(theoretical = reactive({ FALSE }))
       )
     )

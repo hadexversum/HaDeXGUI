@@ -7,11 +7,13 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_state_ui <- function(id, differential){
+mod_settings_state_ui <- function(id, mode){
+  stopifnot(mode %in% c("disabled", "single", "double"))
   ns <- NS(id)
 
-  if (differential)
-    collapsible_card(
+  switch(
+    mode,
+    double = collapsible_card(
       title = "States",
       p("Differential plot presents the uptake difference between State 1 and State 2."),
       splitLayout(
@@ -26,9 +28,8 @@ mod_settings_state_ui <- function(id, differential){
           choices = ""
         )
       )
-    )
-  else
-    collapsible_card(
+    ),
+    single = collapsible_card(
       title = "State",
       selectInput_h(
         inputId = ns("state"),
@@ -36,17 +37,21 @@ mod_settings_state_ui <- function(id, differential){
         choices = "",
         selected = ""
       )
-    )
+    ),
+    disabled = NULL
+  )
 }
 
 #' settings_state Server Functions
 #'
 #' @noRd
-mod_settings_state_server <- function(id, differential, p_states_chosen_protein){
-  moduleServer( id, function(input, output, session){
+mod_settings_state_server <- function(id, mode,
+                                      p_states_chosen_protein){
+  stopifnot(mode %in% c("disabled", "single", "double"))
+  moduleServer( id, function(input, output, session) {
     ns <- session$ns
 
-    if (differential) {
+    if (mode == "double") {
       observe({
         updateSelectInput(
           session,
@@ -66,7 +71,7 @@ mod_settings_state_server <- function(id, differential, p_states_chosen_protein)
           selected = not_state_1[1]
         )
       })
-    } else {
+    } else if (mode == "single") {
       observe({
         updateSelectInput(
           session,
@@ -78,27 +83,24 @@ mod_settings_state_server <- function(id, differential, p_states_chosen_protein)
     }
 
     return(
-      if (differential)
-        list(
-          state_1 = reactive({
-            wait_for(input[["state_1"]] %in% p_states_chosen_protein())
+      if (mode == "double") list(
+        state_1 = reactive({
+          wait_for(input[["state_1"]] %in% p_states_chosen_protein())
+          input[["state_1"]]
+        }),
+        state_2 = reactive({
+          wait_for(input[["state_1"]] != input[["state_2"]])
+          input[["state_2"]]
+        })
+      )
+      else if (mode == "single") list(
+        state = reactive({
+          validate(need(input[["state"]] %in% p_states_chosen_protein(),
+                        "Wait for the parameters to be loaded."))
 
-            input[["state_1"]]
-          }),
-          state_2 = reactive({
-            wait_for(input[["state_1"]] != input[["state_2"]])
-            input[["state_2"]]
-          })
-        )
-      else
-        list(
-          state = reactive({
-            validate(need(input[["state"]] %in% p_states_chosen_protein(),
-                          "Wait for the parameters to be loaded."))
-
-            input[["state"]]
-          })
-        )
+          input[["state"]]
+        })
+      )
     )
-  })
+  }) %nullify if% (mode == "disabled")
 }

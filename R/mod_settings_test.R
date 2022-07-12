@@ -1,4 +1,4 @@
-#' settings_diff_test UI Function
+#' settings_test UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,12 +7,13 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_diff_test_ui <- function(id, differential, test_mode = "select shown"){
+mod_settings_test_ui <- function(id, mode){
+  stopifnot(mode %in% c("selectible", "fixed", "disabled"))
   ns <- NS(id)
 
   collapsible_card(
     title = "Test",
-    if (test_mode == "select shown") fluidRow(
+    if (mode == "selectible") fluidRow(
       column(
         width = 6,
         checkboxInput_h(
@@ -45,7 +46,7 @@ mod_settings_diff_test_ui <- function(id, differential, test_mode = "select show
           type = "visswitch"
         )
       )
-    ) else if (test_mode == "fixed") {
+    ) else if (mode == "fixed") {
       tagList(
         selectInput_h(
           inputId = ns("confidence_level"),
@@ -61,19 +62,20 @@ mod_settings_diff_test_ui <- function(id, differential, test_mode = "select show
         )
       )
     }
-  ) %nullify if% !differential
+  ) %nullify if% (mode == "disabled")
 }
 
-#' settings_diff_test Server Functions
+#' settings_test Server Functions
 #'
 #' @noRd
-mod_settings_diff_test_server <- function(id, differential, test_mode){
+mod_settings_test_server <- function(id, mode){
+  stopifnot(mode %in% c("selectible", "fixed", "disabled"))
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     ### observers modifying input
 
-    if (test_mode == "select shown") {
+    if (mode == "selectible") {
       observe({
         toggle_id(
           input[["show_tstud"]],
@@ -86,7 +88,7 @@ mod_settings_diff_test_server <- function(id, differential, test_mode){
 
     return(
       c(
-        if (test_mode == "select shown") list(
+        if (mode == "selectible") list(
           show_houde = input_r("show_houde"),
           show_tstud = input_r("show_tstud")
         ) else NULL,
@@ -96,6 +98,6 @@ mod_settings_diff_test_server <- function(id, differential, test_mode){
         )
       )
     )
-  }) %nullify if% !differential
+  }) %nullify if% (mode == "disabled")
 }
 

@@ -7,9 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_visualization_ui <- function(id, uncertainty_mode,
-                                          log_x_switch = FALSE,
-                                          volcano_switch = FALSE){
+mod_settings_visualization_ui <- function(id, mode){
   ns <- NS(id)
   collapsible_card(
     title = "Visualization",
@@ -18,22 +16,18 @@ mod_settings_visualization_ui <- function(id, uncertainty_mode,
       inputId = ns("log_x"),
       label = "Logaritmic x scale",
       value = TRUE
-    ) %nullify if% !log_x_switch,
-    switch(
-      uncertainty_mode,
-      binary = checkboxInput_h(
-        inputId = ns("show_uncertainty"),
-        label = "Show uncertainty",
-        value = TRUE
-      ),
-      select = selectInput_h(
-        inputId = ns("uncertainty_type"),
-        label = "Show uncertainty as:",
-        choices = c("ribbon", "bars", "bars + line"),
-        selected = "ribbon"
-      ),
-      none = NULL
-    ),
+    ) %nullify if% !(mode %in% c("uptake")),
+    checkboxInput_h(
+      inputId = ns("show_uncertainty"),
+      label = "Show uncertainty",
+      value = TRUE
+    ) %nullify if% !(mode %in% c("chiclet")),
+    selectInput_h(
+      inputId = ns("uncertainty_type"),
+      label = "Show uncertainty as:",
+      choices = c("ribbon", "bars", "bars + line"),
+      selected = "ribbon"
+    ) %nullify if% !(mode %in% c("uptake", "butterfly")),
     tagList(
       selectInput_h(
         inputId = ns("shown_interval"),
@@ -56,23 +50,23 @@ mod_settings_visualization_ui <- function(id, uncertainty_mode,
         label = "Show insignificant values in grey?",
         value = FALSE
       )
-    ) %nullify if% !volcano_switch
+    ) %nullify if% !(mode %in% c("volcano"))
   )
 }
 
 #' settings_visualization Server Functions
 #'
 #' @noRd
-mod_settings_visualization_server <- function(id, uncertainty_mode, log_x_switch, volcano_switch){
+mod_settings_visualization_server <- function(id, mode){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     return(
       c(
-        if (uncertainty_mode == "binary") list(show_uncertainty = input_r("show_uncertainty")) else NULL,
-        if (uncertainty_mode == "select") list(uncertainty_type = input_r("uncertainty_type")) else NULL,
-        if (log_x_switch) list(log_x = input_r("log_x")) else NULL,
-        if (volcano_switch) list(
+        if (mode == "chiclet") list(show_uncertainty = input_r("show_uncertainty")) else NULL,
+        if (mode %in% c("uptake", "butterfly")) list(uncertainty_type = input_r("uncertainty_type")) else NULL,
+        if (mode == "uptake") list(log_x = input_r("log_x")) else NULL,
+        if (mode == "volcano") list(
           shown_interval = input_r("shown_interval"),
           distinguish_timepoints = input_r("distinguish_timepoints"),
           hide_insignificant = input_r("hide_insignificant"),

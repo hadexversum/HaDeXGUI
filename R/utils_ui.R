@@ -118,7 +118,7 @@ construct_var_name <- function(diff, theo, frac, var)
     var
   )
 
-install_settings_ui <- function(names, params, ns) {
+install_settings_ui <- function(names, modes, params, ns) {
   lapply(names, function(name) {
     ui_fun <- getFromNamespace(paste0("mod_settings_", name, "_ui"), "HaDeXGUI")
     arg_names <- names(formals(ui_fun))
@@ -126,13 +126,16 @@ install_settings_ui <- function(names, params, ns) {
     args <- setNames(lapply(
       arg_names,
       function(arg) {
-        if (arg %in% names(params)) params[[arg]] else NULL
+        if (arg == "id") ns(name)
+        else if (arg == "mode") {
+          if (name %in% names(modes)) modes[[name]] else NULL
+        } else {
+          if (arg %in% names(params)) params[[arg]] else NULL
+        }
       }
     ), arg_names)
 
-    args <- args[!sapply(args, is.null)]
-
-    args[["id"]] <- ns(name)
+    args <- args[sapply(args, not_null)]
 
     do.call(ui_fun, args = args)
   })

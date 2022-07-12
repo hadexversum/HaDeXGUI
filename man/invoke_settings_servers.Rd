@@ -4,7 +4,7 @@
 \alias{invoke_settings_servers}
 \title{Invoke multiple settings servers with automatic parameter binding}
 \usage{
-invoke_settings_servers(names, const_params = list(), env = parent.frame())
+invoke_settings_servers(names, modes = list(), env = parent.frame())
 }
 \arguments{
 \item{names}{[character]
@@ -12,14 +12,14 @@ a vector of names of servers. This should be only the direct name of a
 server, eg. name of `mod_settings_*_server` should be provided as
 `"*"`.}
 
+\item{env}{[environment]
+an environment in which the servers should be installed. Calling
+environment by default.}
+
 \item{const_params}{[named list]
 a list of constant parameters passed to a servers if they are able to
 accept non-reactive replacements of some of their parameters. Emply list
 by default.}
-
-\item{env}{[environment]
-an environment in which the servers should be installed. Calling
-environment by default.}
 }
 \description{
 Invoke multiple settings servers with automatic parameter binding

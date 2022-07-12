@@ -18,23 +18,24 @@ mod_plot_uptake_ui <- function(id, differential) {
 
       !!!install_settings_ui(
         names = c(
-          "general",
-          if (differential) "state" else NULL,
-          "timepoints", "peptide", "visualization", "diff_test", "range", "labels"
+          "calculation", "state", "time", "peptide", "visualization", "test", "range", "label"
+        ),
+        modes = c(
+          time = "only limits",
+          state = if (differential) "double" else "disabled",
+          test = if (differential) "selectible" else "disabled",
+          peptide = if (differential) "single peptide" else "multiple peptides and states",
+          visualization = "uptake"
         ),
         params = list(
-          differential = differential,
-          uncertainty_mode = "select",
-          timepoints_mode = "only deut",
-          log_x_switch = TRUE,
           range_ids = c("y"),
           plot_type = "Uptake curves",
-          peptide_mode = if (differential) "single peptide" else "peptide and state"
+          differential = differential
         ),
         ns = ns
       )
     ),
-    displayPanel = mod_display_plot_section_ui(
+    displayPanel = mod_display_plot_ui(
       ns("display_plot"),
       plot_label = construct_plot_label("Uptake curves", differential),
       additional_data_info = cosntruct_uptake_plots_data_info(differential)
@@ -72,17 +73,17 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         protein = params[["chosen_protein"]](),
         state_1 = s_state[["state_1"]](),
         state_2 = s_state[["state_2"]](),
-        p_adjustment_method = s_diff_test[["p_adjustment_method"]](),
-        confidence_level = s_diff_test[["confidence_level"]](),
-        time_0 = s_timepoints[["time_0"]](),
-        time_100 = s_timepoints[["time_100"]](),
+        p_adjustment_method = s_test[["p_adjustment_method"]](),
+        confidence_level = s_test[["confidence_level"]](),
+        time_0 = s_time[["0"]](),
+        time_100 = s_time[["100"]](),
         deut_part = params[["deut_part"]]()
       )
     }) else reactive({
       validate(need(s_peptide[["selected"]](),
                     "Please select at least one peptide from the table on the left."))
-      validate(need(sum(s_timepoints[["time_0"]]() < params[["times"]]() &
-                          params[["times"]]() < s_timepoints[["time_100"]]()),
+      validate(need(sum(s_time[["0"]]() < params[["times"]]() &
+                          params[["times"]]() < s_time[["100"]]()),
                     "Not enough time points between Deut 0% and Deut 100%"))
 
       HaDeX::create_kinetic_dataset(
@@ -90,8 +91,8 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         peptide_list = peptide_table()[s_peptide[["selected"]](), ],
         protein = params[["chosen_protein"]](),
         deut_part = params[["deut_part"]](),
-        time_0 = s_timepoints[["time_0"]](),
-        time_100 = s_timepoints[["time_100"]]()
+        time_0 = s_time[["0"]](),
+        time_100 = s_time[["100"]]()
       )
     })
 
@@ -99,44 +100,44 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       HaDeX::plot_differential_uptake_curve(
         diff_p_uptake_dat = dat_processed(),
         sequence = peptide_table()[s_peptide[["selected"]](), "Sequence"],
-        theoretical = s_general[["theoretical"]](),
-        fractional = s_general[["fractional"]](),
+        theoretical = s_calculation[["theoretical"]](),
+        fractional = s_calculation[["fractional"]](),
         uncertainty_type = s_visualization[["uncertainty_type"]](),
         log_x = s_visualization[["log_x"]](),
-        show_houde_interval = s_diff_test[["show_houde"]](),
-        show_tstud_confidence = s_diff_test[["show_tstud"]]()
+        show_houde_interval = s_test[["show_houde"]](),
+        show_tstud_confidence = s_test[["show_tstud"]]()
       ) %>%
-        update_axes_and_labels(range_y = s_range[["y"]], labels = s_labels) %>%
+        update_axes_and_labels(range_y = s_range[["y"]], labels = s_label) %>%
         suppressMessages()
     }) else reactive({
       HaDeX::plot_kinetics(
         kin_dat = dat_processed(),
-        theoretical = s_general[["theoretical"]](),
-        fractional = s_general[["fractional"]](),
+        theoretical = s_calculation[["theoretical"]](),
+        fractional = s_calculation[["fractional"]](),
         uncertainty_type = s_visualization[["uncertainty_type"]](),
         log_x = s_visualization[["log_x"]]()
       ) %>%
-        update_axes_and_labels(range_y = s_range[["y"]], labels = s_labels) %>%
+        update_axes_and_labels(range_y = s_range[["y"]], labels = s_label) %>%
         suppressMessages()
     })
 
     dat_out <- if (differential) reactive({
       HaDeX::show_diff_uptake_data(
         diff_uptake_dat = dat_processed(),
-        theoretical = s_general[["theoretical"]](),
-        fractional = s_general[["fractional"]]()
+        theoretical = s_calculation[["theoretical"]](),
+        fractional = s_calculation[["fractional"]]()
       )
     }) else reactive({
       HaDeX::show_kinetic_data(
         kin_dat = dat_processed(),
-        theoretical = s_general[["theoretical"]](),
-        fractional = s_general[["fractional"]]()
+        theoretical = s_calculation[["theoretical"]](),
+        fractional = s_calculation[["fractional"]]()
       )
     })
 
     range_specs <- list(
       if (differential) range_spec({
-        if (s_general[["fractional"]]()) {
+        if (s_calculation[["fractional"]]()) {
           max_abs <- round_any(max(dat_processed()[c("diff_frac_deut_uptake", "diff_theo_frac_deut_uptake")], na.rm = TRUE), 5, ceiling)
 
           list(
@@ -157,7 +158,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
           )
         }
       }, "y") else range_spec({
-        if (s_general[["fractional"]]()) {
+        if (s_calculation[["fractional"]]()) {
           list(
             min = -50,
             max = 200,
@@ -184,24 +185,17 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
 
     invoke_settings_servers(
       names = c(
-        "general",
-        if (differential) "state" else NULL,
-        "timepoints", "peptide", "visualization", "diff_test", "range", "labels"
+        "calculation", "state", "time", "peptide", "visualization", "test", "range", "label"
       ),
-      const_params = list(
-        # general:
-        theoretical_switch = TRUE,
-        # visualization:
-        uncertainty_mode = "select",
-        log_x_switch = TRUE,
-        volcano_switch = FALSE,
-        # peptide:
-        peptide_mode = if (differential) "single peptide" else "peptide and state",
-        # diff_test:
-        test_mode = "select shown"
+      modes = c(
+        time = "only limits",
+        state = if (differential) "double" else "single",
+        test = if (differential) "selectible" else "disabled",
+        peptide = if (differential) "single peptide" else "multiple peptides and states",
+        visualization = "uptake"
       )
     )
 
-    mod_display_plot_section_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out)
   })
 }

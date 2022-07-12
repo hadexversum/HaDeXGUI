@@ -1,4 +1,4 @@
-#' settings_timepoints UI Function
+#' settings_time UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,18 +7,19 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_timepoints_ui <- function(id, timepoints_mode = "show and deut"){
+mod_settings_time_ui <- function(id, mode = "limits and points"){
+  stopifnot(mode %in% c("limits and points", "only limits"))
   ns <- NS(id)
 
   switch(
-    timepoints_mode,
-    `show and deut` = collapsible_card(
+    mode,
+    `limits and points` = collapsible_card(
       title = "Timepoints",
       fluidRow(
         column(
           width = 6,
           checkboxGroupInput_h(
-            inputId = ns("timepoints"),
+            inputId = ns("points"),
             label = "Show time points: ",
             choices = "",
             selected = ""
@@ -28,80 +29,82 @@ mod_settings_timepoints_ui <- function(id, timepoints_mode = "show and deut"){
           width = 6,
           wrap_div(
             selectInput_h(
-              inputId = ns("time_0"),
-              label = "Deut 0%",
+              inputId = ns("0"),
+              label = "Deut 0% Exposure",
               choices = "",
               selected = ""
             ),
-            id = ns("time_0"),
+            id = ns("0"),
             type = "visswitch"
           ),
           wrap_div(
             selectInput_h(
-              inputId = ns("time_100"),
-              label = "Deut 100%",
+              inputId = ns("100"),
+              label = "Deut 100% Exposure",
               choices = "",
               selected = ""
             ),
-            id = ns("time_100"),
+            id = ns("100"),
             type = "visswitch"
           )
         )
       )
     ),
-    `only deut` = wrap_div(
+    `only limits` = wrap_div(
       collapsible_card(
         title = "Timepoints",
         splitLayout(
           selectInput_h(
-            inputId = ns("time_0"),
-            label = "Deut 0%",
+            inputId = ns("0"),
+            label = "Deut 0% Exposure",
             choices = "",
             selected = ""
           ),
           wrap_div(
             selectInput_h(
-              inputId = ns("time_100"),
-              label = "Deut 100%",
+              inputId = ns("100"),
+              label = "Deut 100% Exposure",
               choices = "",
               selected = ""
             ),
-            id = ns("time_100"),
+            id = ns("100"),
             type = "visswitch"
           )
         )
       ),
-      id = ns("time_0"),
+      id = ns("0"),
       type = "visswitch"
     )
   )
 }
 
-#' settings_timepoints Server Functions
+#' settings_time Server Functions
 #'
 #' @noRd
-mod_settings_timepoints_server <- function(id,
-                                           p_times,
-                                           p_times_with_control,
-                                           p_no_deut_control,
-                                           s_general) {
+mod_settings_time_server <- function(id,
+                                     mode = "limits and points",
+                                     p_times,
+                                     p_times_with_control,
+                                     p_no_deut_control,
+                                     s_calculation) {
+  stopifnot(mode %in% c("limits and points", "only limits"))
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     ### reactive values from inputs
 
     time_0 <- reactive({
-      if (s_general[["theoretical"]]())
+      if (s_calculation[["theoretical"]]())
         min(p_times()[p_times() > 0]) # TODO: should there be 0 instead?
       else
-        as.numeric(input[["time_0"]])
+        as.numeric(input[["0"]])
     })
 
     time_100 <- reactive({
-      if (s_general[["theoretical"]]() || !s_general[["fractional"]]())
+      if (s_calculation[["theoretical"]]() || !s_calculation[["fractional"]]())
         MAX_TIME # TODO: should there be max ()[] ... instead?
       else
-        as.numeric(input[["time_100"]])
+        as.numeric(input[["100"]])
     })
 
     ### observers updating inputs
@@ -109,14 +112,14 @@ mod_settings_timepoints_server <- function(id,
     observe({
       updateSelectInput(
         session,
-        inputId = "time_0",
+        inputId = "0",
         choices = p_times()[p_times() < MAX_TIME],
         selected = p_times()[p_times() == p_no_deut_control()]
       )
 
       toggle_id(
-        !s_general[["theoretical"]](),
-        wrap_id(ns("time_0"), "visswitch")
+        !s_calculation[["theoretical"]](),
+        wrap_id(ns("0"), "visswitch")
       )
     })
 
@@ -129,14 +132,14 @@ mod_settings_timepoints_server <- function(id,
 
       updateSelectInput(
         session,
-        inputId = "time_100",
+        inputId = "100",
         choices = bigger_than_0,
         selected = max(bigger_than_0[bigger_than_0 < MAX_TIME])
       )
 
       toggle_id(
-        !s_general[["theoretical"]]() && s_general[["fractional"]](),
-        wrap_id(ns("time_100"), "visswitch")
+        !s_calculation[["theoretical"]]() && s_calculation[["fractional"]](),
+        wrap_id(ns("100"), "visswitch")
       )
     })
 
@@ -148,7 +151,7 @@ mod_settings_timepoints_server <- function(id,
 
       updateCheckboxGroupInput(
         session,
-        inputId = "timepoints",
+        inputId = "points",
         choices = times_t,
         selected = times_t
       )
@@ -158,9 +161,9 @@ mod_settings_timepoints_server <- function(id,
 
     return(
       list(
-        timepoints = input_r_numeric("timepoints"),
-        time_0 = time_0,
-        time_100 = time_100
+        points = input_r_numeric("points"),
+        `0` = time_0,
+        `100` = time_100
       )
     )
   })

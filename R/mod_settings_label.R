@@ -1,4 +1,4 @@
-#' settings_labels UI Function
+#' settings_label UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_labels_ui <- function(id, plot_type, differential){
+mod_settings_label_ui <- function(id, plot_type, differential){
   ns <- NS(id)
 
   collapsible_card(
@@ -59,10 +59,10 @@ mod_settings_labels_ui <- function(id, plot_type, differential){
   )
 }
 
-#' settings_labels Server Functions
+#' settings_label Server Functions
 #'
 #' @noRd
-mod_settings_labels_server <- function(id, label_specs){
+mod_settings_label_server <- function(id, label_specs){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 

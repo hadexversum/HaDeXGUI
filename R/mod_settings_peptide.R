@@ -7,14 +7,15 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_peptide_ui <- function(id, peptide_mode){
+mod_settings_peptide_ui <- function(id, mode){
+  stopifnot(mode %in% c("single peptide", "multiple peptides and states"))
   ns <- NS(id)
   collapsible_card(
     title = "Peptide",
 
     p(
-      if (peptide_mode == "peptide and state") "Select peptides and according states:"
-      else if (peptide_mode == "single peptide") "Select peptide"
+      if (mode == "multiple peptides and states") "Select peptides and according states:"
+      else if (mode == "single peptide") "Select peptide"
     ),
     dataTableOutput_h(ns("peptide_list")),
     actionButton(
@@ -27,7 +28,8 @@ mod_settings_peptide_ui <- function(id, peptide_mode){
 #' settings_peptide Server Functions
 #'
 #' @noRd
-mod_settings_peptide_server <- function(id, dat, peptide_table, peptide_mode){
+mod_settings_peptide_server <- function(id, peptide_table, mode){
+  stopifnot(mode %in% c("single peptide", "multiple peptides and states"))
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -36,7 +38,7 @@ mod_settings_peptide_server <- function(id, dat, peptide_table, peptide_mode){
         data = peptide_table(),
         class = "table-bordered table-condensed",
         extensions = "Buttons",
-        selection = if (peptide_mode == "peptide and state") "multiple" else if (peptide_mode == "single peptide") "single",
+        selection = if (mode == "multiple peptides and states") "multiple" else if (mode == "single peptide") "single",
         options = list(pageLength = 10, dom = "tip", autoWidth = TRUE, target = 'cell'),
         filter = "bottom",
         rownames = FALSE

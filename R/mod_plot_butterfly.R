@@ -17,17 +17,21 @@ mod_plot_butterfly_ui <- function(id, differential) {
       .fn = HaDeX_plotSettingsPanel,
 
       !!!install_settings_ui(
-        names = c("general", "state", "timepoints", "diff_test", "visualization", "range", "labels"),
+        names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
+        modes = c(
+          state = if (differential) "double" else "single",
+          test = if (differential) "selectible" else "disabled",
+          visualization = "butterfly"
+        ),
         params = list(
-          differential = differential,
-          uncertainty_mode = "select",
           range_ids = c("x", "y"),
-          plot_type = "Butterfly"
+          plot_type = "Butterfly",
+          differential = differential
         ),
         ns = ns
       )
     ),
-    displayPanel = mod_display_plot_section_ui(
+    displayPanel = mod_display_plot_ui(
       ns("display_plot"),
       plot_label = construct_plot_label("Butterfly", differential),
       additional_data_info = cosntruct_uptake_plots_data_info(differential)
@@ -45,28 +49,28 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
 
     dat_processed <- if (differential) reactive({
       # TODO: check which validates are really needed
-      wait_for(s_timepoints[["timepoints"]]())
+      wait_for(s_time[["points"]]())
 
       HaDeX::create_diff_uptake_dataset(
         dat(),
         protein = params[["chosen_protein"]](),
         state_1 = s_state[["state_1"]](),
         state_2 = s_state[["state_2"]](),
-        time_0 = s_timepoints[["time_0"]](),
-        time_100 = s_timepoints[["time_100"]]() %||% max(dat()[["Exposure"]]),
+        time_0 = s_time[["0"]](),
+        time_100 = s_time[["100"]](),
         deut_part = params[["deut_part"]]()
       ) %>%
-        filter(Exposure %in% s_timepoints[["timepoints"]]())
+        filter(Exposure %in% s_time[["points"]]())
     }) else reactive({
       HaDeX::create_state_uptake_dataset(
         dat(),
         protein = params[["chosen_protein"]](),
         state = s_state[["state"]](),
-        time_0 = s_timepoints[["time_0"]](),
-        time_100 = s_timepoints[["time_100"]](),
+        time_0 = s_time[["0"]](),
+        time_100 = s_time[["100"]](),
         deut_part = params[["deut_part"]]()
       ) %>%
-        filter(Exposure %in% s_timepoints[["timepoints"]]())
+        filter(Exposure %in% s_time[["points"]]())
     })
 
     plot_out <- if (differential) reactive({
@@ -76,20 +80,20 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
            protein = params[["chosen_protein"]](),
            state_1 = s_state[["state_1"]](),
            state_2 = s_state[["state_2"]](),
-           confidence_level = s_diff_test[["confidence_level"]](),
-           p_adjustment_method = s_diff_test[["p_adjustment_method"]](),
-           time_0 = s_timepoints[["time_0"]](),
-           time_100 = s_timepoints[["time_100"]](),
+           confidence_level = s_test[["confidence_level"]](),
+           p_adjustment_method = s_test[["p_adjustment_method"]](),
+           time_0 = s_time[["0"]](),
+           time_100 = s_time[["100"]](),
            deut_part = params[["deut_part"]]()
          ) %>% HaDeX::plot_differential_butterfly(
            diff_uptake_dat = dat_processed(),
            diff_p_uptake_dat = .,
-           theoretical = s_general[["theoretical"]](),
-           fractional = s_general[["fractional"]](),
+           theoretical = s_calculation[["theoretical"]](),
+           fractional = s_calculation[["fractional"]](),
            uncertainty_type = s_visualization[["uncertainty_type"]](),
-           show_houde_interval = s_diff_test[["show_houde"]](),
-           show_tstud_confidence = s_diff_test[["show_tstud"]](),
-           confidence_level = s_diff_test[["confidence_level"]]()
+           show_houde_interval = s_test[["show_houde"]](),
+           show_tstud_confidence = s_test[["show_tstud"]](),
+           confidence_level = s_test[["confidence_level"]]()
          ) +
          geom_point_interactive(
            data = dat_processed(),
@@ -100,16 +104,16 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
              "<br/>Exposure: ", Exposure, " min"
            ))
          )
-      ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_labels) %>%
+      ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_label) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
-      validate(need(s_timepoints[["timepoints"]](),
+      validate(need(s_time[["points"]](),
                     "Wait for parameters to be loaded"))
 
       (dat_processed() %>%
         HaDeX::plot_butterfly(
-          theoretical = s_general[["theoretical"]](),
-          fractional = s_general[["fractional"]](),
+          theoretical = s_calculation[["theoretical"]](),
+          fractional = s_calculation[["fractional"]](),
           uncertainty_type = s_visualization[["uncertainty_type"]]()
         ) +
           geom_point_interactive( #TODO: fix this redundancy?
@@ -120,7 +124,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
               "<br/>Exposure: ", Exposure, " min"
             ))
           )
-      ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_labels) %>%
+      ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_label) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
@@ -129,8 +133,8 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     dat_out <- reactive({
       dat_processed() %>%
         .show_fun(
-          theoretical = s_general[["theoretical"]](),
-          fractional = s_general[["fractional"]]()
+          theoretical = s_calculation[["theoretical"]](),
+          fractional = s_calculation[["fractional"]]()
         ) %>%
         filter(ID >= s_range[["x"]]()[[1]] &
                ID <= s_range[["x"]]()[[2]])
@@ -154,7 +158,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
           construct_var_name(
             differential,
             TRUE,
-            s_general[["fractional"]](),
+            s_calculation[["fractional"]](),
             "deut_uptake"
           )
         ]]
@@ -162,7 +166,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
           construct_var_name(
             differential,
             FALSE,
-            s_general[["fractional"]](),
+            s_calculation[["fractional"]](),
             "deut_uptake"
           )
         ]]
@@ -179,26 +183,17 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       label_spec("Peptide ID", "x"),
       label_spec(react_construct_uptake_lab_y(differential), "y")
     )
-
     ### server settings
 
     invoke_settings_servers(
-      names = c(
-        "general", "state", "timepoints", "visualization",
-        "range", "labels", "diff_test"
-      ),
-      const_params = list(
-        # general:
-        theoretical_switch = TRUE,
-        # visualization:
-        uncertainty_mode = "select",
-        log_x_switch = FALSE,
-        volcano_switch = FALSE,
-        # diff_test:
-        test_mode = "select shown"
+      names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
+      modes = list(
+        state = if (differential) "double" else "single",
+        test = if (differential) "selectible" else "disabled",
+        visualization = "butterfly"
       )
     )
 
-    mod_display_plot_section_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out)
   })
 }

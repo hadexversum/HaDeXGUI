@@ -17,25 +17,25 @@ mod_plot_volcano_ui <- function(id){
       .fn = HaDeX_plotSettingsPanel,
 
       !!!install_settings_ui(
-        names = c("general", "state", "timepoints",
-                  "diff_test", "subregion",
-                  "visualization", "range", "labels"),
+        names = c("calculation", "state", "time",
+                  "test", "subregion",
+                  "visualization", "range", "label"),
+        modes = list(
+          calculation = "only frac",
+          state = "double",
+          time = "limits and points",
+          test = "fixed",
+          visualization = "volcano"
+        ),
         params = list(
-          differential = TRUE,
-          # general:
-          theoretical_switch = FALSE,
-          # test_diff:
-          test_mode = "fixed",
-          # visualization:
-          uncertainty_mode = "none",
-          volcano_switch = TRUE,
           range_ids = c("x", "y"),
-          plot_type = "Volcano"
+          plot_type = "Volcano",
+          differential = FALSE
         ),
         ns = ns
       ),
     ),
-    displayPanel = mod_display_plot_section_ui(
+    displayPanel = mod_display_plot_ui(
       ns("display_plot"),
       plot_label = construct_plot_label("Volcano", differential = FALSE),
       additional_data_info = cosntruct_uptake_plots_data_info(differential = FALSE)
@@ -65,17 +65,17 @@ mod_plot_volcano_server <- function(id, dat, params){
           state_1             = s_state      %()% state_1,
           state_2             = s_state      %()% state_2,
           protein             = params       %()% chosen_protein,
-          time_0              = s_timepoints %()% time_0,
-          time_100            = s_timepoints %()% time_100,
+          time_0              = s_time       %()% 0,
+          time_100            = s_time       %()% 100,
           deut_part           = params       %()% deut_part,
-          p_adjustment_method = s_diff_test  %()% p_adjustment_method ,
-          confidence_level    = s_diff_test  %()% confidence_level
+          p_adjustment_method = s_test       %()% p_adjustment_method ,
+          confidence_level    = s_test       %()% confidence_level
         )
     })
 
     dat_filtered <- reactive({
       dat_processed() %>%
-        filter(Exposure %in% (s_timepoints %()% timepoints)) %>%
+        filter(Exposure %in% (s_time %()% points)) %>%
         filter(Start >= (s_subregion %()% subregion)[1],
                  End <= (s_subregion %()% subregion)[2])
     })
@@ -99,7 +99,7 @@ mod_plot_volcano_server <- function(id, dat, params){
     dat_selected <- reactive({
       if ((s_visualization %()% shown_interval) == "Selected time points"){
         dat_span() %>%
-          filter(Exposure %in% (s_timepoints %()% timepoints))
+          filter(Exposure %in% (s_time %()% points))
       } else
         dat_span()
     })
@@ -107,14 +107,14 @@ mod_plot_volcano_server <- function(id, dat, params){
     houde_intervals <- reactive({
       dat_selected() %>%
         HaDeX::calculate_confidence_limit_values(
-          confidence_level = s_diff_test %()% confidence_level,
+          confidence_level = s_test %()% confidence_level,
           theoretical = FALSE,
-          fractional = s_general %()% fractional
+          fractional = s_calculation %()% fractional
         )
     })
 
     alpha_interval <- reactive({
-      -log(1 - s_diff_test %()% confidence_level)
+      -log(1 - s_test %()% confidence_level)
     })
 
     dat_out <- reactive({
@@ -122,8 +122,8 @@ mod_plot_volcano_server <- function(id, dat, params){
         dat_filtered(),
         D_diff_threshold = houde_intervals()[2],
         log_P_threshold = alpha_interval(),
-        confidence_level = s_diff_test %()% vol_confidence_level,
-        fractional = s_general %()% fractional
+        confidence_level = s_test %()% vol_confidence_level,
+        fractional = s_calculation %()% fractional
       )
     })
 
@@ -138,7 +138,7 @@ mod_plot_volcano_server <- function(id, dat, params){
             color_times             = s_visualization %()% distinguish_timepoints,
             show_insignificant_grey = s_visualization %()% show_insignificant_grey,
             hide_insignificant      = s_visualization %()% hide_insignificant,
-            fractional              = s_general       %()% fractional,
+            fractional              = s_calculation   %()% fractional,
             theoretical             = FALSE ## hard coded, no theoretical
           ) +
           # ## statistics
@@ -167,7 +167,7 @@ mod_plot_volcano_server <- function(id, dat, params){
                 xend = range_x[2]
             ), linetype = "dashed", color = "red")
       ) %>%
-        update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_labels) %>%
+        update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_label) %>%
         suppressMessages()
     })
 
@@ -181,7 +181,7 @@ mod_plot_volcano_server <- function(id, dat, params){
           construct_var_name(
             diff = TRUE,
             theo = FALSE,
-            s_general %()% fractional,
+            s_calculation %()% fractional,
             "deut_uptake"
           )
         ]]
@@ -217,23 +217,19 @@ mod_plot_volcano_server <- function(id, dat, params){
 
     invoke_settings_servers(
       names = c(
-        "general", "state", "timepoints",
-        "diff_test", "subregion",
-        "visualization", "range", "labels"
+        "calculation", "state", "time",
+        "test", "subregion",
+        "visualization", "range", "label"
       ),
-      const_params = list(
-        differential = TRUE,
-        # general:
-        theoretical_switch = FALSE,
-        # visualization:
-        uncertainty_mode = "none",
-        log_x_switch = FALSE,
-        volcano_switch = TRUE,
-        # diff_test:
-        test_mode = "fixed"
+      modes = list(
+        calculation = "only frac",
+        state = "double",
+        time = "limits and points",
+        test = "fixed",
+        visualization = "volcano"
       )
     )
 
-    mod_display_plot_section_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out)
   })
 }
