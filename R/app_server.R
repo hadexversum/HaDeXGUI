@@ -10,6 +10,12 @@ app_server <- function(input, output, session) {
 
   dat_source <- mod_data_load_server("data_load")
 
+  mod_plot_volcano_server(
+    id = "volcano",
+    dat = dat_source[["dat"]],
+    params = dat_source[["params"]]
+  )
+
   mod_plot_butterfly_server(
     id = "butterfly",
     differential = FALSE,

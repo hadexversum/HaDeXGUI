@@ -16,6 +16,7 @@ app_ui <- function(request) {
       mod_data_load_ui("data_load"),
       navbarMenu(
         title = "Deuterium uptake",
+        mod_plot_volcano_ui("volcano"),
         mod_plot_butterfly_ui("butterfly", differential = FALSE),
         mod_plot_butterfly_ui("butterfly_diff", differential = TRUE),
         mod_plot_chiclet_ui("chiclet", differential = FALSE),
