@@ -28,6 +28,7 @@ Imports:
     icecream,
     reactlog,
     shiny (>= 1.6.0),
+    shinycustomloader,
     shinyhelper,
     shinyjs,
     shinyvalidate,

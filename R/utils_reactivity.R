@@ -1,6 +1,7 @@
 #' Get input as a reactive value
 #'
-#' @param name [character(1)] \n Name of the input value.
+#' @param name [character(1)]
+#'     Name of the input value.
 #' @param env the environment
 #' @param ... Any number of characters or character vectors
 #'

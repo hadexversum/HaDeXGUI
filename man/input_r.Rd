@@ -7,7 +7,8 @@
 input_r(name, env = parent.frame())
 }
 \arguments{
-\item{name}{[character(1)] \n Name of the input value.}
+\item{name}{[character(1)]
+Name of the input value.}
 
 \item{env}{the environment}
 
