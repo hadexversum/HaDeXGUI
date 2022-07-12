@@ -24,7 +24,7 @@ mod_settings_range_ui <- function(id, range_ids){
         )
       }),
       init_collapsed = TRUE,
-      fancy_icon = "arrows-h"
+      fancy_icon = "arrows-alt-h"
     )
   )
 }

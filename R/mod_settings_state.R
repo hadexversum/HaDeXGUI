@@ -38,7 +38,7 @@ mod_settings_state_ui <- function(id, mode){
         choices = "",
         selected = ""
       ),
-      fancy_icon = "atom-alt"
+      fancy_icon = "atom"
     ),
     disabled = NULL
   )
