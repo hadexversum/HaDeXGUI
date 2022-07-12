@@ -45,3 +45,6 @@ construct_plot_label <- function(plot_type, differential, capitalize = FALSE) {
   plt_text <- if (capitalize) " Plot" else " plot"
   paste0(plot_type, diff_text %nullify if% !differential, plt_text)
 }
+
+first <- function(x) x[1]
+last <- function(x) x[length(x)]
