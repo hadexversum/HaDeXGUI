@@ -91,4 +91,13 @@ wait_for <- function(expr, message = "Wait for the parameters to be loaded...") 
   validate(need(expr, message))
 }
 
+#' Access value of list of reactives
+#'
+#' Because typing `some_list[["some_values"]]()` takes too long
+#'
+#' @param lhs [list]
+#'     list of reactive values
+#' @param rhs [symbol]
+#'     name of the element of the list being the reactive value, unquoted
+#' @return A value of reactive expression
 `%()%` <- function(lhs, rhs) lhs[[deparse(substitute(rhs))]]()
