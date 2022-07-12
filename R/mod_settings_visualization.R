@@ -36,23 +36,23 @@ mod_settings_visualization_ui <- function(id, uncertainty_mode,
     ),
     tagList(
       selectInput_h(
-        inputId = "shown_interval",
+        inputId = ns("shown_interval"),
         label = "Show confidence limit for: ",
         choices = c("All time points", "Selected time points"),
         selected = "All time points"
       ),
       checkboxInput_h(
-        inputId = "distinguish_timepoints",
+        inputId = ns("distinguish_timepoints"),
         label = "Distinguish timepoints by color",
         value = TRUE
       ),
       checkboxInput_h(
-        inputId = "hide_insignificant",
+        inputId = ns("hide_insignificant"),
         label = "Hide insignificant values?",
         value = FALSE
       ),
       checkboxInput_h(
-        inputId = "show_insignificant_grey",
+        inputId = ns("show_insignificant_grey"),
         label = "Show insignificant values in grey?",
         value = FALSE
       )
