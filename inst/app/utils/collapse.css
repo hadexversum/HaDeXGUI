@@ -33,6 +33,11 @@
   flex-grow: 0;
 }
 
+.collapsible-card > .card-header > i.fancy-icon {
+  margin-right: 10px;
+  color: #333;
+}
+
 .collapsible-card > .card-body {
   padding: 10px;
 }

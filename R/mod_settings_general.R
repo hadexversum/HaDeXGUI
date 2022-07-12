@@ -22,7 +22,8 @@ mod_settings_calculation_ui <- function(id, mode = "frac and theo"){
       inputId = ns("fractional"),
       label = "Fractional values",
       value = FALSE
-    )
+    ),
+    fancy_icon = "cogs"
   )
 }
 

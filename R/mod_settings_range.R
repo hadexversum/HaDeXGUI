@@ -23,7 +23,8 @@ mod_settings_range_ui <- function(id, range_ids){
           step = 1
         )
       }),
-      init_collapsed = TRUE
+      init_collapsed = TRUE,
+      fancy_icon = "arrows-h"
     )
   )
 }

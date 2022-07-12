@@ -83,7 +83,10 @@ wrap_div <- function(..., id, type) div(..., id = wrap_id(id, type))
 gen_random_id <- function(prefix = "")
   paste0(prefix, paste0(sample(c(0:9, letters[1:6]), 16, TRUE), collapse = ''))
 
-collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL) {
+add_fancy_icon <- function(fancy_icon)
+  icon(fancy_icon, class = "fancy-icon")
+
+collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL, fancy_icon = NULL) {
   obj_id = if (!is.null(id)) id else gen_random_id("collapsible_")
 
   tagList(
@@ -92,8 +95,9 @@ collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL) {
 
     div(
       h6(
+        fancy_icon %?>% add_fancy_icon,
         p(title),
-        icon(if (init_collapsed) "angle-down" else "angle-up"),
+        icon(if (init_collapsed) "angle-down" else "angle-up", class = "arrow-icon"),
         class = if (init_collapsed) "card-header collapsed" else "card-header",
         `data-toggle` = "collapse",
         `data-target` = paste0("#", obj_id),

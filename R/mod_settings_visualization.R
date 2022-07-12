@@ -50,7 +50,8 @@ mod_settings_visualization_ui <- function(id, mode){
         label = "Show insignificant values in grey?",
         value = FALSE
       )
-    ) %nullify if% !(mode %in% c("volcano"))
+    ) %nullify if% !(mode %in% c("volcano")),
+    fancy_icon = "image"
   )
 }
 

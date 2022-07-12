@@ -20,7 +20,8 @@ mod_settings_subregion_ui <- function(id) {
       max = 2,
       value = c(1, 2),
       step = 1
-    )
+    ),
+    fancy_icon = "grip-lines"
   )
 }
 

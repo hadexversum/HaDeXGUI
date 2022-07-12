@@ -55,7 +55,8 @@ mod_settings_label_ui <- function(id, plot_type, differential){
     ),
     p("The axis ticks have the same size as the axis label.
       The legend text size is the same as the x axis label."),
-    init_collapsed = TRUE
+    init_collapsed = TRUE,
+    fancy_icon = "paragraph"
   )
 }
 

@@ -61,7 +61,8 @@ mod_settings_test_ui <- function(id, mode){
           selected = "none"
         )
       )
-    }
+    },
+    fancy_icon = "chart-bar"
   ) %nullify if% (mode == "disabled")
 }
 

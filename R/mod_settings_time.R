@@ -48,7 +48,8 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
             type = "visswitch"
           )
         )
-      )
+      ),
+      fancy_icon = "stopwatch"
     ),
     `only limits` = wrap_div(
       collapsible_card(
@@ -70,7 +71,8 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
             id = ns("100"),
             type = "visswitch"
           )
-        )
+        ),
+        fancy_icon = "stopwatch"
       ),
       id = ns("0"),
       type = "visswitch"

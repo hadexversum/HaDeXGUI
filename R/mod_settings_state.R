@@ -27,7 +27,8 @@ mod_settings_state_ui <- function(id, mode){
           label = "State 2",
           choices = ""
         )
-      )
+      ),
+      fancy_icon = "atom"
     ),
     single = collapsible_card(
       title = "State",
@@ -36,7 +37,8 @@ mod_settings_state_ui <- function(id, mode){
         label = "Choose state:",
         choices = "",
         selected = ""
-      )
+      ),
+      fancy_icon = "atom-alt"
     ),
     disabled = NULL
   )
