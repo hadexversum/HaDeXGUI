@@ -21,8 +21,8 @@ update_axes_and_labels <- function(
     labels) {
   plt +
     coord_cartesian(
-      xlim = ic(range_x %?>% extract_limits_from_range),
-      ylim = ic(range_y %?>% extract_limits_from_range)
+      xlim = range_x %?>% extract_limits_from_range,
+      ylim = range_y %?>% extract_limits_from_range
     ) +
     labs(
       title = labels[["title"]](),
