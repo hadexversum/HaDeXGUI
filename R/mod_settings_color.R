@@ -46,7 +46,17 @@ mod_settings_color_server <- function(id, s_state){
     return(
       list(
         values = reactive({
-          sapply(paste0("color_", s_state %()% states), function(x) input[[x]])
+          states <- s_state %()% states
+
+          colors <- sapply(
+            paste0("color_", states),
+            function(x) input[[x]]
+          )
+
+          wait_for(length(colors) > 0)
+          wait_for(all(not_null(colors)))
+
+          setNames(colors, states)
         })
       )
     )
