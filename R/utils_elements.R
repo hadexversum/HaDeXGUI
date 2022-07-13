@@ -42,6 +42,9 @@ hadex_panel_display <- function(...) div(
   )
 )
 
+hadex_settings_separator <- function(title)
+  h5(class = "HaDeX-plot-settings-panels-section-title", title)
+
 hadex_panel_settings_section <- function(..., title = NULL) tagList(
   if (!is.null(title)) h5(class = "HaDeX-plot-settings-panels-section-title", title) else NULL,
   ...
