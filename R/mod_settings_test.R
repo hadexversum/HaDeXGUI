@@ -35,15 +35,14 @@ mod_settings_test_ui <- function(id, mode){
           choices = c("80%" = 0.8, "90%" = 0.9, "95%" = 0.95, "98%" = 0.98, "99%" = 0.99, "99.9%" = 0.999),
           selected = 0.98
         ),
-        wrap_div(
+        toggleable(
           selectInput_h(
             inputId = ns("p_adjustment_method"),
             label = "Choose method of adjustment:",
             choices = c("none", "BH", "bonferroni"),
             selected = "none"
           ),
-          id = ns("p_adjustment_method"),
-          type = "visswitch"
+          id = ns("p_adjustment_method")
         )
       )
     ) else if (mode == "fixed") {
@@ -80,7 +79,7 @@ mod_settings_test_server <- function(id, mode){
       observe({
         toggle_id(
           input[["show_tstud"]],
-          wrap_id(ns("p_adjustment_method"), "visswitch")
+          id = ns("p_adjustment_method")
         )
       })
     }

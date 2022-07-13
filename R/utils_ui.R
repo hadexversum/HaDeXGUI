@@ -70,8 +70,7 @@ display.shiny.tag.list <- function(x) {
 `%visible if%` <- function(tag, condition)
   (if (condition) display else undisplay)(tag)
 
-wrap_id <- function(id, type) paste0(type, "-", id)
-wrap_div <- function(..., id, type) div(..., id = wrap_id(id, type))
+toggleable <- function(..., id) div(..., id = id)
 
 `%nullify if%` <- function(x, condition) if (condition) NULL else x
 
