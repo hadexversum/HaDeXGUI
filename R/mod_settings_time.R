@@ -143,7 +143,6 @@ mod_settings_time_server <- function(id,
     observe({
       wait_for(length(p_times_with_control()) > 1)
       wait_for(time_0())
-      wait_for(time_100())
 
       bigger_than_0 <- p_times_with_control()[p_times_with_control() > time_0()]
 
