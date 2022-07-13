@@ -159,27 +159,58 @@ mod_settings_time_server <- function(id,
       )
     })
 
-    observe({
+    times_t <- reactive({
       wait_for(time_100())
       wait_for(time_0())
 
-      times_t <- p_times()[p_times() > time_0() & p_times() < time_100()]
+      p_times()[p_times() > time_0() & p_times() < time_100()]
+    })
 
+    observe({
       updateCheckboxGroupInput(
         session,
         inputId = "points",
-        choices = times_t,
-        selected = times_t
+        choices = times_t(),
+        selected = times_t()
       )
     })
+
+    ### limits-and-exposure-mode-specific observers
+
+    if (mode == "limits and exposure") {
+      observe({
+        toggle_id(input[["multiple_exposures"]], id = ns("points"))
+        toggle_id(!input[["multiple_exposures"]], id = ns("t"))
+      })
+
+      observe({
+        validate(need(length(times_t) > 0,
+                      "There should be at least one valid option between Exposure 0% and 100% to choose from."))
+
+        updateSelectInput(
+          session,
+          inputId = "t",
+          choices = times_t(),
+          selected = times_t()[1]
+        )
+      })
+
+      t_out <- reactive({
+        if (input[["multiple_exposures"]]) input[["points"]]
+        else input[["t"]]
+      })
+    }
 
     ### return values
 
     return(
-      list(
-        points = input_r_numeric("points"),
-        `0` = time_0,
-        `100` = time_100
+      c(
+        list(
+          points = input_r_numeric("points"),
+          `0` = time_0,
+          `100` = time_100
+        ),
+        if (mode == "limits and exposure") list(t = t_out) else NULL
       )
     )
   })
