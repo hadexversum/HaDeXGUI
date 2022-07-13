@@ -9,7 +9,7 @@ h2 {
 }
 
 body {
-  font-family: Lato;
+  font-family: Lato, sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
   line-height: 1.5;
@@ -320,7 +320,7 @@ pre {
 }
 
 pre, code, kbd, samp {
-  font-family: "Fira Code";
+  font-family: "Fira Code", monospace;
   font-size: 1em;
 }
 
