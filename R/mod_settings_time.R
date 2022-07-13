@@ -8,74 +8,89 @@
 #'
 #' @importFrom shiny NS tagList
 mod_settings_time_ui <- function(id, mode = "limits and points"){
-  stopifnot(mode %in% c("limits and points", "only limits"))
+  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure"))
   ns <- NS(id)
+
+  deut_0 <- selectInput_h(
+    inputId = ns("0"),
+    label = "Deut 0% Exposure",
+    choices = "",
+    selected = ""
+  )
+
+  deut_100 <- selectInput_h(
+    inputId = ns("100"),
+    label = "Deut 100% Exposure",
+    choices = "",
+    selected = ""
+  )
+
+  timepoints <- checkboxGroupInput_h(
+    inputId = ns("points"),
+    label = "Show time points: ",
+    choices = "",
+    selected = ""
+  )
+
+  card_timepoints <- function(...) collapsible_card(
+    title = "Timepoints",
+    ...,
+    fancy_icon = "stopwatch"
+  )
 
   switch(
     mode,
-    `limits and points` = collapsible_card(
-      title = "Timepoints",
+    `limits and points` = card_timepoints(
       fluidRow(
         column(
           width = 6,
-          checkboxGroupInput_h(
-            inputId = ns("points"),
-            label = "Show time points: ",
-            choices = "",
-            selected = ""
-          )
+          toggleable(deut_0, id = ns("0")),
+          toggleable(deut_100, id = ns("100"))
         ),
         column(
           width = 6,
-          wrap_div(
-            selectInput_h(
-              inputId = ns("0"),
-              label = "Deut 0% Exposure",
-              choices = "",
-              selected = ""
-            ),
-            id = ns("0"),
-            type = "visswitch"
-          ),
-          wrap_div(
-            selectInput_h(
-              inputId = ns("100"),
-              label = "Deut 100% Exposure",
-              choices = "",
-              selected = ""
-            ),
-            id = ns("100"),
-            type = "visswitch"
+          timepoints
+        )
+      )
+    ),
+    `only limits` = toggleable(
+      card_timepoints(
+        splitLayout(
+          deut_0,
+          toggleable(
+            deut_100,
+            id = ns("100")
           )
         )
       ),
-      fancy_icon = "stopwatch"
+      id = ns("0")
     ),
-    `only limits` = wrap_div(
-      collapsible_card(
-        title = "Timepoints",
-        splitLayout(
-          selectInput_h(
-            inputId = ns("0"),
-            label = "Deut 0% Exposure",
-            choices = "",
-            selected = ""
+    `limits and exposure` = card_timepoints(
+      fluidRow(
+        column(
+          width = 6,
+          toggleable(deut_0, id = ns("0")),
+          toggleable(deut_100, id = ns("100"))
+        ),
+        column(
+          width = 6,
+          checkboxInput_h(
+            inputId = ns("multiple_exposures"),
+            label = "Use multiple Exposures?",
+            value = FALSE
           ),
-          wrap_div(
+          toggleable(
             selectInput_h(
-              inputId = ns("100"),
-              label = "Deut 100% Exposure",
+              inputId = ns("t"),
+              label = "Measurement Exposure",
               choices = "",
               selected = ""
             ),
-            id = ns("100"),
-            type = "visswitch"
-          )
-        ),
-        fancy_icon = "stopwatch"
-      ),
-      id = ns("0"),
-      type = "visswitch"
+            id = ns("t")
+          ),
+          toggleable(timepoints, id = ns("points"))
+        )
+      )
     )
   )
 }
@@ -89,7 +104,7 @@ mod_settings_time_server <- function(id,
                                      p_times_with_control,
                                      p_no_deut_control,
                                      s_calculation) {
-  stopifnot(mode %in% c("limits and points", "only limits"))
+  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure"))
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -121,7 +136,7 @@ mod_settings_time_server <- function(id,
 
       toggle_id(
         !s_calculation[["theoretical"]](),
-        wrap_id(ns("0"), "visswitch")
+        id = ns("0")
       )
     })
 
@@ -141,7 +156,7 @@ mod_settings_time_server <- function(id,
 
       toggle_id(
         !s_calculation[["theoretical"]]() && s_calculation[["fractional"]](),
-        wrap_id(ns("100"), "visswitch")
+        id  = ns("100")
       )
     })
 
