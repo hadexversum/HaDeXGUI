@@ -86,34 +86,6 @@ gen_random_id <- function(prefix = "")
 add_fancy_icon <- function(fancy_icon)
   icon(fancy_icon, class = "fancy-icon")
 
-collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL, fancy_icon = NULL) {
-  obj_id = if (!is.null(id)) id else gen_random_id("collapsible_")
-
-  tagList(
-    singleton(tags$head(tags$script(src = "utils/collapse.js", type = "text/javascript"))),
-    singleton(tags$head(tags$link(href = "utils/collapse.css", rel = "stylesheet"))),
-
-    div(
-      h6(
-        fancy_icon %?>% add_fancy_icon,
-        p(title),
-        icon(if (init_collapsed) "angle-down" else "angle-up", class = "arrow-icon"),
-        class = if (init_collapsed) "card-header collapsed" else "card-header",
-        `data-toggle` = "collapse",
-        `data-target` = paste0("#", obj_id),
-        `aria-expanded` = if (init_collapsed) "false" else "true"
-      ),
-      div(
-        ...,
-        id = obj_id,
-        class = if (init_collapsed) "card-body collapse" else "card-body collapse in",
-        `aria-expanded` = if (init_collapsed) "false" else "true"
-      ),
-      class = "collapsible-card"
-    )
-  )
-}
-
 construct_var_name <- function(diff, theo, frac, var)
   paste0(
     "diff_" %nullify if% (!diff),

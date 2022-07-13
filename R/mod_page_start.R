@@ -8,7 +8,7 @@
 #'
 #' @importFrom shiny NS tagList
 mod_page_start_ui <- function(id){
-  HaDeX_nonplotTab(
+  hadex_tab_other(
     title = "Start",
     h1("Welcome to HaDeX GUI!"),
     fluidPage(

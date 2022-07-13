@@ -11,7 +11,7 @@
 mod_data_load_ui <- function(id){
   ns <- NS(id)
 
-  HaDeX_nonplotTab(
+  hadex_tab_other(
     title = "Input data",
 
     p(strong("Upload your file."), "Otherwise, you will see the example data."),

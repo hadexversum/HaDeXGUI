@@ -10,11 +10,11 @@
 mod_plot_uptake_ui <- function(id, differential) {
   ns <- NS(id)
 
-  HaDeX_plotTab(
+  hadex_tab_plot(
     title = construct_plot_label("Uptake Curves", differential, capitalize = TRUE),
 
     settingsPanel = rlang::exec(
-      .fn = HaDeX_plotSettingsPanel,
+      .fn = hadex_panel_settings,
 
       !!!install_settings_ui(
         names = c(

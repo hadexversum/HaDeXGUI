@@ -5,7 +5,7 @@
 #' @return The return value, if any, from executing the utility.
 #'
 #' @noRd
-HaDeX_plotTab <- function(title, settingsPanel, displayPanel) tabPanel(
+hadex_tab_plot <- function(title, settingsPanel, displayPanel) tabPanel(
   title = title,
   fillRow(
     class = "HaDeX-plot-tab-content",
@@ -15,13 +15,13 @@ HaDeX_plotTab <- function(title, settingsPanel, displayPanel) tabPanel(
   )
 )
 
-HaDeX_nonplotTab <- function(title, ...) tabPanel(
+hadex_tab_other <- function(title, ...) tabPanel(
   title = title,
   class = "HaDeX-nonplot-tab-content",
   ...
 )
 
-HaDeX_plotSettingsPanel <- function(...) wellPanel(
+hadex_panel_settings <- function(...) wellPanel(
   class = "HaDeX-tab-content-element HaDeX-plot-settings-panel",
   fillCol(
     flex = NA,
@@ -33,7 +33,7 @@ HaDeX_plotSettingsPanel <- function(...) wellPanel(
   )
 )
 
-HaDeX_plotDisplayPanel <- function(...) div(
+hadex_panel_display <- function(...) div(
   class = "HaDeX-tab-content-element HaDeX-plot-display-panel",
   fillCol(
     class = "HaDeX-plot-display-panel-container",
@@ -42,20 +42,35 @@ HaDeX_plotDisplayPanel <- function(...) div(
   )
 )
 
-HaDeX_plotSettingsSection <- function(..., title = NULL) tagList(
+hadex_panel_settings_section <- function(..., title = NULL) tagList(
   if (!is.null(title)) h5(class = "HaDeX-plot-settings-panels-section-title", title) else NULL,
   ...
 )
 
-HaDeX_collapseButton <- function(title, target) tags$button(
-  title,
-  class = "btn btn-default collapse-btn",
-  `data-toggle`= "collapse",
-  `data-target`= target
-)
+collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL, fancy_icon = NULL) {
+  obj_id <- if (!is.null(id)) id else gen_random_id("collapsible_")
 
-HaDeX_collapsablePanel <- function(id, ...) tags$div(
-  class = "hideable collapse",
-  id = id,
-  ...
-)
+  tagList(
+    singleton(tags$head(tags$script(src = "utils/collapse.js", type = "text/javascript"))),
+    singleton(tags$head(tags$link(href = "utils/collapse.css", rel = "stylesheet"))),
+
+    div(
+      h6(
+        fancy_icon %?>% add_fancy_icon,
+        p(title),
+        icon(if (init_collapsed) "angle-down" else "angle-up", class = "arrow-icon"),
+        class = if (init_collapsed) "card-header collapsed" else "card-header",
+        `data-toggle` = "collapse",
+        `data-target` = paste0("#", obj_id),
+        `aria-expanded` = if (init_collapsed) "false" else "true"
+      ),
+      div(
+        ...,
+        id = obj_id,
+        class = if (init_collapsed) "card-body collapse" else "card-body collapse in",
+        `aria-expanded` = if (init_collapsed) "false" else "true"
+      ),
+      class = "collapsible-card"
+    )
+  )
+}

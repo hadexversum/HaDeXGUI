@@ -9,7 +9,7 @@
 #' @importFrom shiny NS tagList
 mod_data_setup_ui <- function(id){
   ns <- NS(id)
-  HaDeX_plotSettingsSection(
+  hadex_panel_settings_section(
     title = "Select the parameters:",
 
     selectInput_h(
