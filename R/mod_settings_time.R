@@ -197,7 +197,7 @@ mod_settings_time_server <- function(id,
 
       t_out <- reactive({
         if (input[["multiple_exposures"]]) input[["points"]]
-        else input[["t"]]
+        else as.numeric(input[["t"]])
       })
     }
 
