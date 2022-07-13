@@ -13,29 +13,25 @@ mod_plot_uptake_ui <- function(id, differential) {
   hadex_tab_plot(
     title = construct_plot_label("Uptake Curves", differential, capitalize = TRUE),
 
-    settingsPanel = rlang::exec(
-      .fn = hadex_panel_settings,
-
-      !!!install_settings_ui(
-        names = c(
-          "calculation", "state", "time", "peptide", "visualization", "test", "range", "label"
-        ),
-        modes = c(
-          time = "only limits",
-          state = if (differential) "double" else "disabled",
-          test = if (differential) "selectible" else "disabled",
-          peptide = if (differential) "single peptide" else "multiple peptides and states",
-          visualization = "uptake"
-        ),
-        params = list(
-          range_ids = c("y"),
-          plot_type = "Uptake curves",
-          differential = differential
-        ),
-        ns = ns
-      )
+    settings = install_settings_ui(
+      names = c(
+        "calculation", "state", "time", "peptide", "visualization", "test", "range", "label"
+      ),
+      modes = c(
+        time = "only limits",
+        state = if (differential) "double" else "disabled",
+        test = if (differential) "selectible" else "disabled",
+        peptide = if (differential) "single peptide" else "multiple peptides and states",
+        visualization = "uptake"
+      ),
+      params = list(
+        range_ids = c("y"),
+        plot_type = "Uptake curves",
+        differential = differential
+      ),
+      ns = ns
     ),
-    displayPanel = mod_display_plot_ui(
+    display = mod_display_plot_ui(
       ns("display_plot"),
       plot_label = construct_plot_label("Uptake curves", differential),
       additional_data_info = cosntruct_uptake_plots_data_info(differential)

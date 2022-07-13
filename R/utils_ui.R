@@ -95,7 +95,7 @@ construct_var_name <- function(diff, theo, frac, var)
   )
 
 install_settings_ui <- function(names, modes, params, ns) {
-  lapply(names, function(name) {
+  uis <- lapply(names, function(name) {
     ui_fun <- getFromNamespace(paste0("mod_settings_", name, "_ui"), "HaDeXGUI")
     arg_names <- names(formals(ui_fun))
 
@@ -115,4 +115,5 @@ install_settings_ui <- function(names, modes, params, ns) {
 
     do.call(ui_fun, args = args)
   })
+  rlang::exec(hadex_panel_settings, !!!uis)
 }

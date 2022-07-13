@@ -5,13 +5,13 @@
 #' @return The return value, if any, from executing the utility.
 #'
 #' @noRd
-hadex_tab_plot <- function(title, settingsPanel, displayPanel) tabPanel(
+hadex_tab_plot <- function(title, settings, display) tabPanel(
   title = title,
   fillRow(
     class = "HaDeX-plot-tab-content",
     flex = c(3, 7),
-    settingsPanel,
-    displayPanel
+    settings,
+    display
   )
 )
 

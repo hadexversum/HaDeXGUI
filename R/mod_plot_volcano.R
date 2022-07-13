@@ -13,29 +13,25 @@ mod_plot_volcano_ui <- function(id){
   hadex_tab_plot(
     title = construct_plot_label("Volcano", differential = FALSE, capitalize = TRUE),
 
-    settingsPanel = rlang::exec(
-      .fn = hadex_panel_settings,
-
-      !!!install_settings_ui(
-        names = c("calculation", "state", "time",
-                  "test", "subregion",
-                  "visualization", "range", "label"),
-        modes = list(
-          calculation = "only frac",
-          state = "double",
-          time = "limits and points",
-          test = "fixed",
-          visualization = "volcano"
-        ),
-        params = list(
-          range_ids = c("x", "y"),
-          plot_type = "Volcano",
-          differential = FALSE
-        ),
-        ns = ns
+    settings = install_settings_ui(
+      names = c("calculation", "state", "time",
+                "test", "subregion",
+                "visualization", "range", "label"),
+      modes = list(
+        calculation = "only frac",
+        state = "double",
+        time = "limits and points",
+        test = "fixed",
+        visualization = "volcano"
       ),
+      params = list(
+        range_ids = c("x", "y"),
+        plot_type = "Volcano",
+        differential = FALSE
+      ),
+      ns = ns
     ),
-    displayPanel = mod_display_plot_ui(
+    display = mod_display_plot_ui(
       ns("display_plot"),
       plot_label = construct_plot_label("Volcano", differential = FALSE),
       additional_data_info = cosntruct_uptake_plots_data_info(differential = FALSE)
