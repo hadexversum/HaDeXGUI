@@ -70,15 +70,15 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
         column(
           width = 6,
           toggleable(deut_0, id = ns("0")),
-          toggleable(deut_100, id = ns("100"))
-        ),
-        column(
-          width = 6,
+          toggleable(deut_100, id = ns("100")),
           checkboxInput_h(
             inputId = ns("multiple_exposures"),
             label = "Use multiple Exposures?",
             value = FALSE
-          ),
+          )
+        ),
+        column(
+          width = 6,
           toggleable(
             selectInput_h(
               inputId = ns("t"),
