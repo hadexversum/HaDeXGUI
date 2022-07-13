@@ -51,6 +51,11 @@ mod_settings_visualization_ui <- function(id, mode){
         value = FALSE
       )
     ) %nullify if% !(mode %in% c("volcano")),
+    checkboxInput_h(
+      inputId = ns("hide_insignificant"),
+      label = "Hide insignificant values?",
+      value = FALSE
+    ) %nullify if% !(mode %in% c("woods")),
     fancy_icon = "image"
   )
 }
@@ -70,8 +75,10 @@ mod_settings_visualization_server <- function(id, mode){
         if (mode == "volcano") list(
           shown_interval = input_r("shown_interval"),
           distinguish_timepoints = input_r("distinguish_timepoints"),
-          hide_insignificant = input_r("hide_insignificant"),
           show_insignificant_grey = input_r("show_insignificant_grey")
+        ) else NULL,
+        if (mode %in% c("volcano", "woods")) list(
+          hide_insignificant = input_r("hide_insignificant")
         )
       )
     )
