@@ -99,7 +99,7 @@ mod_settings_state_server <- function(id, mode,
     return(
       if (mode == "multiple") list(
         states = reactive({
-          wait_for(all(input[["states"]]) %in% p_states_chosen_protein())
+          wait_for(all(input[["states"]] %in% p_states_chosen_protein()))
           input[["states"]]
         })
       ) else if (mode == "double") list(
