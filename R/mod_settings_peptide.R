@@ -21,7 +21,8 @@ mod_settings_peptide_ui <- function(id, mode){
     actionButton(
       inputId = ns("reset"),
       label = "Reset selection"
-    )
+    ),
+    fancy_icon = "dna"
   )
 }
 
