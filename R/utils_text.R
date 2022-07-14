@@ -31,7 +31,7 @@ react_construct_uptake_title <- function(plot_name, differential = FALSE, includ
       state_str <- if (!!include_state) glue("for state {s_state[['state']]()} ") else ""
       glue("{state_str}for {params[['chosen_protein']]()}")
     }
-    exposure_str <- if (!!include_exposure) glue("in {s_time[['t']]()} min ") else ""
+    exposure_str <- if (!!include_exposure && !s_time[["multiple"]]()) glue("in {s_time[['t']]()} min ") else ""
 
     capitalize(glue("{theo_str}{plot_name} plot {exposure_str}{states_str}"))
 

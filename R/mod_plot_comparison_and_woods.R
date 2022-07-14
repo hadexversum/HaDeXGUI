@@ -111,32 +111,36 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     })
 
     plot_out_woods <- reactive({
-      dat() %>%
-        HaDeX::create_p_diff_uptake_dataset(
-          diff_uptake_dat     = dat_processed_woods(),
-          protein             = params        %()% chosen_protein,
-          state_1             = s_state_woods %()% state_1,
-          state_2             = s_state_woods %()% state_2,
-          p_adjustment_method = s_test        %()% p_adjustment_method,
-          confidence_level    = s_test        %()% confidence_level,
-          time_0              = s_time        %()% 0,
-          time_100            = s_time        %()% 100,
-          deut_part           = params        %()% deut_part
-        ) %>%
-        HaDeX::plot_differential(
-          diff_uptake_dat          = dat_processed_woods(),
-          diff_p_uptake_dat        = .,
-          theoretical              = s_calculation %()% theoretical,
-          fractional               = s_calculation %()% fractional,
-          show_houde_interval      = s_test        %()% show_houde,
-          hide_houde_insignificant = (s_visualization %()% hide_insignificant) && (s_test %()% show_houde),
-          show_tstud_confidence    = s_test        %()% show_tstud,
-          hide_tstud_insignificant = (s_visualization %()% hide_insignificant) && (s_test %()% show_tstud),
-          time_t                   = s_time        %()% t,
-          line_size                = 1,
-          confidence_level         = s_test        %()% confidence_level,
-          all_times                = s_time        %()% multiple
-        )
+      (dat() %>%
+         HaDeX::create_p_diff_uptake_dataset(
+           diff_uptake_dat     = dat_processed_woods(),
+           protein             = params        %()% chosen_protein,
+           state_1             = s_state_woods %()% state_1,
+           state_2             = s_state_woods %()% state_2,
+           p_adjustment_method = s_test        %()% p_adjustment_method,
+           confidence_level    = s_test        %()% confidence_level,
+           time_0              = s_time        %()% 0,
+           time_100            = s_time        %()% 100,
+           deut_part           = params        %()% deut_part
+         ) %>%
+         HaDeX::plot_differential(
+           diff_uptake_dat          = dat_processed_woods(),
+           diff_p_uptake_dat        = .,
+           theoretical              = s_calculation %()% theoretical,
+           fractional               = s_calculation %()% fractional,
+           show_houde_interval      = s_test        %()% show_houde,
+           hide_houde_insignificant = (s_visualization %()% hide_insignificant) && (s_test %()% show_houde),
+           show_tstud_confidence    = s_test        %()% show_tstud,
+           hide_tstud_insignificant = (s_visualization %()% hide_insignificant) && (s_test %()% show_tstud),
+           time_t                   = s_time        %()% t,
+           line_size                = 1,
+           confidence_level         = s_test        %()% confidence_level,
+           all_times                = s_time        %()% multiple
+         )
+      ) %>%
+        update_axes_and_labels(s_range[["x"]], s_range[["woods_y"]],
+                               s_label, label_prefix = "woods") %>%
+        suppressMessages()
     })
 
     dat_out_comparison <- reactive({
@@ -192,7 +196,24 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
         }
       }),
       woods_y = range_spec({
-        list(min = 0, max = 10)
+        if (s_calculation %()% fractional) list(
+          min = -200,
+          max = 200,
+          value = c(0, 120),
+          step = 10
+        ) else {
+          wait_for(nrow(dat_processed_woods()) > 0)
+
+          min_abs <- round_any(min(dat_processed_woods()[c("diff_deut_uptake", "diff_theo_deut_uptake")], na.rm = TRUE), 2, floor)
+          max_abs <- round_any(max(dat_processed_woods()[c("diff_deut_uptake", "diff_theo_deut_uptake")], na.rm = TRUE), 2, ceiling)
+
+          list(
+            min = min_abs - 2,
+            max = max_abs + 2,
+            value = c(min_abs, max_abs),
+            step = 0.5
+          )
+        }
       })
     )
 
@@ -200,9 +221,9 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
       comparison_title = label_spec(react_construct_uptake_title("deuterium uptake", include_state = FALSE, include_exposure = TRUE)),
       comparison_y = label_spec(react_construct_uptake_lab_y(differential = FALSE)),
       comparison_x = label_spec("Position in sequence"),
-      woods_title = label_spec("bufasfaserfwr"),
-      woods_y = label_spec("Exposure [min]"),
-      woods_x = label_spec("Peptide ID")
+      woods_title = label_spec(react_construct_uptake_title("deuterium uptake difference", include_state = FALSE, include_exposure = TRUE)),
+      woods_y = label_spec(react_construct_uptake_lab_y(differential = TRUE)),
+      woods_x = label_spec("Position in sequence")
     )
 
     ### run settings servers
