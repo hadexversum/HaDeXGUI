@@ -64,26 +64,39 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    dat_processed <- reactive({
+    dat_processed_comparison <- reactive({
+      states <- s_state_comparison %()% states # calculated outside to handle validation error correctly
+
       HaDeX::create_uptake_dataset(
         dat(),
         protein   = params %()% chosen_protein,
-        states    = params %()% states,
+        states    = states,
         time_0    = s_time %()% 0,
         time_100  = s_time %()% 100,
         deut_part = params %()% deut_part
-      )
+      ) %>%
+        filter(Exposure %in% (s_time %()% t))
     })
 
-    dat_filtered <- reactive({
-      states <- s_state_comparison %()% states # calculated outside to handle validation error correctly
-      dat_processed() %>%
-        filter(State %in% states,
-               Exposure %in% (s_time %()% t))
+    dat_processed_woods <- reactive({
+      # TODO bypass this legacy
+      validate(need(length(unique(filter(dat(), !is.na("Modification"), Protein == params[["chosen_protein"]]())[["State"]])) > 1,
+                    "Not sufficient number of states without modifications."))
+
+      dat() %>%
+        HaDeX::create_diff_uptake_dataset(
+          protein   = params        %()% chosen_protein,
+          state_1   = s_state_woods %()% state_1,
+          state_2   = s_state_woods %()% state_2,
+          time_0    = s_time        %()% 0,
+          time_100  = s_time        %()% 100,
+          deut_part = params        %()% deut_part
+        ) %>%
+        filter(Exposure %in% (s_time %()% t))
     })
 
-    plot_comparison_out <- reactive({
-      (dat_filtered() %>%
+    plot_out_comparison <- reactive({
+      (dat_processed_comparison() %>%
           HaDeX::plot_state_comparison(
             theoretical = s_calculation %()% theoretical,
             fractional  = s_calculation %()% fractional,
@@ -97,15 +110,57 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
         suppressMessages()
     })
 
-    dat_comparison_out <- reactive({
-      HaDeX::show_uptake_data(
-        uptake_dat = dat_filtered(),
-        theoretical = s_calculation %()% theoretical,
-        fractional  = s_calculation %()% fractional
-      ) %>%
+    plot_out_woods <- reactive({
+      dat() %>%
+        HaDeX::create_p_diff_uptake_dataset(
+          diff_uptake_dat     = dat_processed_woods(),
+          protein             = params        %()% chosen_protein,
+          state_1             = s_state_woods %()% state_1,
+          state_2             = s_state_woods %()% state_2,
+          p_adjustment_method = s_test        %()% p_adjustment_method,
+          confidence_level    = s_test        %()% confidence_level,
+          time_0              = s_time        %()% 0,
+          time_100            = s_time        %()% 100,
+          deut_part           = params        %()% deut_part
+        ) %>%
+        HaDeX::plot_differential(
+          diff_uptake_dat          = dat_processed_woods(),
+          diff_p_uptake_dat        = .,
+          theoretical              = s_calculation %()% theoretical,
+          fractional               = s_calculation %()% fractional,
+          show_houde_interval      = s_test        %()% show_houde,
+          hide_houde_insignificant = (s_visualization %()% hide_insignificant) && (s_test %()% show_houde),
+          show_tstud_confidence    = s_test        %()% show_tstud,
+          hide_tstud_insignificant = (s_visualization %()% hide_insignificant) && (s_test %()% show_tstud),
+          time_t                   = s_time        %()% t,
+          line_size                = 1,
+          confidence_level         = s_test        %()% confidence_level,
+          all_times                = s_time        %()% multiple
+        )
+    })
+
+    dat_out_comparison <- reactive({
+      dat_processed_comparison() %>%
+        HaDeX::show_uptake_data(
+          uptake_dat  = dat_processed_comparison(),
+          theoretical = s_calculation %()% theoretical,
+          fractional  = s_calculation %()% fractional
+        ) %>%
         filter(Protein == params %()% chosen_protein,
                Start >= (s_range %()% x) [[1]],
-               End <= (s_range %()% x) [[2]])
+               End   <= (s_range %()% x) [[2]])
+    })
+
+    dat_out_woods <- reactive({
+      dat_processed_woods() %>%
+        HaDeX::show_diff_uptake_data_confidence(
+          theoretical      = s_calculation %()% theoretical,
+          fractional       = s_calculation %()% fractional,
+          confidence_level = s_test        %()% confidence_level
+        ) %>%
+        filter(Protein == params %()% chosen_protein,
+               Start >= (s_range %()% x) [[1]],
+               End   <= (s_range %()% x) [[2]])
     })
 
     range_specs <- list(
@@ -123,10 +178,10 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
           value = c(0, 120),
           step = 10
         ) else {
-          wait_for(nrow(dat_filtered()) > 0)
+          wait_for(nrow(dat_processed_comparison()) > 0)
 
-          min_abs <- round_any(min(dat_filtered()[c("deut_uptake", "theo_deut_uptake")], na.rm = TRUE), 5, floor)
-          max_abs <- round_any(max(dat_filtered()[c("deut_uptake", "theo_deut_uptake")], na.rm = TRUE), 5, ceiling)
+          min_abs <- round_any(min(dat_processed_comparison()[c("deut_uptake", "theo_deut_uptake")], na.rm = TRUE), 5, floor)
+          max_abs <- round_any(max(dat_processed_comparison()[c("deut_uptake", "theo_deut_uptake")], na.rm = TRUE), 5, ceiling)
 
           list(
             min = min_abs - 5,
@@ -178,7 +233,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
       s_state = s_state_comparison
     )
 
-    mod_display_plot_server("display_plot_comparison", plot_comparison_out, dat_comparison_out)
-    #mod_display_plot_server("display_plot_woods", plot_woods_out, dat_woods_out)
+    mod_display_plot_server("display_plot_comparison", plot_out_comparison, dat_out_comparison)
+    mod_display_plot_server("display_plot_woods", plot_out_woods, dat_out_woods)
   })
 }
