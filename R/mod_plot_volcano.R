@@ -11,7 +11,7 @@ mod_plot_volcano_ui <- function(id){
   ns <- NS(id)
 
   hadex_tab_plot(
-    title = construct_plot_label("Volcano", differential = FALSE, capitalize = TRUE),
+    title = construct_plot_label("Volcano", differential = FALSE),
 
     settings = install_settings_ui(
       names = c("calculation", "state", "time",
@@ -26,8 +26,7 @@ mod_plot_volcano_ui <- function(id){
       ),
       params = list(
         range_labs = construct_auto_range_labs("Volcano"),
-        plot_type = "Volcano",
-        differential = FALSE
+        label_labs = construct_auto_label_labs("Volcano")
       ),
       ns = ns
     ),
@@ -204,9 +203,9 @@ mod_plot_volcano_server <- function(id, dat, params){
     )
 
     label_specs <- list(
-      label_spec(react_construct_uptake_title("volcano", differential = TRUE), "title"),
-      label_spec(react_construct_uptake_lab_y(differential = TRUE), "x"),
-      label_spec("-log(P value)", "y")
+      title = label_spec(react_construct_uptake_title("volcano", differential = TRUE)),
+      x = label_spec(react_construct_uptake_lab_y(differential = TRUE)),
+      y = label_spec("-log(P value)")
     )
 
     ### settings servers

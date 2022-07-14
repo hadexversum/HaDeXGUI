@@ -25,9 +25,9 @@ input_r_numeric <- function(name, env = parent.frame()) {
 }
 
 #' @noRd
-input_r_list <- function(...) {
+input_r_list <- function(..., env = parent.frame()) {
   names <- unlist(list(...))
-  setNames(lapply(names, input_r, env = parent.frame()), names)
+  setNames(lapply(names, input_r, env = env), names)
 }
 
 #' Invoke multiple settings servers with automatic parameter binding

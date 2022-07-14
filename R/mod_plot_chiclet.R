@@ -11,7 +11,7 @@ mod_plot_chiclet_ui <- function(id, differential){
   ns <- NS(id)
 
   hadex_tab_plot(
-    title = construct_plot_label("Chiclet", differential, capitalize = TRUE),
+    title = construct_plot_label("Chiclet", differential),
 
     settings = install_settings_ui(
       names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
@@ -22,8 +22,7 @@ mod_plot_chiclet_ui <- function(id, differential){
       ),
       params = list(
         range_labs = construct_auto_range_labs("Chiclet", axes = "x", differential = differential),
-        plot_type = "Chiclet",
-        differential = differential
+        label_labs = construct_auto_label_labs("Chiclet", differential = differential)
       ),
       ns = ns
     ),
@@ -135,9 +134,9 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
     )
 
     label_specs <- list(
-      label_spec(react_construct_uptake_title("butterfly", differential), "title"),
-      label_spec("Exposure [min]", "y"),
-      label_spec("Peptide ID", "x")
+      title = label_spec(react_construct_uptake_title("Chiclet", differential)),
+      y = label_spec("Exposure [min]"),
+      x = label_spec("Peptide ID")
     )
 
     ### settings servers

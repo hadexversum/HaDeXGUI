@@ -11,7 +11,7 @@
 mod_plot_butterfly_ui <- function(id, differential) {
   ns <- NS(id)
   hadex_tab_plot(
-    title = construct_plot_label("Butterfly", differential, capitalize = TRUE),
+    title = construct_plot_label("Butterfly", differential),
 
     settings = install_settings_ui(
       names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
@@ -22,8 +22,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
       ),
       params = list(
         range_labs = construct_auto_range_labs("Butterfly", differential = differential),
-        plot_type = "Butterfly",
-        differential = differential
+        label_labs = construct_auto_label_labs("Butterfly", differential = differential)
       ),
       ns = ns
     ),
@@ -175,10 +174,11 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     )
 
     label_specs <- list(
-      label_spec(react_construct_uptake_title("butterfly", differential), "title"),
-      label_spec("Peptide ID", "x"),
-      label_spec(react_construct_uptake_lab_y(differential), "y")
+      title = label_spec(react_construct_uptake_title("butterfly", differential)),
+      x = label_spec("Peptide ID"),
+      y = label_spec(react_construct_uptake_lab_y(differential))
     )
+
     ### server settings
 
     invoke_settings_servers(

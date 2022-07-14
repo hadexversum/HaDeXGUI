@@ -7,50 +7,32 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_label_ui <- function(id, plot_type, differential){
+mod_settings_label_ui <- function(id, label_labs){
   ns <- NS(id)
 
   collapsible_card(
-    title = "Adjust labels",
+    title = "Labels",
     fluidRow(
       column(
         width = 10,
-        textInput(
-          inputId = ns("title"),
-          label = paste0(construct_plot_label(plot_type, differential), " title:"),
-          value = "" # updatable by observer
-        ),
-        textInput(
-          inputId = ns("x"),
-          label = paste0(construct_plot_label(plot_type, differential)," axis x label:"),
-          value = "" # updatable by observer
-        ),
-        textInput(
-          inputId = ns("y"),
-          label = paste0(construct_plot_label(plot_type, differential), " axis y label:"),
-          value = "" # updatable by observer
-        )
+        lapply(seq_along(label_labs), function(i) {
+          textInput(
+            inputId = ns(names(label_labs)[i]),
+            label = label_labs[i],
+            value = "" # updatable by observer
+          )
+        })
       ),
       column(
         width = 2,
-        numericInput_h(
-          inputId = ns("size_title"),
-          label = "Size:",
-          value = 15,
-          min = 5
-        ),
-        numericInput_h(
-          inputId = ns("size_x"),
-          label = "Size:",
-          value = 15,
-          min = 5
-        ),
-        numericInput_h(
-          inputId = ns("size_y"),
-          label = "Size:",
-          value = 15,
-          min = 5
-        )
+        lapply(names(label_labs), function(lab) {
+          numericInput_h(
+            inputId = ns(paste0(lab, "_size")),
+            label = "Size:",
+            value = 15,
+            min = 5
+          )
+        })
       )
     ),
     p("The axis ticks have the same size as the axis label.
@@ -67,31 +49,31 @@ mod_settings_label_server <- function(id, label_specs){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 
-    for (spec in label_specs) {
+    for (i in seq_along(label_specs)) {
       rlang::inject(
         observe({
           updateTextInput(
             session,
-            inputId = (!!spec)[["id"]],
-            value = (!!spec)[["expr_react"]]()
+            inputId = names(label_specs)[!!i],
+            value = label_specs[[!!i]]()
           )
         })
       )
     }
 
     return(
-      input_r_list("title", "x", "y", "size_title", "size_x", "size_y")
+      input_r_list(
+        c(
+          names(label_specs),
+          paste0(names(label_specs), "_size")
+        )
+      )
     )
   })
 }
 
-label_spec <- function(expr, id,
-                       env = parent.frame()) {
-  expr_react <- if (is.reactive(expr)) expr
+label_spec <- function(expr, env = parent.frame()) {
+  if (is.reactive(expr)) expr
   else reactive(substitute(expr), quoted = TRUE, env = env)
-
-  list(
-    id = id,
-    expr_react = expr_react
-  )
 }
+

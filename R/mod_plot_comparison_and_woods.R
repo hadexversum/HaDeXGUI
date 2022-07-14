@@ -11,7 +11,7 @@ mod_plot_comparison_and_woods_ui <- function(id){
   ns <- NS(id)
 
   hadex_tab_plot(
-    title = construct_plot_label("Comparison and Woods", differential = FALSE, capitalize = TRUE),
+    title = construct_plot_label("Comparison and Woods", differential = FALSE),
 
     settings = hadex_panel_settings(
       hadex_settings_separator("Common settings"),
@@ -31,12 +31,15 @@ mod_plot_comparison_and_woods_ui <- function(id){
       mod_settings_range_ui(
         id = ns("range"),
         range_labs = c(
-          "y-comparison" = construct_auto_range_lab("Comparison", "y"),
-          "y-woods" = construct_auto_range_lab("Woods", "y"),
-          "x" = "Choose x range for both plots:"
+          comparison_y = construct_auto_range_lab("Comparison", "y"),
+          woods_y = construct_auto_range_lab("Woods", "y"),
+          x = "Choose x range for both plots:"
         )
       ),
-      mod_settings_label_ui(ns("label"), plot_type = "Comparison and Woods", differential = TRUE)
+      mod_settings_label_ui(
+        id = ns("label"),
+        label_labs = construct_auto_label_labs(c("Comparison", "Woods"))
+      )
     ),
     display = tagList(
       mod_display_plot_ui(
@@ -89,7 +92,8 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
           ) +
           scale_color_manual(values = s_color %()% values)
       ) %>%
-        update_axes_and_labels(s_range[["x"]], s_range[["y-comparison"]], s_label) %>%
+        update_axes_and_labels(s_range[["x"]], s_range[["comparison_y"]],
+                               s_label, label_prefix = "comparison") %>%
         suppressMessages()
     })
 
@@ -111,7 +115,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
           max = params %()% max_range
         )
       }),
-      `y-comparison` = range_spec({
+      comparison_y = range_spec({
         # TODO: copypasted comment: this should be dynamic as well
         if (s_calculation %()% fractional) list(
           max = 200,
@@ -132,15 +136,18 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
           )
         }
       }),
-      `y-woods` = range_spec({
+      woods_y = range_spec({
         list(min = 0, max = 10)
       })
     )
 
     label_specs <- list(
-      label_spec(reactive({glue::glue("{if (s_calculation %()% theoretical) 'Theoretical d' else 'D'}euterium uptake for {params %()% chosen_protein}")}), "title"),
-      label_spec("Position in time sequence", "x"),
-      label_spec(react_construct_uptake_lab_y(differential = FALSE), "y")
+      comparison_title = label_spec(react_construct_uptake_title("deuterium uptake", include_state = FALSE, include_exposure = TRUE)),
+      comparison_y = label_spec(react_construct_uptake_lab_y(differential = FALSE)),
+      comparison_x = label_spec("Position in sequence"),
+      woods_title = label_spec("bufasfaserfwr"),
+      woods_y = label_spec("Exposure [min]"),
+      woods_x = label_spec("Peptide ID")
     )
 
     ### run settings servers

@@ -11,7 +11,7 @@ mod_plot_uptake_ui <- function(id, differential) {
   ns <- NS(id)
 
   hadex_tab_plot(
-    title = construct_plot_label("Uptake Curves", differential, capitalize = TRUE),
+    title = construct_plot_label("Uptake Curves", differential),
 
     settings = install_settings_ui(
       names = c(
@@ -26,8 +26,7 @@ mod_plot_uptake_ui <- function(id, differential) {
       ),
       params = list(
         range_labs = construct_auto_range_labs("Uptake Curves", axes = "y", differential = differential),
-        plot_type = "Uptake curves",
-        differential = differential
+        label_labs = construct_auto_label_labs("Uptake Curves", differential = differential)
       ),
       ns = ns
     ),
@@ -174,9 +173,9 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
     )
 
     label_specs <- list(
-      label_spec(react_construct_uptake_title("uptake curve", differential, include_state = FALSE), "title"),
-      label_spec(react_construct_uptake_lab_y(differential), "y"),
-      label_spec("Time point [min]", "x")
+      title = label_spec(react_construct_uptake_title("uptake curve", differential, include_state = FALSE)),
+      y = label_spec(react_construct_uptake_lab_y(differential)),
+      x = label_spec("Time point [min]")
     )
 
     invoke_settings_servers(
