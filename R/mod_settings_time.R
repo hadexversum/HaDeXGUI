@@ -210,7 +210,10 @@ mod_settings_time_server <- function(id,
           `0` = time_0,
           `100` = time_100
         ),
-        if (mode == "limits and exposure") list(t = t_out) else NULL
+        if (mode == "limits and exposure") list(
+          t = t_out,
+          multiple = input_r("multiple_exposures")
+        ) else NULL
       )
     )
   })

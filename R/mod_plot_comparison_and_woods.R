@@ -80,14 +80,12 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     })
 
     plot_comparison_out <- reactive({
-      t <- s_time %()% t
-
       (dat_filtered() %>%
           HaDeX::plot_state_comparison(
             theoretical = s_calculation %()% theoretical,
             fractional  = s_calculation %()% fractional,
-            time_t      = t,
-            all_times   = length(t) > 1
+            time_t      = s_time        %()% t,
+            all_times   = s_time        %()% multiple
           ) +
           scale_color_manual(values = s_color %()% values)
       ) %>%
