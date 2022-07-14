@@ -4,28 +4,168 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList
 mod_plot_comparison_and_woods_ui <- function(id){
   ns <- NS(id)
-  tagList(
- 
+
+  hadex_tab_plot(
+    title = construct_plot_label("Comparison and Woods", differential = FALSE, capitalize = TRUE),
+
+    settings = hadex_panel_settings(
+      hadex_settings_separator("Common settings"),
+      mod_settings_calculation_ui(ns("calculation")),
+      mod_settings_time_ui(ns("time"), mode = "limits and exposure"),
+
+      hadex_settings_separator("Comparison Plot settings"),
+      mod_settings_state_ui(ns("state_comparison"), mode = "multiple"),
+      mod_settings_color_ui(ns("color")),
+
+      hadex_settings_separator("Woods Plot settings"),
+      mod_settings_state_ui(ns("state_woods"), mode = "double"),
+      mod_settings_test_ui(ns("test"), mode = "selectible"),
+      mod_settings_visualization_ui(ns("visualization"), mode = "woods"),
+
+      hadex_settings_separator("Adjustment settings"),
+      mod_settings_range_ui(ns("range"), range_ids = c("y-comparison", "y-woods", "x")),
+      mod_settings_label_ui(ns("label"), plot_type = "Comparison and Woods", differential = TRUE)
+    ),
+    display = tagList(
+      mod_display_plot_ui(
+        ns("display_plot_comparison"),
+        plot_label = construct_plot_label("Comparison", differential = FALSE),
+        additional_data_info = cosntruct_uptake_plots_data_info(differential = FALSE)
+      ),
+      mod_display_plot_ui(
+        ns("display_plot_woods"),
+        plot_label = construct_plot_label("Woods", differential = FALSE),
+        additional_data_info = cosntruct_uptake_plots_data_info(differential = TRUE)
+
+      )
+    )
   )
 }
-    
+
 #' plot_comparison_and_woods Server Functions
 #'
-#' @noRd 
-mod_plot_comparison_and_woods_server <- function(id){
+#' @noRd
+mod_plot_comparison_and_woods_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
- 
+
+    dat_processed <- reactive({
+      HaDeX::create_uptake_dataset(
+        dat(),
+        protein   = params %()% chosen_protein,
+        states    = params %()% states,
+        time_0    = s_time %()% 0,
+        time_100  = s_time %()% 100,
+        deut_part = params %()% deut_part
+      )
+    })
+
+    dat_filtered <- reactive({
+      states <- s_state_comparison %()% states # calculated outside to handle validation error correctly
+      dat_processed() %>%
+        filter(State %in% states,
+               Exposure %in% (s_time %()% t))
+    })
+
+    plot_comparison_out <- reactive({
+      t <- s_time %()% t
+
+      (dat_filtered() %>%
+          HaDeX::plot_state_comparison(
+            theoretical = s_calculation %()% theoretical,
+            fractional  = s_calculation %()% fractional,
+            time_t      = t,
+            all_times   = length(t) > 1
+          ) +
+          scale_color_manual(values = s_color %()% values)
+      ) %>%
+        update_axes_and_labels(s_range[["x"]], s_range[["y-comparison"]], s_label) %>%
+        suppressMessages()
+    })
+
+    dat_comparison_out <- reactive({
+      HaDeX::show_uptake_data(
+        uptake_dat = dat_filtered(),
+        theoretical = s_calculation %()% theoretical,
+        fractional  = s_calculation %()% fractional
+      ) %>%
+        filter(Protein == params %()% chosen_protein,
+               Start >= (s_range %()% x) [[1]],
+               End <= (s_range %()% x) [[2]])
+    })
+
+    range_specs <- list(
+      range_spec({
+        list(
+          min = 1,
+          max = params %()% max_range
+        )
+      }, "x"),
+      range_spec({
+        # TODO: copypasted comment: this should be dynamic as well
+        if (s_calculation %()% fractional) list(
+          max = 200,
+          min = -200,
+          value = c(0, 120),
+          step = 10
+        ) else {
+          wait_for(nrow(dat_filtered()) > 0)
+
+          min_abs <- round_any(min(dat_filtered()[c("deut_uptake", "theo_deut_uptake")], na.rm = TRUE), 5, floor)
+          max_abs <- round_any(max(dat_filtered()[c("deut_uptake", "theo_deut_uptake")], na.rm = TRUE), 5, ceiling)
+
+          list(
+            min = min_abs - 5,
+            max = max_abs + 5,
+            value = c(min_abs, max_abs),
+            step = 1
+          )
+        }
+      }, "y-comparison"),
+      range_spec({
+        list(min = 0, max = 10)
+      }, "y-woods")
+    )
+
+    label_specs <- list(
+      label_spec(reactive({glue::glue("{if (s_calculation %()% theoretical) 'Theoretical d' else 'D'}euterium uptake for {params %()% chosen_protein}")}), "title"),
+      label_spec("Position in time sequence", "x"),
+      label_spec(react_construct_uptake_lab_y(differential = FALSE), "y")
+    )
+
+    ### run settings servers
+
+    invoke_settings_servers(
+      names = c("calculation", "time", "test", "visualization", "range", "label"),
+      modes = list(
+        time = "limits and exposure",
+        test = "selectible",
+        visualization = "woods"
+      )
+    )
+
+    s_state_comparison <- mod_settings_state_server(
+      id = "state_comparison",
+      mode = "multiple",
+      p_states_chosen_protein = params[["states_chosen_protein"]]
+    )
+
+    s_state_woods <- mod_settings_state_server(
+      id = "state_woods",
+      mode = "double",
+      p_states_chosen_protein = params[["states_chosen_protein"]]
+    )
+
+    s_color <- mod_settings_color_server(
+      id = "color",
+      s_state = s_state_comparison
+    )
+
+    mod_display_plot_server("display_plot_comparison", plot_comparison_out, dat_comparison_out)
   })
 }
-    
-## To be copied in the UI
-# mod_plot_comparison_and_woods_ui("plot_comparison_and_woods_1")
-    
-## To be copied in the server
-# mod_plot_comparison_and_woods_server("plot_comparison_and_woods_1")
