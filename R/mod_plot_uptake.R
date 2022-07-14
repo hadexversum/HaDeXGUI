@@ -25,7 +25,7 @@ mod_plot_uptake_ui <- function(id, differential) {
         visualization = "uptake"
       ),
       params = list(
-        range_ids = c("y"),
+        range_labs = construct_auto_range_labs("Uptake Curves", axes = "y", differential = differential),
         plot_type = "Uptake curves",
         differential = differential
       ),

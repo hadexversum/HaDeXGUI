@@ -21,7 +21,7 @@ mod_plot_chiclet_ui <- function(id, differential){
         visualization = "chiclet"
       ),
       params = list(
-        range_ids = c("x"),
+        range_labs = construct_auto_range_labs("Chiclet", axes = "x", differential = differential),
         plot_type = "Chiclet",
         differential = differential
       ),

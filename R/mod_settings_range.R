@@ -7,25 +7,23 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_range_ui <- function(id, range_ids){
+mod_settings_range_ui <- function(id, range_labs){
   ns <- NS(id)
-  do.call(
+  rlang::exec(
     collapsible_card,
-    args = c(
-      title = "Ranges",
-      lapply(range_ids, function(id) {
-        sliderInput(
-          inputId = ns(id),
-          label = paste0("Choose ", id, " range for plot:"),
-          min = 0,
-          max = 1,
-          value = c(0, 1),
-          step = 1
-        )
-      }),
-      init_collapsed = TRUE,
-      fancy_icon = "arrows-alt-h"
-    )
+    title = "Ranges",
+    !!!lapply(seq_along(range_labs), function(i) {
+      sliderInput(
+        inputId = ns(names(range_labs)[i]),
+        label = range_labs[i],
+        min = 0,
+        max = 1,
+        value = c(0, 1),
+        step = 1
+      )
+    }),
+    init_collapsed = TRUE,
+    fancy_icon = "arrows-alt-h"
   )
 }
 

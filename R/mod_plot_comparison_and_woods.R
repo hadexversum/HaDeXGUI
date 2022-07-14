@@ -28,7 +28,14 @@ mod_plot_comparison_and_woods_ui <- function(id){
       mod_settings_visualization_ui(ns("visualization"), mode = "woods"),
 
       hadex_settings_separator("Adjustment settings"),
-      mod_settings_range_ui(ns("range"), range_ids = c("y-comparison", "y-woods", "x")),
+      mod_settings_range_ui(
+        id = ns("range"),
+        range_labs = c(
+          "y-comparison" = construct_auto_range_lab("Comparison", "y"),
+          "y-woods" = construct_auto_range_lab("Woods", "y"),
+          "x" = "Choose x range for both plots:"
+        )
+      ),
       mod_settings_label_ui(ns("label"), plot_type = "Comparison and Woods", differential = TRUE)
     ),
     display = tagList(
@@ -167,5 +174,6 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     )
 
     mod_display_plot_server("display_plot_comparison", plot_comparison_out, dat_comparison_out)
+    #mod_display_plot_server("display_plot_woods", plot_woods_out, dat_woods_out)
   })
 }

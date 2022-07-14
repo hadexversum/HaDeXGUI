@@ -21,7 +21,7 @@ mod_plot_butterfly_ui <- function(id, differential) {
         visualization = "butterfly"
       ),
       params = list(
-        range_ids = c("x", "y"),
+        range_labs = construct_auto_range_labs("Butterfly", differential = differential),
         plot_type = "Butterfly",
         differential = differential
       ),

@@ -29,3 +29,9 @@ react_construct_uptake_title <- function(plot_type, differential, include_state 
 
   }, env = env)
 )
+
+construct_auto_range_lab <- function(plot_label, ax, differential = FALSE)
+  glue::glue("Choose {ax} range for the {plot_label} {if (differential) 'Differential ' else ''}Plot:")
+
+construct_auto_range_labs <- function(plot_label, axes = c("x", "y"), differential = FALSE)
+  sapply(axes, function(ax) construct_auto_range_lab(plot_label, ax, differential), USE.NAMES = TRUE)

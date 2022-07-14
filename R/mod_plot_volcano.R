@@ -25,7 +25,7 @@ mod_plot_volcano_ui <- function(id){
         visualization = "volcano"
       ),
       params = list(
-        range_ids = c("x", "y"),
+        range_labs = construct_auto_range_labs("Volcano"),
         plot_type = "Volcano",
         differential = FALSE
       ),
