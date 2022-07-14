@@ -132,7 +132,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
     })
 
     range_specs <- list(
-      if (differential) range_spec({
+      y = if (differential) range_spec({
         if (s_calculation[["fractional"]]()) {
           max_abs <- round_any(max(dat_processed()[c("diff_frac_deut_uptake", "diff_theo_frac_deut_uptake")], na.rm = TRUE), 5, ceiling)
 
@@ -153,7 +153,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
             value = c(0, max_abs)
           )
         }
-      }, "y") else range_spec({
+      }) else range_spec({
         if (s_calculation[["fractional"]]()) {
           list(
             min = -50,
@@ -170,7 +170,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
             value = c(0, max_abs)
           )
         }
-      }, id = "y")
+      })
     )
 
     label_specs <- list(

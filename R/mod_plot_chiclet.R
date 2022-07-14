@@ -124,14 +124,14 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
     ### reactives for settings servers
 
     range_specs <- list(
-      range_spec({
+      x = range_spec({
         wait_for(nrow(dat_processed()) > 0)
 
         list(
           min = min(dat_processed()[["ID"]]),
           max = max(dat_processed()[["ID"]])
         )
-      }, id = "x")
+      })
     )
 
     label_specs <- list(

@@ -170,7 +170,7 @@ mod_plot_volcano_server <- function(id, dat, params){
     ### reactives for settings servers
 
     range_specs <- list(
-      range_spec({
+      x = range_spec({
         wait_for(nrow(dat_processed()) > 0)
 
         ntheo <- dat_processed()[[
@@ -189,8 +189,8 @@ mod_plot_volcano_server <- function(id, dat, params){
           max = max_abs + 2,
           value = c(-max_abs, max_abs)
         )
-      }, "x"),
-      range_spec({
+      }),
+      y = range_spec({
         wait_for(nrow(dat_processed()) > 0)
 
         max_y <- ceiling(max(dat_processed()[["log_p_value"]], na.rm = TRUE))
@@ -200,7 +200,7 @@ mod_plot_volcano_server <- function(id, dat, params){
           max = max_y + 2,
           value = c(0, max_y)
         )
-      }, "y")
+      })
     )
 
     label_specs <- list(

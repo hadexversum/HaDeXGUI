@@ -139,15 +139,15 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     ### server reactives
 
     range_specs <- list(
-      range_spec({
+      x = range_spec({
         wait_for(nrow(dat_processed()) > 0)
 
         list(
           min = min(dat_processed()[["ID"]]),
           max = max(dat_processed()[["ID"]])
         )
-      }, id = "x"),
-      range_spec({
+      }),
+      y = range_spec({
         wait_for(nrow(dat_processed()) > 0)
 
         theo <- dat_processed()[[
@@ -171,7 +171,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
           min = floor(min(theo, ntheo, na.rm = TRUE)) - 1,
           max = ceiling(max(theo, ntheo, na.rm = TRUE)) + 1
         )
-      }, id = "y")
+      })
     )
 
     label_specs <- list(

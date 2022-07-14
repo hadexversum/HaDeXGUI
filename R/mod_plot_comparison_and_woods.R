@@ -107,13 +107,13 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     })
 
     range_specs <- list(
-      range_spec({
+      x = range_spec({
         list(
           min = 1,
           max = params %()% max_range
         )
-      }, "x"),
-      range_spec({
+      }),
+      `y-comparison` = range_spec({
         # TODO: copypasted comment: this should be dynamic as well
         if (s_calculation %()% fractional) list(
           max = 200,
@@ -133,10 +133,10 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
             step = 1
           )
         }
-      }, "y-comparison"),
-      range_spec({
+      }),
+      `y-woods` = range_spec({
         list(min = 0, max = 10)
-      }, "y-woods")
+      })
     )
 
     label_specs <- list(
