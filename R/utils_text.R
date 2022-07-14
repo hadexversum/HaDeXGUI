@@ -17,7 +17,7 @@ react_construct_uptake_title <- function(plot_type, differential, include_state 
                                          env = parent.frame()) rlang::inject(
   reactive({
     plot_type <- !!plot_type
-    theo_str <- if (s_calculation[["theoretical"]]()) "Theoreotical " else ""
+    theo_str <- if (s_calculation[["theoretical"]]()) "Theoretical " else ""
     states_str <- if (!!differential) {
       glue("between {s_state[['state_1']]()} and {s_state[['state_2']]()}")
     } else {
