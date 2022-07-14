@@ -100,6 +100,8 @@ mod_settings_state_server <- function(id, mode,
       if (mode == "multiple") list(
         states = reactive({
           wait_for(all(input[["states"]] %in% p_states_chosen_protein()))
+          validate(need(length(input[["states"]]) > 0,
+                        "Please select at least one state."))
           input[["states"]]
         })
       ) else if (mode == "double") list(

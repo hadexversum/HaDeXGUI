@@ -54,7 +54,7 @@ mod_settings_color_server <- function(id, s_state){
           )
 
           wait_for(length(colors) > 0)
-          wait_for(all(not_null(colors)))
+          wait_for(all(sapply(colors, not_null)))
 
           setNames(colors, states)
         })
