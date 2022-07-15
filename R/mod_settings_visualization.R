@@ -56,18 +56,21 @@ mod_settings_visualization_ui <- function(id, mode){
       label = "Hide insignificant values?",
       value = FALSE
     ) %nullify if% !(mode %in% c("woods")),
-    tagList(
-      checkboxInput_h(
-        inputId = ns("show_length"),
-        label = "Show peptide length and position in the sequence? ",
-        value = FALSE
-      ),
-      checkboxInput_h(
-        inputId = ns("split_timepoints"),
-        label = "Show time points separately?",
-        value = FALSE
-      )
-    ) %nullify if% !(mode == "manhattan"),
+    checkboxInput_h(
+      inputId = ns("show_length"),
+      label = "Show peptide length and position in the sequence? ",
+      value = FALSE
+    ) %nullify if% (mode != "manhattan"),
+    checkboxInput_h(
+      inputId = ns("show_aggregated"),
+      label = "Show aggregated data? ",
+      value = TRUE
+    ) %nullify if% (mode != "uncertainty"),
+    checkboxInput_h(
+      inputId = ns("split_timepoints"),
+      label = "Show time points separately?",
+      value = FALSE
+    ) %nullify if% !(mode %in% c("manhattan", "uncertainty")),
     fancy_icon = "image"
   )
 }
@@ -92,7 +95,8 @@ mod_settings_visualization_server <- function(id, mode){
         if (mode %in% c("volcano", "woods")) list(
           hide_insignificant = input_r("hide_insignificant")
         ),
-        if (mode == "manhattan") input_r_list("show_length", "split_timepoints")
+        if (mode == "manhattan") input_r_list("show_length", "split_timepoints"),
+        if (mode == "uncertainty") input_r_list("show_aggregated", "split_timepoints")
       )
     )
   })

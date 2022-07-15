@@ -23,6 +23,7 @@ HaDeX_DT_format <- function(dat, cols = colnames(dat)) {
 }
 
 MAX_TIME <- 99999
+PROTON_MASS <- 1.00727647
 
 cosntruct_uptake_plots_data_info <- function(differential) {
   if (differential) {

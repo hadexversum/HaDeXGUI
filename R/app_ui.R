@@ -29,7 +29,8 @@ app_ui <- function(request) {
         title = "Time-based data",
         mod_plot_replicates_ui("replicates"),
         mod_plot_manhattan_ui("manhattan"),
-        mod_plot_quality_control_ui("quality_control")
+        mod_plot_quality_control_ui("quality_control"),
+        mod_plot_uncertainty_ui("uncertainty")
       ),
 
       if (getOption("shiny.reactlog", default = FALSE))
