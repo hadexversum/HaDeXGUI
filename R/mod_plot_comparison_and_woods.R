@@ -41,17 +41,15 @@ mod_plot_comparison_and_woods_ui <- function(id){
         label_labs = construct_auto_label_labs(c("Comparison", "Woods"))
       )
     ),
-    display = tagList(
-      mod_display_plot_ui(
-        ns("display_plot_comparison"),
-        plot_label = construct_plot_label("Comparison", differential = FALSE),
-        additional_data_info = cosntruct_uptake_plots_data_info(differential = FALSE)
+    display = mod_display_plot_ui(
+      ns("display_plot"),
+      plot_label = c(
+        comparison = construct_plot_label("Comparison", differential = FALSE),
+        woods = construct_plot_label("Woods", differential = FALSE)
       ),
-      mod_display_plot_ui(
-        ns("display_plot_woods"),
-        plot_label = construct_plot_label("Woods", differential = FALSE),
-        additional_data_info = cosntruct_uptake_plots_data_info(differential = TRUE)
-
+      additional_data_info = c(
+        comparison = cosntruct_uptake_plots_data_info(differential = FALSE),
+        woods = cosntruct_uptake_plots_data_info(differential = TRUE)
       )
     )
   )
@@ -254,7 +252,16 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
       s_state = s_state_comparison
     )
 
-    mod_display_plot_server("display_plot_comparison", plot_out_comparison, dat_out_comparison)
-    mod_display_plot_server("display_plot_woods", plot_out_woods, dat_out_woods)
+    mod_display_plot_server(
+      id = "display_plot",
+      plot_out = list(
+        comparison = plot_out_comparison,
+        woods = plot_out_woods
+      ),
+      dat_out = list(
+        comparison = dat_out_comparison,
+        woods = dat_out_woods
+      )
+    )
   })
 }
