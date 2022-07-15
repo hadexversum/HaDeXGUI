@@ -8,7 +8,7 @@
 #'
 #' @importFrom shiny NS tagList
 mod_settings_time_ui <- function(id, mode = "limits and points"){
-  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure"))
+  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure", "SINGLE POINT"))
   ns <- NS(id)
 
   deut_0 <- selectInput_h(
@@ -91,6 +91,15 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
           toggleable(timepoints, id = ns("points"))
         )
       )
+    ),
+    `SINGLE POINT` = card_timepoints(
+      selectizeInput( #TODO: fix this cropping issue also for other selects
+        inputId = ns("t"),
+        label = "Select time point:",
+        choices = "",
+        selected = "",
+        options = list(dropdownParent = 'body')
+      )
     )
   )
 }
@@ -104,108 +113,124 @@ mod_settings_time_server <- function(id,
                                      p_times_with_control,
                                      p_no_deut_control,
                                      s_calculation) {
-  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure"))
+  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure", "SINGLE POINT"))
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    ### reactive values from inputs
-
-    time_0 <- reactive({
-      if (s_calculation[["theoretical"]]())
-        min(p_times()[p_times() > 0]) # TODO: should there be 0 instead?
-      else
-        as.numeric(input[["0"]])
-    })
-
-    time_100 <- reactive({
-      if (s_calculation[["theoretical"]]() || !s_calculation[["fractional"]]())
-        MAX_TIME # TODO: should there be max ()[] ... instead?
-      else
-        as.numeric(input[["100"]])
-    })
-
-    ### observers updating inputs
-
-    observe({
-      updateSelectInput(
-        session,
-        inputId = "0",
-        choices = p_times()[p_times() < MAX_TIME],
-        selected = p_times()[p_times() == p_no_deut_control()]
-      )
-
-      toggle_id(
-        !s_calculation[["theoretical"]](),
-        id = ns("0")
-      )
-    })
-
-    observe({
-      wait_for(length(p_times_with_control()) > 1)
-      wait_for(time_0())
-
-      bigger_than_0 <- p_times_with_control()[p_times_with_control() > time_0()]
-
-      updateSelectInput(
-        session,
-        inputId = "100",
-        choices = bigger_than_0,
-        selected = max(bigger_than_0[bigger_than_0 < MAX_TIME])
-      )
-
-      toggle_id(
-        !s_calculation[["theoretical"]]() && s_calculation[["fractional"]](),
-        id  = ns("100")
-      )
-    })
-
-    times_t <- reactive({
-      wait_for(time_100())
-      wait_for(time_0())
-
-      p_times()[p_times() > time_0() & p_times() < time_100()]
-    })
-
-    observe({
-      updateCheckboxGroupInput(
-        session,
-        inputId = "points",
-        choices = times_t(),
-        selected = times_t()
-      )
-    })
-
-    ### limits-and-exposure-mode-specific observers
-
-    if (mode == "limits and exposure") {
+    if (mode == "SINGLE POINT") {
       observe({
-        toggle_id(input[["multiple_exposures"]], id = ns("points"))
-        toggle_id(!input[["multiple_exposures"]], id = ns("t"))
-      })
-
-      observe({
-        validate(need(length(times_t) > 0,
-                      "There should be at least one valid option between Exposure 0% and 100% to choose from."))
+        values <- p_times()[p_times() < MAX_TIME]
 
         updateSelectInput(
           session,
           inputId = "t",
-          choices = times_t(),
-          selected = times_t()[1]
+          choices = values,
+          selected = middle(values)
+        )
+      })
+    } else {
+    ### reactive values from inputs
+
+      time_0 <- reactive({
+        if (s_calculation[["theoretical"]]())
+          min(p_times()[p_times() > 0]) # TODO: should there be 0 instead?
+        else
+          as.numeric(input[["0"]])
+      })
+
+      time_100 <- reactive({
+        if (s_calculation[["theoretical"]]() || !s_calculation[["fractional"]]())
+          MAX_TIME # TODO: should there be max ()[] ... instead?
+        else
+          as.numeric(input[["100"]])
+      })
+
+      ### observers updating inputs
+
+      observe({
+        updateSelectInput(
+          session,
+          inputId = "0",
+          choices = p_times()[p_times() < MAX_TIME],
+          selected = p_times()[p_times() == p_no_deut_control()]
+        )
+
+        toggle_id(
+          !s_calculation[["theoretical"]](),
+          id = ns("0")
         )
       })
 
-      t_out <- reactive({
-        if (input[["multiple_exposures"]]) input[["points"]]
-        else as.numeric(input[["t"]])
+      observe({
+        wait_for(length(p_times_with_control()) > 1)
+        wait_for(time_0())
+
+        bigger_than_0 <- p_times_with_control()[p_times_with_control() > time_0()]
+
+        updateSelectInput(
+          session,
+          inputId = "100",
+          choices = bigger_than_0,
+          selected = max(bigger_than_0[bigger_than_0 < MAX_TIME])
+        )
+
+        toggle_id(
+          !s_calculation[["theoretical"]]() && s_calculation[["fractional"]](),
+          id  = ns("100")
+        )
       })
+
+      times_t <- reactive({
+        wait_for(time_100())
+        wait_for(time_0())
+
+        p_times()[p_times() > time_0() & p_times() < time_100()]
+      })
+
+      observe({
+        updateCheckboxGroupInput(
+          session,
+          inputId = "points",
+          choices = times_t(),
+          selected = times_t()
+        )
+      })
+
+      ### limits-and-exposure-mode-specific observers
+
+      if (mode == "limits and exposure") {
+        observe({
+          toggle_id(input[["multiple_exposures"]], id = ns("points"))
+          toggle_id(!input[["multiple_exposures"]], id = ns("t"))
+        })
+
+        observe({
+          validate(need(length(times_t) > 0,
+                        "There should be at least one valid option between Exposure 0% and 100% to choose from."))
+
+          updateSelectInput(
+            session,
+            inputId = "t",
+            choices = times_t(),
+            selected = times_t()[1]
+          )
+        })
+
+        t_out <- reactive({
+          if (input[["multiple_exposures"]]) input[["points"]]
+          else as.numeric(input[["t"]])
+        })
+      }
+
     }
 
     ### return values
 
     return(
       c(
-        list(
+        if (mode == "SINGLE POINT") list(
+          t = input_r_numeric("t")
+        ) else list(
           points = input_r_numeric("points"),
           `0` = time_0,
           `100` = time_100
