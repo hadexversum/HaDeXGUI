@@ -25,6 +25,10 @@ app_ui <- function(request) {
         mod_plot_uptake_ui("uptake", differential = FALSE),
         mod_plot_uptake_ui("uptake_diff", differential = TRUE)
       ),
+      navbarMenu(
+        title = "Time-based data",
+        mod_plot_replicates_ui("replicates")
+      ),
 
       if (getOption("shiny.reactlog", default = FALSE))
         tabPanel(title = "reactlog", reactlog_module_ui())
