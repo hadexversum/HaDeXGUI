@@ -56,6 +56,18 @@ mod_settings_visualization_ui <- function(id, mode){
       label = "Hide insignificant values?",
       value = FALSE
     ) %nullify if% !(mode %in% c("woods")),
+    tagList(
+      checkboxInput_h(
+        inputId = ns("show_length"),
+        label = "Show peptide length and position in the sequence? ",
+        value = FALSE
+      ),
+      checkboxInput_h(
+        inputId = ns("split_timepoints"),
+        label = "Show time points separately?",
+        value = FALSE
+      )
+    ) %nullify if% !(mode == "manhattan"),
     fancy_icon = "image"
   )
 }
@@ -79,7 +91,8 @@ mod_settings_visualization_server <- function(id, mode){
         ) else NULL,
         if (mode %in% c("volcano", "woods")) list(
           hide_insignificant = input_r("hide_insignificant")
-        )
+        ),
+        if (mode == "manhattan") input_r_list("show_length", "split_timepoints")
       )
     )
   })
