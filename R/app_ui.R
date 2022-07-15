@@ -28,7 +28,8 @@ app_ui <- function(request) {
       navbarMenu(
         title = "Time-based data",
         mod_plot_replicates_ui("replicates"),
-        mod_plot_manhattan_ui("manhattan")
+        mod_plot_manhattan_ui("manhattan"),
+        mod_plot_quality_control_ui("quality_control")
       ),
 
       if (getOption("shiny.reactlog", default = FALSE))

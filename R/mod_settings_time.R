@@ -8,7 +8,8 @@
 #'
 #' @importFrom shiny NS tagList
 mod_settings_time_ui <- function(id, mode = "limits and points"){
-  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure", "SINGLE POINT"))
+  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure",
+                        "SINGLE POINT", "LIMITS AND SINGLE EXPOSURE"))
   ns <- NS(id)
 
   deut_0 <- selectInput_h(
@@ -30,6 +31,14 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
     label = "Show time points: ",
     choices = "",
     selected = ""
+  )
+
+  exposure <- selectizeInput( #TODO: fix this cropping issue also for other selects
+    inputId = ns("t"),
+    label = "Measurement Exposure:",
+    choices = "",
+    selected = "",
+    options = list(dropdownParent = 'body')
   )
 
   card_timepoints <- function(...) collapsible_card(
@@ -79,28 +88,15 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
         ),
         column(
           width = 6,
-          toggleable(
-            selectInput_h(
-              inputId = ns("t"),
-              label = "Measurement Exposure",
-              choices = "",
-              selected = ""
-            ),
-            id = ns("t")
-          ),
+          toggleable(exposure, id = ns("t")),
           toggleable(timepoints, id = ns("points"))
         )
       )
     ),
-    `SINGLE POINT` = card_timepoints(
-      selectizeInput( #TODO: fix this cropping issue also for other selects
-        inputId = ns("t"),
-        label = "Select time point:",
-        choices = "",
-        selected = "",
-        options = list(dropdownParent = 'body')
-      )
-    )
+    `LIMITS AND SINGLE EXPOSURE` = card_timepoints(
+      splitLayout(deut_0, exposure)
+    ),
+    `SINGLE POINT` = card_timepoints(exposure)
   )
 }
 
@@ -113,7 +109,8 @@ mod_settings_time_server <- function(id,
                                      p_times_with_control,
                                      p_no_deut_control,
                                      s_calculation) {
-  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure", "SINGLE POINT"))
+  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure",
+                        "SINGLE POINT", "LIMITS AND SINGLE EXPOSURE"))
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
@@ -198,12 +195,7 @@ mod_settings_time_server <- function(id,
 
       ### limits-and-exposure-mode-specific observers
 
-      if (mode == "limits and exposure") {
-        observe({
-          toggle_id(input[["multiple_exposures"]], id = ns("points"))
-          toggle_id(!input[["multiple_exposures"]], id = ns("t"))
-        })
-
+      if (mode %in% c("limits and exposure", "LIMITS AND SINGLE EXPOSURE")) {
         observe({
           validate(need(length(times_t) > 0,
                         "There should be at least one valid option between Exposure 0% and 100% to choose from."))
@@ -214,6 +206,13 @@ mod_settings_time_server <- function(id,
             choices = times_t(),
             selected = times_t()[1]
           )
+        })
+      }
+
+      if (mode == "limits and exposure") {
+        observe({
+          toggle_id(input[["multiple_exposures"]], id = ns("points"))
+          toggle_id(!input[["multiple_exposures"]], id = ns("t"))
         })
 
         t_out <- reactive({
@@ -230,6 +229,9 @@ mod_settings_time_server <- function(id,
       c(
         if (mode == "SINGLE POINT") list(
           t = input_r_numeric("t")
+        ) else if (mode == "LIMITS AND SINGLE EXPOSURE") list(
+          t = input_r_numeric("t"),
+          `0` = time_0
         ) else list(
           points = input_r_numeric("points"),
           `0` = time_0,

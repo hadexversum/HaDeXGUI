@@ -78,7 +78,11 @@ app_server <- function(input, output, session) {
     params = dat_source[["params"]]
   )
 
-
+  mod_plot_quality_control_server(
+    id = "quality_control",
+    dat = dat_source[["dat"]],
+    params = dat_source[["params"]]
+  )
 
   if (getOption("shiny.reactlog", default = FALSE)) reactlog_module_server()
 }
