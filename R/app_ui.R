@@ -36,7 +36,9 @@ app_ui <- function(request) {
       mod_page_about_ui("page_about"),
 
       if (getOption("shiny.reactlog", default = FALSE))
-        tabPanel(title = "reactlog", reactlog_module_ui())
+        tabPanel(title = "reactlog", reactlog_module_ui()),
+
+      header = img(id = "HaDeX-logo", src = "www/logo.png")
     )
   )
 }
