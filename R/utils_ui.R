@@ -85,13 +85,12 @@ gen_random_id <- function(prefix = "")
 add_fancy_icon <- function(fancy_icon)
   icon(fancy_icon, class = "fancy-icon")
 
-construct_var_name <- function(diff, theo, frac, var)
-  paste0(
-    "diff_" %nullify if% (!diff),
-    "theo_" %nullify if% (!theo),
-    "frac_" %nullify if% (!frac),
-    var
-  )
+#' @importFrom xtable xtable
+htmlize_data <- function(dataset_name) {
+  data("file_req", package = "HaDeXGUI", envir = environment())
+  HTML(paste(capture.output(print(xtable(file_req), type = "html"))))
+}
+
 
 install_settings_ui <- function(names, modes, params = list(), ns) {
   uis <- lapply(names, function(name) {

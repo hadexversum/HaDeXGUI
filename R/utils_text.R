@@ -74,3 +74,27 @@ construct_auto_label_labs <- function(plot_names, differential = FALSE) {
     })
   )
 }
+
+cosntruct_uptake_plots_data_info <- function(differential) {
+  if (differential) {
+    "The table presents data from the chosen x plot range.
+     The empty values (e.q. `Frac Diff DU`) mean there was not sufficient
+     data for this peptide. There is a possibility that the measurement
+     result is available for only one state of the peptide.
+     Abbreviations from the table: Diff DU - differential deuterium uptake,
+     Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
+  } else {
+    "The table presents data from the chosen x plot range.
+     The empty values (e.q. `Frac DU`) means there was not sufficient data
+     for this peptide. Abbreviations from the table: DU - deuterium uptake,
+     Frac - fractional, Theo - theoretical, U(value) - uncertainty of value."
+  }
+}
+
+construct_var_name <- function(diff, theo, frac, var)
+  paste0(
+    "diff_" %nullify if% (!diff),
+    "theo_" %nullify if% (!theo),
+    "frac_" %nullify if% (!frac),
+    var
+  )
