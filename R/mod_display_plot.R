@@ -21,7 +21,7 @@ mod_display_plot_ui <- function(id, plot_labels, additional_data_info = NULL) {
           downloadButton(ns("plot_download_button"), "Save chart (.svg)")),
         tabPanel(
           "Data",
-          DT::dataTableOutput(ns("data")),
+          dataTableOutput_h(ns("data")),
           additional_data_info %?>% p
         )
       ) else purrr::imap(plot_labels, ~ tabsetPanel(
@@ -31,7 +31,7 @@ mod_display_plot_ui <- function(id, plot_labels, additional_data_info = NULL) {
           downloadButton(ns(paste0("plot_download_button_", .y)), "Save chart (.svg)")),
         tabPanel(
           title = "Data",
-          DT::dataTableOutput(ns(paste0("data_", .y))),
+          dataTableOutput_h(ns(paste0("data_", .y))),
           additional_data_info %?>% (function(info) info[.y]) %?>% p
         )
       ))
