@@ -10,6 +10,8 @@ decapitalize <- function(x) {
   x
 }
 
+idize <- function(x) gsub(" ", "_", tolower(x))
+
 react_construct_uptake_lab_y <- function(differential, env = parent.frame()) rlang::inject(
   reactive({
     frac_str <- if (s_calculation[["fractional"]]()) "Fractional " else ""
@@ -69,7 +71,7 @@ construct_auto_label_labs <- function(plot_names, differential = FALSE) {
     !!!lapply(plot_names, function(plot_name) {
       construct_auto_label_lab_set(
         construct_plot_label(plot_name, differential),
-        id_prefix = decapitalize(plot_name)
+        id_prefix = idize(plot_name)
       )
     })
   )

@@ -54,7 +54,11 @@ mod_settings_peptide_server <- function(id, peptide_table, mode){
 
     return(
       list(
-        selected = input_r("peptide_list_rows_selected")
+        selected = reactive({
+          msg <- if (mode == "single peptide") "Please select one peptide from the table on the left." else "Please select at least one peptide from the table on the left."
+          validate(need(input[["peptide_list_rows_selected"]], msg))
+          input[["peptide_list_rows_selected"]]
+        })
       )
     )
   })

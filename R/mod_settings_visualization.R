@@ -71,6 +71,18 @@ mod_settings_visualization_ui <- function(id, mode){
       label = "Show time points separately?",
       value = FALSE
     ) %nullify if% !(mode %in% c("manhattan", "uncertainty")),
+    tagList(
+      checkboxInput_h(
+        inputId = ns("show_replicates"),
+        label = "Show replicate values?",
+        value = FALSE
+      ),
+      checkboxInput_h(
+        inputId = ns("log_x"),
+        label = "Logaritmic x scale for Mass Uptake Plot?",
+        value = FALSE
+      )
+    ) %nullify if% !(mode == "MEASUREMENTS"),
     fancy_icon = "image"
   )
 }
@@ -96,7 +108,8 @@ mod_settings_visualization_server <- function(id, mode){
           hide_insignificant = input_r("hide_insignificant")
         ),
         if (mode == "manhattan") input_r_list("show_length", "split_timepoints"),
-        if (mode == "uncertainty") input_r_list("show_aggregated", "split_timepoints")
+        if (mode == "uncertainty") input_r_list("show_aggregated", "split_timepoints"),
+        if (mode == "MEASUREMENTS") input_r_list("log_x", "show_replicates")
       )
     )
   })

@@ -90,6 +90,14 @@ app_server <- function(input, output, session) {
     params = dat_source[["params"]]
   )
 
+  ### MEASUREMENT
+
+  mod_plot_measurements_server(
+    id = "measurements",
+    dat = dat_source[["dat"]],
+    params = dat_source[["params"]]
+  )
+
   ### SUMMARY
 
   mod_page_summary_server(

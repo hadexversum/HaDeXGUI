@@ -32,6 +32,7 @@ app_ui <- function(request) {
         mod_plot_quality_control_ui("quality_control"),
         mod_plot_uncertainty_ui("uncertainty")
       ),
+      mod_plot_measurements_ui("measurements"),
       mod_page_summary_ui("page_summary"),
       mod_page_about_ui("page_about"),
 
