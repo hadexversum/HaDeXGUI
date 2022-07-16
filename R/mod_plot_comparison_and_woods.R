@@ -16,16 +16,16 @@ mod_plot_comparison_and_woods_ui <- function(id){
     settings = hadex_panel_settings(
       hadex_settings_separator("Common settings"),
       mod_settings_calculation_ui(ns("calculation")),
-      mod_settings_time_ui(ns("time"), mode = "limits and exposure"),
+      mod_settings_time_ui(ns("time"), mode = "LIMITS AND EXPOSURE"),
 
       hadex_settings_separator("Comparison Plot settings"),
-      mod_settings_state_ui(ns("state_comparison"), mode = "multiple"),
+      mod_settings_state_ui(ns("state_comparison"), mode = "MULTIPLE"),
       mod_settings_color_ui(ns("color")),
 
       hadex_settings_separator("Woods Plot settings"),
-      mod_settings_state_ui(ns("state_woods"), mode = "double"),
-      mod_settings_test_ui(ns("test"), mode = "selectible"),
-      mod_settings_visualization_ui(ns("visualization"), mode = "woods"),
+      mod_settings_state_ui(ns("state_woods"), mode = "DOUBLE"),
+      mod_settings_test_ui(ns("test"), mode = "SELECTIBLE"),
+      mod_settings_visualization_ui(ns("visualization"), mode = "WOODS"),
 
       hadex_settings_separator("Adjustment settings"),
       mod_settings_range_ui(
@@ -229,21 +229,21 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     invoke_settings_servers(
       names = c("calculation", "time", "test", "visualization", "range", "label"),
       modes = list(
-        time = "limits and exposure",
-        test = "selectible",
-        visualization = "woods"
+        time = "LIMITS AND EXPOSURE",
+        test = "SELECTIBLE",
+        visualization = "WOODS"
       )
     )
 
     s_state_comparison <- mod_settings_state_server(
       id = "state_comparison",
-      mode = "multiple",
+      mode = "MULTIPLE",
       p_states_chosen_protein = params[["states_chosen_protein"]]
     )
 
     s_state_woods <- mod_settings_state_server(
       id = "state_woods",
-      mode = "double",
+      mode = "DOUBLE",
       p_states_chosen_protein = params[["states_chosen_protein"]]
     )
 

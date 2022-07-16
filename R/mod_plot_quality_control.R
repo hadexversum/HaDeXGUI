@@ -15,7 +15,7 @@ mod_plot_quality_control_ui <- function(id){
     settings = install_settings_ui(
       names = c("state", "time"),
       modes = list(
-        state = "double",
+        state = "DOUBLE",
         time = "LIMITS AND SINGLE EXPOSURE"
       ),
       ns = ns
@@ -68,7 +68,7 @@ mod_plot_quality_control_server <- function(id, dat, params){
     invoke_settings_servers(
       names = c("state", "time"),
       modes = list(
-        state = "double",
+        state = "DOUBLE",
         time = "LIMITS AND SINGLE EXPOSURE"
       )
     )

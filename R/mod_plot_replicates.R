@@ -15,7 +15,7 @@ mod_plot_replicates_ui <- function(id){
     settings = install_settings_ui(
       names = c("state", "time"),
       modes = list(
-        state = "single",
+        state = "SINGLE",
         time = "SINGLE POINT"
       ),
       ns = ns
@@ -90,7 +90,7 @@ mod_plot_replicates_server <- function(id, dat, params){
     invoke_settings_servers(
       names = c("state", "time"),
       modes = list(
-        state = "single",
+        state = "SINGLE",
         time = "SINGLE POINT"
       )
     )

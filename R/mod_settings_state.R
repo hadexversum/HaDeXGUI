@@ -8,14 +8,14 @@
 #'
 #' @importFrom shiny NS tagList
 mod_settings_state_ui <- function(id, mode){
-  stopifnot(mode %in% c("disabled", "single", "double", "multiple"))
+  stopifnot(mode %in% c("DISABLED", "SINGLE", "DOUBLE", "MULTIPLE"))
   ns <- NS(id)
 
   collapsible_card(
-    title = if (mode == "single") "State" else "States",
+    title = if (mode == "SINGLE") "State" else "States",
     switch(
       mode,
-      double = tagList(
+      DOUBLE = tagList(
         p("Differential plot presents the uptake difference between State 1 and State 2."),
         splitLayout(
           selectInput_h(
@@ -30,13 +30,13 @@ mod_settings_state_ui <- function(id, mode){
           )
         )
       ),
-      single = selectInput_h(
+      SINGLE = selectInput_h(
         inputId = ns("state"),
         label = "Choose state:",
         choices = "",
         selected = ""
       ),
-      multiple = checkboxGroupInput_h(
+      MULTIPLE = checkboxGroupInput_h(
         inputId = ns("states"),
         label = "Choose states for comparison:",
         choices = "",
@@ -44,7 +44,7 @@ mod_settings_state_ui <- function(id, mode){
       )
     ),
     fancy_icon = "atom"
-  ) %nullify if% (mode == "disabled")
+  ) %nullify if% (mode == "DISABLED")
 }
 
 #' settings_state Server Functions
@@ -52,11 +52,11 @@ mod_settings_state_ui <- function(id, mode){
 #' @noRd
 mod_settings_state_server <- function(id, mode,
                                       p_states_chosen_protein){
-  stopifnot(mode %in% c("disabled", "single", "double", "multiple"))
+  stopifnot(mode %in% c("DISABLED", "SINGLE", "DOUBLE", "MULTIPLE"))
   moduleServer( id, function(input, output, session) {
     ns <- session$ns
 
-    if (mode == "double") {
+    if (mode == "DOUBLE") {
       observe({
         updateSelectInput(
           session,
@@ -76,7 +76,7 @@ mod_settings_state_server <- function(id, mode,
           selected = not_state_1[1]
         )
       })
-    } else if (mode == "single") {
+    } else if (mode == "SINGLE") {
       observe({
         updateSelectInput(
           session,
@@ -85,7 +85,7 @@ mod_settings_state_server <- function(id, mode,
           selected = p_states_chosen_protein()[1]
         )
       })
-    } else if (mode == "multiple") {
+    } else if (mode == "MULTIPLE") {
       observe({
         updateCheckboxGroupInput(
           session,
@@ -97,14 +97,14 @@ mod_settings_state_server <- function(id, mode,
     }
 
     return(
-      if (mode == "multiple") list(
+      if (mode == "MULTIPLE") list(
         states = reactive({
           wait_for(all(input[["states"]] %in% p_states_chosen_protein()))
           validate(need(length(input[["states"]]) > 0,
                         "Please select at least one state."))
           input[["states"]]
         })
-      ) else if (mode == "double") list(
+      ) else if (mode == "DOUBLE") list(
         state_1 = reactive({
           wait_for(input[["state_1"]] %in% p_states_chosen_protein())
           input[["state_1"]]
@@ -113,12 +113,12 @@ mod_settings_state_server <- function(id, mode,
           wait_for(input[["state_1"]] != input[["state_2"]])
           input[["state_2"]]
         })
-      ) else if (mode == "single") list(
+      ) else if (mode == "SINGLE") list(
         state = reactive({
           wait_for(input[["state"]] %in% p_states_chosen_protein())
           input[["state"]]
         })
       )
     )
-  }) %nullify if% (mode == "disabled")
+  }) %nullify if% (mode == "DISABLED")
 }

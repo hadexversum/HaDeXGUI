@@ -16,9 +16,9 @@ mod_plot_uncertainty_ui <- function(id){
     settings = install_settings_ui(
       names = c("state", "time", "visualization"),
       modes = list(
-        state = "single",
-        time = "limits and points",
-        visualization = "uncertainty"
+        state = "SINGLE",
+        time = "LIMITS AND POINTS",
+        visualization = "UNCERTAINTY"
       ),
       params = list(
         label_labs = construct_auto_label_labs("Uncertainty")
@@ -86,9 +86,9 @@ mod_plot_uncertainty_server <- function(id, dat, params){
     invoke_settings_servers(
       names = c("state", "time", "visualization"),
       modes = list(
-        state = "single",
-        time = "limits and points",
-        visualization = "uncertainty"
+        state = "SINGLE",
+        time = "LIMITS AND POINTS",
+        visualization = "UNCERTAINTY"
       )
     )
 

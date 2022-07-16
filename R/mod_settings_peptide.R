@@ -8,14 +8,14 @@
 #'
 #' @importFrom shiny NS tagList
 mod_settings_peptide_ui <- function(id, mode){
-  stopifnot(mode %in% c("single peptide", "multiple peptides and states"))
+  stopifnot(mode %in% c("SINGLE PEPTIDE", "MULTIPLE PEPTIDES AND STATES"))
   ns <- NS(id)
   collapsible_card(
     title = "Peptide",
 
     p(
-      if (mode == "multiple peptides and states") "Select peptides and according states:"
-      else if (mode == "single peptide") "Select peptide"
+      if (mode == "MULTIPLE PEPTIDES AND STATES") "Select peptides and according states:"
+      else if (mode == "SINGLE PEPTIDE") "Select peptide"
     ),
     dataTableOutput_h(ns("peptide_list")),
     actionButton(
@@ -30,7 +30,7 @@ mod_settings_peptide_ui <- function(id, mode){
 #'
 #' @noRd
 mod_settings_peptide_server <- function(id, peptide_table, mode){
-  stopifnot(mode %in% c("single peptide", "multiple peptides and states"))
+  stopifnot(mode %in% c("SINGLE PEPTIDE", "MULTIPLE PEPTIDES AND STATES"))
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -39,7 +39,7 @@ mod_settings_peptide_server <- function(id, peptide_table, mode){
         data = peptide_table(),
         class = "table-bordered table-condensed",
         extensions = "Buttons",
-        selection = if (mode == "multiple peptides and states") "multiple" else if (mode == "single peptide") "single",
+        selection = if (mode == "MULTIPLE PEPTIDES AND STATES") "multiple" else if (mode == "SINGLE PEPTIDE") "single",
         options = list(pageLength = 10, dom = "tip", autoWidth = TRUE, target = 'cell'),
         filter = "bottom",
         rownames = FALSE
@@ -55,7 +55,7 @@ mod_settings_peptide_server <- function(id, peptide_table, mode){
     return(
       list(
         selected = reactive({
-          msg <- if (mode == "single peptide") "Please select one peptide from the table on the left." else "Please select at least one peptide from the table on the left."
+          msg <- if (mode == "SINGLE PEPTIDE") "Please select one peptide from the table on the left." else "Please select at least one peptide from the table on the left."
           validate(need(input[["peptide_list_rows_selected"]], msg))
           input[["peptide_list_rows_selected"]]
         })

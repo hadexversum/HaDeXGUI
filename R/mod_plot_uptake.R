@@ -18,11 +18,11 @@ mod_plot_uptake_ui <- function(id, differential) {
         "calculation", "state", "time", "peptide", "visualization", "test", "range", "label"
       ),
       modes = c(
-        time = "only limits",
-        state = if (differential) "double" else "disabled",
-        test = if (differential) "selectible" else "disabled",
-        peptide = if (differential) "single peptide" else "multiple peptides and states",
-        visualization = "uptake"
+        time = "ONLY LIMITS",
+        state = if (differential) "DOUBLE" else "DISABLED",
+        test = if (differential) "SELECTIBLE" else "DISABLED",
+        peptide = if (differential) "SINGLE PEPTIDE" else "MULTIPLE PEPTIDES AND STATES",
+        visualization = "UPTAKE"
       ),
       params = list(
         range_labs = construct_auto_range_labs("Uptake Curves", axes = "y", differential = differential),
@@ -183,11 +183,11 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         "calculation", "state", "time", "peptide", "visualization", "test", "range", "label"
       ),
       modes = c(
-        time = "only limits",
-        state = if (differential) "double" else "single",
-        test = if (differential) "selectible" else "disabled",
-        peptide = if (differential) "single peptide" else "multiple peptides and states",
-        visualization = "uptake"
+        time = "ONLY LIMITS",
+        state = if (differential) "DOUBLE" else "SINGLE",
+        test = if (differential) "SELECTIBLE" else "DISABLED",
+        peptide = if (differential) "SINGLE PEPTIDE" else "MULTIPLE PEPTIDES AND STATES",
+        visualization = "UPTAKE"
       )
     )
 

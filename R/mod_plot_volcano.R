@@ -18,11 +18,11 @@ mod_plot_volcano_ui <- function(id){
                 "test", "subregion",
                 "visualization", "range", "label"),
       modes = list(
-        calculation = "only frac",
-        state = "double",
-        time = "limits and points",
-        test = "fixed",
-        visualization = "volcano"
+        calculation = "ONLY FRAC",
+        state = "DOUBLE",
+        time = "LIMITS AND POINTS",
+        test = "FIXED",
+        visualization = "VOLCANO"
       ),
       params = list(
         range_labs = construct_auto_range_labs("Volcano"),
@@ -217,11 +217,11 @@ mod_plot_volcano_server <- function(id, dat, params){
         "visualization", "range", "label"
       ),
       modes = list(
-        calculation = "only frac",
-        state = "double",
-        time = "limits and points",
-        test = "fixed",
-        visualization = "volcano"
+        calculation = "ONLY FRAC",
+        state = "DOUBLE",
+        time = "LIMITS AND POINTS",
+        test = "FIXED",
+        visualization = "VOLCANO"
       )
     )
 

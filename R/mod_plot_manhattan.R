@@ -16,10 +16,10 @@ mod_plot_manhattan_ui <- function(id){
     settings = install_settings_ui(
       names = c("state", "time", "test", "visualization", "label"),
       modes = list(
-        state = "double",
-        time = "limits and points",
-        test = "fixed",
-        visualization = "manhattan"
+        state = "DOUBLE",
+        time = "LIMITS AND POINTS",
+        test = "FIXED",
+        visualization = "MANHATTAN"
       ),
       params = list(
         label_labs = construct_auto_label_labs("Manhattan")
@@ -90,10 +90,10 @@ mod_plot_manhattan_server <- function(id, dat, params){
     invoke_settings_servers(
       names = c("state", "time", "test", "visualization", "label"),
       modes = list(
-        state = "double",
-        time = "limits and points",
-        test = "fixed",
-        visualization = "manhattan"
+        state = "DOUBLE",
+        time = "LIMITS AND POINTS",
+        test = "FIXED",
+        visualization = "MANHATTAN"
       )
     )
 

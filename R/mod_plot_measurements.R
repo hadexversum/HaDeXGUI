@@ -16,9 +16,9 @@ mod_plot_measurements_ui <- function(id){
     settings = install_settings_ui(
       names = c("state", "time", "peptide", "visualization", "range", "label"),
       modes = c(
-        state = "single",
+        state = "SINGLE",
         time = "SINGLE POINT",
-        peptide = "single peptide",
+        peptide = "SINGLE PEPTIDE",
         visualization = "MEASUREMENTS"
       ),
       params = list(
@@ -45,9 +45,10 @@ mod_plot_measurements_server <- function(id, dat, params){
     ns <- session$ns
 
     peptide_table <- reactive({
+      state <- s_state %()% state
       dat() %>%
         filter(Protein == params %()% chosen_protein,
-               State == s_state %()% state)  %>%
+               State == state)  %>%
         select(Sequence, Start, End) %>%
         unique(.) %>%
         arrange(Start, End)
@@ -77,11 +78,12 @@ mod_plot_measurements_server <- function(id, dat, params){
       }
 
       sequence <- selected_sequence()
+      state <- s_state %()% state
 
       dat_processed_measurements() %>%
         filter(
           Protein  == params  %()% chosen_protein,
-          State    == s_state %()% state,
+          State    == state,
           Sequence == selected_sequence(),
           Exposure >  params  %()% no_deut_control
         ) %>%
@@ -179,9 +181,9 @@ mod_plot_measurements_server <- function(id, dat, params){
     invoke_settings_servers(
       names = c("state", "time", "peptide", "visualization", "range", "label"),
       modes = c(
-        state = "single",
+        state = "SINGLE",
         time = "SINGLE POINT",
-        peptide = "single peptide",
+        peptide = "SINGLE PEPTIDE",
         visualization = "MEASUREMENTS"
       )
     )

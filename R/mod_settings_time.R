@@ -7,8 +7,8 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_settings_time_ui <- function(id, mode = "limits and points"){
-  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure",
+mod_settings_time_ui <- function(id, mode = "LIMITS AND POINTS"){
+  stopifnot(mode %in% c("LIMITS AND POINTS", "ONLY LIMITS", "LIMITS AND EXPOSURE",
                         "SINGLE POINT", "LIMITS AND SINGLE EXPOSURE"))
   ns <- NS(id)
 
@@ -49,7 +49,7 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
 
   switch(
     mode,
-    `limits and points` = card_timepoints(
+    `LIMITS AND POINTS` = card_timepoints(
       fluidRow(
         column(
           width = 6,
@@ -62,7 +62,7 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
         )
       )
     ),
-    `only limits` = toggleable(
+    `ONLY LIMITS` = toggleable(
       card_timepoints(
         splitLayout(
           deut_0,
@@ -74,7 +74,7 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
       ),
       id = ns("0")
     ),
-    `limits and exposure` = card_timepoints(
+    `LIMITS AND EXPOSURE` = card_timepoints(
       fluidRow(
         column(
           width = 6,
@@ -104,12 +104,12 @@ mod_settings_time_ui <- function(id, mode = "limits and points"){
 #'
 #' @noRd
 mod_settings_time_server <- function(id,
-                                     mode = "limits and points",
+                                     mode = "LIMITS AND POINTS",
                                      p_times,
                                      p_times_with_control,
                                      p_no_deut_control,
                                      s_calculation) {
-  stopifnot(mode %in% c("limits and points", "only limits", "limits and exposure",
+  stopifnot(mode %in% c("LIMITS AND POINTS", "ONLY LIMITS", "LIMITS AND EXPOSURE",
                         "SINGLE POINT", "LIMITS AND SINGLE EXPOSURE"))
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -195,7 +195,7 @@ mod_settings_time_server <- function(id,
 
       ### limits-and-exposure-mode-specific observers
 
-      if (mode %in% c("limits and exposure", "LIMITS AND SINGLE EXPOSURE")) {
+      if (mode %in% c("LIMITS AND EXPOSURE", "LIMITS AND SINGLE EXPOSURE")) {
         observe({
           validate(need(length(times_t) > 0,
                         "There should be at least one valid option between Exposure 0% and 100% to choose from."))
@@ -209,7 +209,7 @@ mod_settings_time_server <- function(id,
         })
       }
 
-      if (mode == "limits and exposure") {
+      if (mode == "LIMITS AND EXPOSURE") {
         observe({
           toggle_id(input[["multiple_exposures"]], id = ns("points"))
           toggle_id(!input[["multiple_exposures"]], id = ns("t"))
@@ -237,7 +237,7 @@ mod_settings_time_server <- function(id,
           `0` = time_0,
           `100` = time_100
         ),
-        if (mode == "limits and exposure") list(
+        if (mode == "LIMITS AND EXPOSURE") list(
           t = t_out,
           multiple = input_r("multiple_exposures")
         ) else NULL

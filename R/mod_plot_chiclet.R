@@ -16,9 +16,9 @@ mod_plot_chiclet_ui <- function(id, differential){
     settings = install_settings_ui(
       names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
       modes = c(
-        state = if (differential) "double" else "single",
-        test = if (differential) "selectible" else "disabled",
-        visualization = "chiclet"
+        state = if (differential) "DOUBLE" else "SINGLE",
+        test = if (differential) "SELECTIBLE" else "DISABLED",
+        visualization = "CHICLET"
       ),
       params = list(
         range_labs = construct_auto_range_labs("Chiclet", axes = "x", differential = differential),
@@ -146,9 +146,9 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         "calculation", "state", "time", "test", "visualization", "range", "label"
       ),
       modes = c(
-        state = if (differential) "double" else "single",
-        test = if (differential) "selectible" else "disabled",
-        visualization = "chiclet"
+        state = if (differential) "DOUBLE" else "SINGLE",
+        test = if (differential) "SELECTIBLE" else "DISABLED",
+        visualization = "CHICLET"
       )
     )
 

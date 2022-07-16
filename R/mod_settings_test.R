@@ -8,12 +8,12 @@
 #'
 #' @importFrom shiny NS tagList
 mod_settings_test_ui <- function(id, mode){
-  stopifnot(mode %in% c("selectible", "fixed", "disabled"))
+  stopifnot(mode %in% c("SELECTIBLE", "FIXED", "DISABLED"))
   ns <- NS(id)
 
   collapsible_card(
     title = "Test",
-    if (mode == "selectible") fluidRow(
+    if (mode == "SELECTIBLE") fluidRow(
       column(
         width = 6,
         checkboxInput_h(
@@ -45,7 +45,7 @@ mod_settings_test_ui <- function(id, mode){
           id = ns("p_adjustment_method")
         )
       )
-    ) else if (mode == "fixed") {
+    ) else if (mode == "FIXED") {
       tagList(
         selectInput_h(
           inputId = ns("confidence_level"),
@@ -62,20 +62,20 @@ mod_settings_test_ui <- function(id, mode){
       )
     },
     fancy_icon = "chart-bar"
-  ) %nullify if% (mode == "disabled")
+  ) %nullify if% (mode == "DISABLED")
 }
 
 #' settings_test Server Functions
 #'
 #' @noRd
 mod_settings_test_server <- function(id, mode){
-  stopifnot(mode %in% c("selectible", "fixed", "disabled"))
+  stopifnot(mode %in% c("SELECTIBLE", "FIXED", "DISABLED"))
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     ### observers modifying input
 
-    if (mode == "selectible") {
+    if (mode == "SELECTIBLE") {
       observe({
         toggle_id(
           input[["show_tstud"]],
@@ -88,7 +88,7 @@ mod_settings_test_server <- function(id, mode){
 
     return(
       c(
-        if (mode == "selectible") list(
+        if (mode == "SELECTIBLE") list(
           show_houde = input_r("show_houde"),
           show_tstud = input_r("show_tstud")
         ) else NULL,
@@ -98,6 +98,6 @@ mod_settings_test_server <- function(id, mode){
         )
       )
     )
-  }) %nullify if% (mode == "disabled")
+  }) %nullify if% (mode == "DISABLED")
 }
 

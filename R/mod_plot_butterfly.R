@@ -16,9 +16,9 @@ mod_plot_butterfly_ui <- function(id, differential) {
     settings = install_settings_ui(
       names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
       modes = list(
-        state = if (differential) "double" else "single",
-        test = if (differential) "selectible" else "disabled",
-        visualization = "butterfly"
+        state = if (differential) "DOUBLE" else "SINGLE",
+        test = if (differential) "SELECTIBLE" else "DISABLED",
+        visualization = "BUTTERFLY"
       ),
       params = list(
         range_labs = construct_auto_range_labs("Butterfly", differential = differential),
@@ -184,9 +184,9 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     invoke_settings_servers(
       names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
       modes = list(
-        state = if (differential) "double" else "single",
-        test = if (differential) "selectible" else "disabled",
-        visualization = "butterfly"
+        state = if (differential) "DOUBLE" else "SINGLE",
+        test = if (differential) "SELECTIBLE" else "DISABLED",
+        visualization = "BUTTERFLY"
       )
     )
 
