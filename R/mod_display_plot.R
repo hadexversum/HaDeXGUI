@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_display_plot_ui <- function(id, plot_labels, additional_data_info = NULL) {
+mod_display_plot_ui <- function(id, plot_labels, additional_data_info = NULL, additional_plot_info = FALSE) {
   ns <- NS(id)
   div(
     class = "HaDeX-tab-content-element HaDeX-plot-display-panel",
@@ -18,6 +18,7 @@ mod_display_plot_ui <- function(id, plot_labels, additional_data_info = NULL) {
         tabPanel(
           title = plot_labels,
           girafeOutput_h(ns("plot")),
+          verbatimTextOutput(ns("plot_info")) %nullify if% !additional_plot_info,
           downloadButton(ns("plot_download_button"), "Save chart (.svg)")),
         tabPanel(
           "Data",
@@ -44,7 +45,7 @@ mod_display_plot_ui <- function(id, plot_labels, additional_data_info = NULL) {
 #' @importFrom ggiraph renderGirafe
 #' @importFrom DT renderDataTable
 #' @noRd
-mod_display_plot_server <- function(id, plot_out, dat_out) {
+mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
   moduleServer(id, function(input, output, session) {
     if (is.reactive(plot_out)) {
       output[["plot"]] <- renderGirafe({ girafe(ggobj = plot_out(), width_svg = 17, height_svg = 9) })
@@ -56,6 +57,10 @@ mod_display_plot_server <- function(id, plot_out, dat_out) {
                  height = 300, width = 400, units = "mm")
         }
       )
+
+      if (not_null(info_out)) {
+        output[["plot_info"]] <- renderPrint({ info_out() })
+      }
     } else {
       for (i in seq_along(plot_out)) {
         name <- names(plot_out)[i]
