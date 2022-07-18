@@ -16,7 +16,7 @@ mod_plot_coverage_ui <- function(id){
     settings = install_settings_ui(
       names = c("state", "subregion"),
       modes = c(
-        state = "DOUBLE"
+        state = "SINGLE"
       ),
       ns = ns
     ),
@@ -38,10 +38,11 @@ mod_plot_coverage_server <- function(id, dat, params){
     ns <- session$ns
 
     dat_processed_position_frequency <- reactive({
+      state <- s_state     %()% state
       HaDeX::create_overlap_distribution_dataset(
         dat(),
         protein          = params      %()% chosen_protein,
-        state            = s_state     %()% state,
+        state            = state,
         start            = s_subregion %()% start,
         end              = s_subregion %()% end,
         protein_sequence = params      %()% protein_sequence
