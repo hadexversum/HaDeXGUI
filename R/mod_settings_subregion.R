@@ -46,7 +46,10 @@ mod_settings_subregion_server <- function(id, p_max_range) {
     ### return
 
     return(
-      input_r_list("subregion")
+      list(
+        start = reactive({ input[["subregion"]][1] }),
+        end = reactive({ input[["subregion"]][2] })
+      )
     )
   })
 }

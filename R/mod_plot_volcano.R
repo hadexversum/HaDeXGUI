@@ -71,8 +71,8 @@ mod_plot_volcano_server <- function(id, dat, params){
     dat_filtered <- reactive({
       dat_processed() %>%
         filter(Exposure %in% (s_time %()% points)) %>%
-        filter(Start >= (s_subregion %()% subregion)[1],
-                 End <= (s_subregion %()% subregion)[2])
+        filter(Start >= (s_subregion %()% start),
+                 End <= (s_subregion %()% end))
     })
 
     dat_span <- reactive({
