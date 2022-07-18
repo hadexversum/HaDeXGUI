@@ -33,7 +33,8 @@ mod_plot_volcano_ui <- function(id){
     display = mod_display_plot_ui(
       ns("display_plot"),
       plot_label = construct_plot_label("Volcano", differential = FALSE),
-      additional_data_info = cosntruct_uptake_plots_data_info(differential = FALSE)
+      additional_data_info = cosntruct_uptake_plots_data_info(differential = FALSE),
+      additional_plot_info = TRUE
     )
   )
 }
@@ -166,6 +167,15 @@ mod_plot_volcano_server <- function(id, dat, params){
         suppressMessages()
     })
 
+    info_out <- reactive({
+      glue::glue(
+        "Based on the chosen criteria, the threshold of -log(P value) is ",
+        "{round(alpha_interval(), 4)}.\nThe threshold on deuterium uptake difference ",
+        "is {round(houde_intervals()[1], 4)} and {round(houde_intervals()[2], 4)} ",
+        "{if (s_calculation %()% fractional) '[%]' else '[Da]'}."
+      )
+    })
+
     ### reactives for settings servers
 
     range_specs <- list(
@@ -225,6 +235,6 @@ mod_plot_volcano_server <- function(id, dat, params){
       )
     )
 
-    mod_display_plot_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out, info_out = info_out)
   })
 }
