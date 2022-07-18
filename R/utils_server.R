@@ -49,7 +49,7 @@ toggle_id <- function(condition, id) {
   )
 }
 
-HaDeX_DT_format <- function(dat, cols = colnames(dat)) {
+HaDeX_DT_format <- function(dat, cols = colnames(dat), dom = "tBip") {
   DT::datatable(
     data = dat,
     colnames = cols,
@@ -57,7 +57,7 @@ HaDeX_DT_format <- function(dat, cols = colnames(dat)) {
     extensions = "Buttons",
     options = list(
       pageLength = 10,
-      dom = "tBip",
+      dom = dom,
       autoWidth = TRUE,
       buttons = c("excel", "pdf")
     ),

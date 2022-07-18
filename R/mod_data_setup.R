@@ -201,6 +201,8 @@ mod_data_setup_server <- function(id, dat_adjusted){
         dat = dat,
 
         params = list(
+          sequence_length = input_r_numeric("sequence_length"),
+
           proteins = proteins_from_file,
           chosen_protein = reactive({
             wait_for(input[["chosen_protein"]] %in% proteins_from_file())

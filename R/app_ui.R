@@ -35,9 +35,10 @@ app_ui <- function(request) {
       mod_plot_measurements_ui("measurements"),
       navbarMenu(
         title = "Sequence data",
+        mod_plot_sequence_data_ui("sequence_data"),
         mod_plot_coverage_ui("coverage")
       ),
-      mod_page_summary_ui("page_summary"),
+      mod_page_summary_ui("page_summary"), #TODO: shouldn't this tab be merged with Sequence data?
       mod_page_about_ui("page_about"),
 
       if (getOption("shiny.reactlog", default = FALSE))

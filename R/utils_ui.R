@@ -91,6 +91,11 @@ htmlize_data <- function(dataset_name) {
   HTML(paste(capture.output(print(xtable(file_req), type = "html"))))
 }
 
+get_amino_prop <- function() {
+  data("amino_prop", package = "HaDeXGUI", envir = environment())
+  amino_prop
+}
+
 
 install_settings_ui <- function(names, modes, params = list(), ns) {
   uis <- lapply(names, function(name) {

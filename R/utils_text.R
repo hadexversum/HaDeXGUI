@@ -100,3 +100,22 @@ construct_var_name <- function(diff, theo, frac, var)
     "frac_" %nullify if% (!frac),
     var
   )
+
+color_cysteins <- function(protein_sequence) {
+  n <- nchar(protein_sequence)
+
+  split <- first(strsplit(protein_sequence, ""))
+
+  #TODO: I want this to be rendered as pre
+  HTML(
+    paste0(
+      sapply(1:ceiling(n / 50), function(i) {
+        line <- split[(50 * (i - 1) + 1):(50 * i)]
+        line <- line[not_na(line)]
+        line[grepl("C", line)] <- "<font color='red'>C</font>"
+        paste(line, collapse = "")
+      }),
+      collapse = "<br>"
+    )
+  )
+}

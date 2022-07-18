@@ -83,6 +83,13 @@ mod_settings_visualization_ui <- function(id, mode){
         value = FALSE
       )
     ) %nullify if% !(mode == "MEASUREMENTS"),
+    selectizeInput(
+      inputId = ns("show_residues"),
+      label = "Select group of residues to display: ",
+      choices = c("Hydrophilic and hydrophobic", "Only hydrophilic", "Only hydrophobic"),
+      selected = "Hydrophilic and hydrophobic",
+      options = list(dropdownParent = 'body')
+    ) %nullify if% (mode != "SEQUENCE DATA"),
     fancy_icon = "image"
   )
 }
@@ -109,7 +116,8 @@ mod_settings_visualization_server <- function(id, mode){
         ),
         if (mode == "MANHATTAN") input_r_list("show_length", "split_timepoints"),
         if (mode == "UNCERTAINTY") input_r_list("show_aggregated", "split_timepoints"),
-        if (mode == "MEASUREMENTS") input_r_list("log_x", "show_replicates")
+        if (mode == "MEASUREMENTS") input_r_list("log_x", "show_replicates"),
+        if (mode == "SEQUENCE DATA") input_r_list("show_residues")
       )
     )
   })
