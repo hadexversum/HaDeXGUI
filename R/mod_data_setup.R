@@ -207,6 +207,13 @@ mod_data_setup_server <- function(id, dat_adjusted){
 
             input[["chosen_protein"]]
           }),
+          protein_sequence = reactive({
+            wait_for(input[["chosen_protein"]] %in% proteins_from_file())
+
+            dat() %>%
+              filter(Protein == input[["chosen_protein"]]) %>%
+              HaDeX::reconstruct_sequence(end = as.numeric(input[["sequence_length"]]))
+          }),
 
           states = states_from_file,
           has_modifications = file_has_modifications,
