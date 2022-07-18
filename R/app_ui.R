@@ -33,6 +33,10 @@ app_ui <- function(request) {
         mod_plot_uncertainty_ui("uncertainty")
       ),
       mod_plot_measurements_ui("measurements"),
+      navbarMenu(
+        title = "Sequence data",
+        mod_plot_coverage_ui("coverage")
+      ),
       mod_page_summary_ui("page_summary"),
       mod_page_about_ui("page_about"),
 

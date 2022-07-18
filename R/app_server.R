@@ -98,6 +98,14 @@ app_server <- function(input, output, session) {
     params = dat_source[["params"]]
   )
 
+  ### SEQUENCE DATA
+
+  mod_plot_coverage_server(
+    id = "coverage",
+    dat = dat_source[["dat"]],
+    params = dat_source[["params"]]
+  )
+
   ### SUMMARY
 
   mod_page_summary_server(
