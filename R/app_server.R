@@ -46,7 +46,10 @@ app_server <- function(input, output, session) {
 
   mod_report_server(
     id = "report",
-    dat_export = dat_export
+    dat_export = dat_export,
+    dat_summary = dat_summary,
+    input_info = dat_source[["input_info"]],
+    params = dat_source[["params"]]
   )
 
   if (getOption("shiny.reactlog", default = FALSE)) reactlog_module_server()

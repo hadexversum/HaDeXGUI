@@ -59,7 +59,11 @@ mod_report_ui <- function(id){
 #' report Server Functions
 #'
 #' @noRd
-mod_report_server <- function(id, dat_export){
+mod_report_server <- function(id,
+                              params,
+                              dat_export,
+                              dat_summary,
+                              input_info){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 
@@ -95,7 +99,12 @@ mod_report_server <- function(id, dat_export){
           input = app_sys("app/report_template.Rmd"),
           output_file = file,
           quiet = FALSE,
-          params = list(components = selected_export_components())
+          params = list(
+            dat_params = params,
+            dat_summary = dat_summary(),
+            input_info = input_info(),
+            components = selected_export_components()
+          )
         )
       }
     )
