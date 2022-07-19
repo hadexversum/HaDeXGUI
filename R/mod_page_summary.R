@@ -27,7 +27,7 @@ mod_page_summary_server <- function(id, dat, params){
     dat_processed <- reactive({
       HaDeX::show_summary_data(
         dat = dat(),
-        confidence_limit_1 = input[["confidence_limit"]], #TODO: why it exists?
+        confidence_limit_1 = input[["confidence_limit"]], #TODO: why does it exist?
         confidence_limit_2 = input[["confidence_limit_2"]],
         protein_length = params %()% max_range
       )
@@ -36,5 +36,9 @@ mod_page_summary_server <- function(id, dat, params){
     output[["table"]] <- DT::renderDataTable(server = FALSE, {
       HaDeX_DT_format(dat_processed())
     })
+
+    return(
+      dat_processed
+    )
   })
 }

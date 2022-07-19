@@ -36,7 +36,7 @@ app_server <- function(input, output, session) {
 
   ### SUMMARY
 
-  mod_page_summary_server(
+  dat_summary <- mod_page_summary_server(
     id = "page_summary",
     dat = dat_source[["dat"]],
     params = dat_source[["params"]]
