@@ -123,6 +123,35 @@ invoke_settings_servers <- function(names, modes = list(), env = parent.frame())
   invisible()
 }
 
+invoke_plot_servers <- function(server_names, dat_source, env = parent.frame()) {
+  ret <- list()
+  for (name in server_names) {
+    # transform name into server function
+    server_fun <- getFromNamespace(paste0("mod_plot_", name, "_server"), "HaDeXGUI")
+    # get names of arguments to the function
+    arg_names <- names(formals(server_fun))
+
+    args <- list()
+    args[["id"]] <- name
+
+    if ("dat" %in% arg_names) args[["dat"]] <- dat_source[["dat"]]
+    if ("params" %in% arg_names) args[["params"]] <- dat_source[["params"]]
+
+    if ("differential" %in% arg_names) {
+      args[["differential"]] <- FALSE
+      ret[[name]] <- rlang::exec(server_fun, !!!args)
+
+      args[["differential"]] <- TRUE
+      name <- paste0(name, "_diff")
+      args[["id"]] <- name
+      ret[[name]] <- rlang::exec(server_fun, !!!args)
+
+    } else {
+      ret[[name]] <- rlang::exec(server_fun, !!!args)
+    }
+  }
+  ret
+}
 
 autoreturn <- function(..., env = parent.frame()) {
   plot_names <- list(...)

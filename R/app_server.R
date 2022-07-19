@@ -10,106 +10,28 @@ app_server <- function(input, output, session) {
 
   dat_source <- mod_data_load_server("data_load")
 
-  mod_plot_comparison_and_woods_server(
-    id = "comparison_and_woods",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
+  ### AUTOMATIC INVOCATION OF PLOTTING SERVERS
 
-  mod_plot_volcano_server(
-    id = "volcano",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_butterfly_server(
-    id = "butterfly",
-    differential = FALSE,
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_butterfly_server(
-    id = "butterfly_diff",
-    differential = TRUE,
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_chiclet_server(
-    id = "chiclet",
-    differential = FALSE,
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_chiclet_server(
-    id = "chiclet_diff",
-    differential = TRUE,
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_uptake_server(
-    id = "uptake",
-    differential = FALSE,
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_uptake_server(
-    id = "uptake_diff",
-    differential = TRUE,
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  ### TIME-BASED DATA
-
-  mod_plot_replicates_server(
-    id = "replicates",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_manhattan_server(
-    id = "manhattan",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_quality_control_server(
-    id = "quality_control",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_uncertainty_server(
-    id = "uncertainty",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  ### MEASUREMENT
-
-  mod_plot_measurements_server(
-    id = "measurements",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  ### SEQUENCE DATA
-
-  mod_plot_sequence_data_server(
-    id = "sequence_data",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
-  )
-
-  mod_plot_coverage_server(
-    id = "coverage",
-    dat = dat_source[["dat"]],
-    params = dat_source[["params"]]
+  dat_export <- invoke_plot_servers(
+    server_names = c(
+      ### DEUTERIUM UPTAKE:
+      "comparison_and_woods",
+      "volcano",
+      "butterfly", # +diff
+      "chiclet",   # +diff
+      "uptake",    # +diff
+      ### TIME-BASED DATA:
+      "replicates",
+      "manhattan",
+      "quality_control",
+      "uncertainty",
+      ### MEASUREMENTS
+      "measurements",
+      ### SEQUENCE DATA
+      "sequence_data",
+      "coverage"
+    ),
+    dat_source = dat_source
   )
 
   ### SUMMARY
@@ -118,6 +40,13 @@ app_server <- function(input, output, session) {
     id = "page_summary",
     dat = dat_source[["dat"]],
     params = dat_source[["params"]]
+  )
+
+  ### REPORT
+
+  mod_report_server(
+    id = "report",
+    dat_export = dat_export
   )
 
   if (getOption("shiny.reactlog", default = FALSE)) reactlog_module_server()
