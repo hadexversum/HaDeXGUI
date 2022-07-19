@@ -128,8 +128,26 @@ mod_data_load_server <- function(id) {
 
     ### return values
 
+    dat <- mod_data_setup_server("setup", dat_adjusted = dat_adjusted)
+
     return(
-      mod_data_setup_server("setup", dat_adjusted = dat_adjusted)
+      c(
+        dat,
+        list(input_info = reactive({
+          data_file <- input[["data_file"]]
+
+          if (is.null(data_file)) {
+            list(is_example = TRUE)
+          } else {
+            list(
+              is_example = FALSE,
+              name = data_file[["name"]],
+              hash = tools::md5sum(as.character(data_file[["datapath"]]))
+            )
+          }
+
+        }))
+      )
     )
   })
 }
