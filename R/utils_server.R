@@ -164,7 +164,7 @@ autoreturn <- function(..., env = parent.frame()) {
     plot_names <- as.character(plot_names)
     list(
       plot = rlang::set_names(purrr::map(plot_names, ~ get(glue::glue("plot_out_{.x}"), envir = env)), plot_names),
-      dat = rlang::set_names(purrr::map(plot_names, ~ get(glue::glue("plot_out_{.x}"), envir = env)), plot_names)
+      dat = rlang::set_names(purrr::map(plot_names, ~ get(glue::glue("dat_out_{.x}"), envir = env)), plot_names)
     )
   }
 }

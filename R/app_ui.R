@@ -39,6 +39,7 @@ app_ui <- function(request) {
         mod_plot_coverage_ui("coverage")
       ),
       mod_page_summary_ui("page_summary"), #TODO: shouldn't this tab be merged with Sequence data?
+      mod_report_ui("report"),
       mod_page_about_ui("page_about"),
 
       if (getOption("shiny.reactlog", default = FALSE))

@@ -1,0 +1,48 @@
+---
+title: "HaDeX Report"
+author: ""
+date: ""
+output:
+  html_document:
+    theme: united
+    highlight: textmate
+    toc: true
+    toc_float: true
+    number_sections: false
+    df_print: paged
+params:
+  components: list()
+---
+
+<style type="text/css">
+span { 
+      display: block;
+      max-width: 100%;
+      word-wrap: break-word;
+    }
+</style>
+
+
+
+Report generated on `r Sys.time()` using the [HaDeXGUI](http://github.com/hadexversum/HaDeXGUI) R package, interface
+to the [HaDeX](http://github.com/hadexversum/HaDeX) package.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results="asis"}
+
+for (i in seq_along(params[["components"]])) {
+  cat(glue::glue("\n<h2> {names(params[['components']])[i]}</h2>"))
+  
+  component <- params[["components"]][[i]]
+  
+  if (is.data.frame(component)) print(knitr::kable(component, format = "html")) else print(component)
+}
+
+```
+
+# R Session
+
+```{r, echo=FALSE}
+
+pander::pander(sessionInfo())
+
+```
