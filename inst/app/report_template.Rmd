@@ -11,6 +11,9 @@ output:
     number_sections: false
     df_print: paged
 params:
+  dat_params: list()
+  dat_summary: data.frame()
+  input_info: list()
   components: list()
 ---
 
@@ -23,14 +26,33 @@ span {
 </style>
 
 
-
 Report generated on `r Sys.time()` using the [HaDeXGUI](http://github.com/hadexversum/HaDeXGUI) R package, interface
 to the [HaDeX](http://github.com/hadexversum/HaDeX) package.
+
+Detected input file: `r ifelse(params[["input_info"]][["is_example"]], "none (example file)", params[["input_info"]][["name"]])`.  
+
+MD5 hash of the input file: `r ifelse(params[["input_info"]][["is_example"]], "none (example file)", params[["input_info"]][["hash"]])`.
+
+# Summary
+
+Protein name : `r params[["dat_params"]][["chosen_protein"]]()`
+
+Protein sequence : <span>`r params[["dat_params"]][["protein_sequence"]]()`</span>
+
+Sequence length : `r params[["dat_params"]][["sequence_length"]]()`
+
+```{r echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+knitr::kable(params[["dat_summary"]])
+```
+
+```{r, child="man/summary.md"}
+```
+
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, results="asis"}
 
 for (i in seq_along(params[["components"]])) {
-  cat(glue::glue("\n<h2> {names(params[['components']])[i]}</h2>"))
+  cat(glue::glue("\n<h1> {names(params[['components']])[i]}</h1>"))
   
   component <- params[["components"]][[i]]
   
