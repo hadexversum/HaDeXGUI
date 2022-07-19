@@ -191,5 +191,9 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     )
 
     mod_display_plot_server("display_plot", plot_out, dat_out)
+
+    return(
+      autoreturn()
+    )
   })
 }

@@ -98,5 +98,9 @@ mod_plot_manhattan_server <- function(id, dat, params){
     )
 
     mod_display_plot_server("display_plot", plot_out, dat_out)
+
+    return(
+      autoreturn()
+    )
   })
 }

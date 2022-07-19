@@ -199,5 +199,9 @@ mod_plot_measurements_server <- function(id, dat, params){
         mass_uptake = dat_out_mass_uptake
       )
     )
+
+    return(
+      autoreturn("measurements", "mass_uptake")
+    )
   })
 }

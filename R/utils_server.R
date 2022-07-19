@@ -122,3 +122,20 @@ invoke_settings_servers <- function(names, modes = list(), env = parent.frame())
   }
   invisible()
 }
+
+
+autoreturn <- function(..., env = parent.frame()) {
+  plot_names <- list(...)
+  if (length(plot_names) == 0) {
+    list(
+      plot = get("plot_out", envir = env),
+      dat = get("dat_out", envir = env)
+    )
+  } else {
+    plot_names <- as.character(plot_names)
+    list(
+      plot = rlang::set_names(purrr::map(plot_names, ~ get(glue::glue("plot_out_{.x}"), envir = env)), plot_names),
+      dat = rlang::set_names(purrr::map(plot_names, ~ get(glue::glue("plot_out_{.x}"), envir = env)), plot_names)
+    )
+  }
+}

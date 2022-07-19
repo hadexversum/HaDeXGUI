@@ -38,7 +38,7 @@ mod_plot_replicates_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    dat_processed_per_peptide_per_time <- reactive({
+    dat_processed_per_peptide_for_time <- reactive({
       HaDeX::create_replicate_dataset(
         dat(),
         time_t  = s_time  %()% t,
@@ -55,8 +55,8 @@ mod_plot_replicates_server <- function(id, dat, params){
       )
     })
 
-    dat_out_per_peptide_per_time <- reactive({
-      HaDeX::show_replicate_histogram_data(dat_processed_per_peptide_per_time())
+    dat_out_per_peptide_for_time <- reactive({
+      HaDeX::show_replicate_histogram_data(dat_processed_per_peptide_for_time())
     })
 
     dat_out_per_peptide_all_times <- reactive({
@@ -69,8 +69,8 @@ mod_plot_replicates_server <- function(id, dat, params){
         select(Exposure, everything())
     })
 
-    plot_out_per_peptide_per_time <- reactive({
-      HaDeX::plot_replicate_histogram(dat_processed_per_peptide_per_time())
+    plot_out_per_peptide_for_time <- reactive({
+      HaDeX::plot_replicate_histogram(dat_processed_per_peptide_for_time())
     })
 
     plot_out_per_peptide_all_times <- reactive({
@@ -98,15 +98,19 @@ mod_plot_replicates_server <- function(id, dat, params){
     mod_display_plot_server(
       id = "display_plot",
       plot_out = list(
-        per_peptide_for_time = plot_out_per_peptide_per_time,
+        per_peptide_for_time = plot_out_per_peptide_for_time,
         per_peptide_all_times = plot_out_per_peptide_all_times,
         per_time = plot_out_per_time
       ),
       dat_out = list(
-        per_peptide_for_time = dat_out_per_peptide_per_time,
+        per_peptide_for_time = dat_out_per_peptide_for_time,
         per_peptide_all_times = dat_out_per_peptide_all_times,
         per_time = dat_out_per_time
       )
+    )
+
+    return(
+      autoreturn("per_peptide_for_time", "per_peptide_all_times", "per_time")
     )
   })
 }

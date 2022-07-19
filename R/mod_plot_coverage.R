@@ -107,6 +107,10 @@ mod_plot_coverage_server <- function(id, dat, params){
         position_frequency = dat_out_position_frequency
       )
     )
+
+    return(
+      autoreturn("peptide_coverage", "position_frequency")
+    )
   })
 }
 

@@ -263,5 +263,9 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
         woods = dat_out_woods
       )
     )
+
+    return(
+      autoreturn("comparison", "woods")
+    )
   })
 }

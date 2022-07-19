@@ -155,5 +155,9 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
     ### plot server
 
     mod_display_plot_server("display_plot", plot_out, dat_out)
+
+    return(
+      autoreturn()
+    )
   })
 }
