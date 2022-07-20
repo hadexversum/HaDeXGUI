@@ -11,7 +11,7 @@ mod_settings_color_ui <- function(id){
   ns <- NS(id)
   collapsible_card(
     title = "Colors",
-    uiOutput(ns("gen_state_color_pickers")),
+    uiOutput_h(ns("gen_state_color_pickers")),
     init_collapsed = TRUE,
     fancy_icon = "palette"
   )

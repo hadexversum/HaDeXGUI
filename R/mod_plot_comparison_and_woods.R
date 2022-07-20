@@ -19,11 +19,11 @@ mod_plot_comparison_and_woods_ui <- function(id){
       mod_settings_time_ui(ns("time"), mode = "LIMITS AND EXPOSURE"),
 
       hadex_settings_separator("Comparison Plot settings"),
-      mod_settings_state_ui(ns("state_comparison"), mode = "MULTIPLE"),
+      mod_settings_state_ui(ns("comparison_state"), mode = "MULTIPLE"),
       mod_settings_color_ui(ns("color")),
 
       hadex_settings_separator("Woods Plot settings"),
-      mod_settings_state_ui(ns("state_woods"), mode = "DOUBLE"),
+      mod_settings_state_ui(ns("woods_state"), mode = "DOUBLE"),
       mod_settings_test_ui(ns("test"), mode = "SELECTIBLE"),
       mod_settings_visualization_ui(ns("visualization"), mode = "WOODS"),
 
@@ -63,7 +63,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     ns <- session$ns
 
     dat_processed_comparison <- reactive({
-      states <- s_state_comparison %()% states # calculated outside to handle validation error correctly
+      states <- s_comparison_state %()% states # calculated outside to handle validation error correctly
 
       HaDeX::create_uptake_dataset(
         dat(),
@@ -84,8 +84,8 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
       dat() %>%
         HaDeX::create_diff_uptake_dataset(
           protein   = params        %()% chosen_protein,
-          state_1   = s_state_woods %()% state_1,
-          state_2   = s_state_woods %()% state_2,
+          state_1   = s_woods_state %()% state_1,
+          state_2   = s_woods_state %()% state_2,
           time_0    = s_time        %()% 0,
           time_100  = s_time        %()% 100,
           deut_part = params        %()% deut_part
@@ -113,8 +113,8 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
          HaDeX::create_p_diff_uptake_dataset(
            diff_uptake_dat     = dat_processed_woods(),
            protein             = params        %()% chosen_protein,
-           state_1             = s_state_woods %()% state_1,
-           state_2             = s_state_woods %()% state_2,
+           state_1             = s_woods_state %()% state_1,
+           state_2             = s_woods_state %()% state_2,
            p_adjustment_method = s_test        %()% p_adjustment_method,
            confidence_level    = s_test        %()% confidence_level,
            time_0              = s_time        %()% 0,
@@ -235,21 +235,21 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
       )
     )
 
-    s_state_comparison <- mod_settings_state_server(
-      id = "state_comparison",
+    s_comparison_state <- mod_settings_state_server(
+      id = "comparison_state",
       mode = "MULTIPLE",
       p_states_chosen_protein = params[["states_chosen_protein"]]
     )
 
-    s_state_woods <- mod_settings_state_server(
-      id = "state_woods",
+    s_woods_state <- mod_settings_state_server(
+      id = "woods_state",
       mode = "DOUBLE",
       p_states_chosen_protein = params[["states_chosen_protein"]]
     )
 
     s_color <- mod_settings_color_server(
       id = "color",
-      s_state = s_state_comparison
+      s_state = s_comparison_state
     )
 
     mod_display_plot_server(

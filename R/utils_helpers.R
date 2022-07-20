@@ -4,46 +4,76 @@
 #'
 #' @return The return value, if any, from executing the utility.
 #'
-#' @importFrom shinyhelper helper
 #' @noRd
-plotOutput_h <- function(outputId, ...)
-  # TODO: restore spinner
-  helper(plotOutput(outputId = outputId, ...),
-         content = outputId, type = "markdown", buttonLabel = "Okay", easyClose = TRUE,
-         icon = "far fa-question-circle", colour = "#856C9D")
+#' @importFrom shinyhelper helper
+match_helper_content <- function(id) {
+  split <- strsplit(id, split = "-|_")[[1]]
+  n <- length(split)
 
-func_vec <- c("selectInput", "textInput", "checkboxInput", "numericInput", "radioButtons", "checkboxGroupInput")
-func_list <- setNames(lapply(func_vec, function(ith_fun)
-  tmp_name <- function(inputId, ...) {
-    helper(getFromNamespace(ith_fun, ns = "shiny")(inputId = inputId, ...),  content = inputId,
-           type = "markdown", buttonLabel = "Okay", easyClose = TRUE,
-           icon = "far fa-question-circle", colour = "#856C9D")
-  }), func_vec)
+  ret <- NULL
 
-for(ith_fun_id in 1L:length(func_list)) {
-  assign(x = paste0(names(func_list)[ith_fun_id], "_h"), value = func_list[[ith_fun_id]])
+  # looking for helpers from most specific (prepended with module names) to least
+  for (i in 1:n) {
+    sub_id <- paste0(split[i:n], collapse = "-")
+    if (app_sys(glue::glue("app/helpfiles/{sub_id}.md")) != "") {
+      ret <- sub_id
+      break
+    }
+  }
+
+  ic(id, ret)
+  ret
 }
 
-with_hadex_spinner <- function(ui_element)
-  shinycustomloader::withLoader(
-    ui_element,
+decorate_with_helper <- function(fun) function(id, ...) {
+  content <- match_helper_content(id)
+  if (not_null(content)) shinyhelper::helper(
+    shiny_tag = fun(id, ...),
+    content = content,
+    type = "markdown",
+    buttonLabel = "Close",
+    easyClose = TRUE,
+    icon = "far fa-question-circle",
+    colour = "#856C9D"
+  ) else fun(id, ...)
+}
+
+decorate_with_hadex_spinner <- function(fun)
+  function(id, ...) shinycustomloader::withLoader(
+    fun(id, ...),
     type = "image",
     loader = "www/HaDeX_loader.gif"
   )
 
+# manually decorating to specify default parameter values
+
+selectInput_h <- function(inputId, label, choices = "", ...)
+  decorate_with_helper(shiny::selectInput)(inputId, label, choices, ...)
+
+selectizeInput_h <- function(inputId, label, choices = "", ...,
+                             options = list(dropdownParent = "body"))
+  decorate_with_helper(shiny::selectizeInput)(inputId, label = label, choices = choices, options = options, ...)
+
+textInput_h <- function(inputId, ...)
+  decorate_with_helper(shiny::textInput)(inputId, ...)
+
+checkboxInput_h <- function(inputId, ...)
+  decorate_with_helper(shiny::checkboxInput)(inputId, ...)
+
+numericInput_h <- function(inputId, label, value = 0, ...)
+  decorate_with_helper(shiny::numericInput)(inputId, label, value, ...)
+
+checkboxGroupInput_h <- function(inputId, label, choices = "", ...)
+  decorate_with_helper(shiny::checkboxGroupInput)(inputId, label, choices, ...)
+
 plotOutput_h <- function(outputId, ...)
-  helper(with_hadex_spinner(plotOutput(outputId = outputId, ...)),
-         content = outputId, type = "markdown", buttonLabel = "Okay", easyClose = TRUE,
-         icon = "far fa-question-circle", colour = "#856C9D")
+  decorate_with_helper(decorate_with_hadex_spinner(shiny::plotOutput))(outputId, ...)
 
-## "DT::dataTableOutput"
+uiOutput_h <- function(outputId, ...)
+  decorate_with_helper(decorate_with_hadex_spinner(shiny::uiOutput))(outputId, ...)
+
 dataTableOutput_h <- function(outputId, ...)
-  helper(with_hadex_spinner(getFromNamespace("dataTableOutput", ns = "DT")(outputId = outputId, ...)),
-         content = outputId, type = "markdown", buttonLabel = "Okay", easyClose = TRUE,
-         icon = "far fa-question-circle", colour = "#856C9D")
+  decorate_with_helper(decorate_with_hadex_spinner(DT::dataTableOutput))(outputId, ...)
 
-## "ggiraph::girafeOutput"
 girafeOutput_h <- function(outputId, ...)
-  helper(with_hadex_spinner(getFromNamespace("girafeOutput", ns = "ggiraph")(outputId = outputId, ...)),
-         content = outputId, type = "markdown", buttonLabel = "Okay", easyClose = TRUE,
-         icon = "far fa-question-circle", colour = "#856C9D")
+  decorate_with_helper(decorate_with_hadex_spinner(ggiraph::girafeOutput))(outputId, ...)

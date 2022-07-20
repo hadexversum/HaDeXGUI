@@ -79,7 +79,7 @@ mod_settings_visualization_ui <- function(id, mode){
       ),
       checkboxInput_h(
         inputId = ns("log_x"),
-        label = "Logaritmic x scale for Mass UPTAKE Plot?",
+        label = "Logaritmic x scale for Mass Uptake Plot?",
         value = FALSE
       )
     ) %nullify if% !(mode == "MEASUREMENTS"),

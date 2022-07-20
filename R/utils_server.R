@@ -12,6 +12,8 @@ apply_server_settings <- function() {
   }
 
   theme_set(HaDeX_ggtheme)
+
+  shinyhelper::observe_helpers(help_dir = app_sys("app/helpfiles"))
 }
 
 extract_limits_from_range <- function(range) c(range()[[1]], range()[[2]])

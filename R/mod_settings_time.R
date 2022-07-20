@@ -33,12 +33,9 @@ mod_settings_time_ui <- function(id, mode = "LIMITS AND POINTS"){
     selected = ""
   )
 
-  exposure <- selectizeInput( #TODO: fix this cropping issue also for other selects
+  exposure <- selectizeInput_h( #TODO: fix this cropping issue also for other selects
     inputId = ns("t"),
-    label = "Measurement Exposure:",
-    choices = "",
-    selected = "",
-    options = list(dropdownParent = 'body')
+    label = "Measurement Exposure:"
   )
 
   card_timepoints <- function(...) collapsible_card(
