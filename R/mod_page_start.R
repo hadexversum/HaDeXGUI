@@ -9,7 +9,7 @@
 #' @importFrom shiny NS tagList
 mod_page_start_ui <- function(id){
   hadex_tab_other(
-    title = "Start",
+    title = "",
     h1("Welcome to HaDeX GUI!"),
     fluidPage(
       fluidRow(
@@ -28,6 +28,7 @@ mod_page_start_ui <- function(id){
     img(
       id = "HaDeX-funding-icons",
       src = "www/funding_icons.png"
-    )
+    ),
+    value = "start"
   )
 }

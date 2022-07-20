@@ -8,6 +8,16 @@
 app_server <- function(input, output, session) {
   apply_server_settings()
 
+  # USING LOGO AS LINK TO START PAGE
+  # TODO: do it with js instead
+  observe({
+    updateTabsetPanel(
+      session = session,
+      inputId = "navbar",
+      selected = "start"
+    )
+  }) %>% bindEvent({ input[["logo_link"]] })
+
   dat_source <- mod_data_load_server("data_load")
 
   ### AUTOMATIC INVOCATION OF PLOTTING SERVERS

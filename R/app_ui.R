@@ -10,6 +10,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     navbarPage(
+      id = "navbar",
       title = "HaDeX",
 
       mod_page_start_ui("page_start"),
@@ -45,7 +46,13 @@ app_ui <- function(request) {
       if (getOption("shiny.reactlog", default = FALSE))
         tabPanel(title = "reactlog", reactlog_module_ui()),
 
-      header = img(id = "HaDeX-logo", src = "www/logo.png")
+      # TODO: maybe make some more clever injection?
+      header = actionLink(
+        "logo_link",
+        "",
+        NULL,
+        img(id = "HaDeX-logo", src = "www/logo.png")
+      )
     )
   )
 }

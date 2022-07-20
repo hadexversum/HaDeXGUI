@@ -126,7 +126,7 @@ body {
   color: rgba(37,40,61,0.5) !important;
   background-color: #CCC2D6 !important;
   border: none;
-  padding-right: 170px; /* to fit the logo */
+  padding-left: 150px; /* to fit the logo */
 }
 
 .navbar.navbar-default .navbar-nav .nav-link:hover,
@@ -185,9 +185,8 @@ body {
 
 #HaDeX-logo {
   position: absolute;
-  float: right;
   top: 0px;
-  right: 0px;
+  left: 10px;
   z-index: 1000;
 
   /* height of navbar = 5 + 40 + 5 */
