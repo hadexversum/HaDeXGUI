@@ -27,8 +27,7 @@ mod_page_summary_server <- function(id, dat, params){
     dat_processed <- reactive({
       HaDeX::show_summary_data(
         dat = dat(),
-        confidence_limit_1 = input[["confidence_limit"]], #TODO: why does it exist?
-        confidence_limit_2 = input[["confidence_limit_2"]],
+        confidence_level = 0.9, #TODO: fix this hardcoded value!
         protein_length = params %()% max_range
       )
     })
