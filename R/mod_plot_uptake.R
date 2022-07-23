@@ -105,8 +105,8 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         update_axes_and_labels(range_y = s_range[["y"]], labels = s_label) %>%
         suppressMessages()
     }) else reactive({
-      HaDeX::plot_kinetics(
-        kin_dat = dat_processed(),
+      HaDeX::plot_uptake_curve(
+        uc_dat = dat_processed(),
         theoretical = s_calculation[["theoretical"]](),
         fractional = s_calculation[["fractional"]](),
         uncertainty_type = s_visualization[["uncertainty_type"]](),
@@ -123,8 +123,8 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         fractional = s_calculation[["fractional"]]()
       )
     }) else reactive({
-      HaDeX::show_kinetic_data(
-        kin_dat = dat_processed(),
+      HaDeX::show_uptake_data(
+        uc_dat = dat_processed(),
         theoretical = s_calculation[["theoretical"]](),
         fractional = s_calculation[["fractional"]]()
       )
