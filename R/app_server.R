@@ -33,7 +33,6 @@ app_server <- function(input, output, session) {
       ### TIME-BASED DATA:
       "replicates",
       "manhattan",
-      "quality_control",
       "uncertainty",
       ### MEASUREMENTS
       "measurements",
