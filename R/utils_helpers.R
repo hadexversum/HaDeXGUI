@@ -20,8 +20,6 @@ match_helper_content <- function(id) {
       break
     }
   }
-
-  ic(id, ret)
   ret
 }
 
