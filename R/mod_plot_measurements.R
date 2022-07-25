@@ -201,7 +201,10 @@ mod_plot_measurements_server <- function(id, dat, params){
     )
 
     return(
-      autoreturn("measurements", "mass_uptake")
+      c(
+        autoreturn("measurements", "mass_uptake"),
+        list(report_validation_peptide_selected = s_peptide[["selected_flag"]])
+      )
     )
   })
 }

@@ -64,7 +64,8 @@ mod_settings_peptide_server <- function(id, peptide_table, mode){
                         )[mode]
           ))
           input[["peptide_list_rows_selected"]]
-        })
+        }),
+        selected_flag = reactive({ length(input[["peptide_list_rows_selected"]]) > 0})
       )
     )
   })
