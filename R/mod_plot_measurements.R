@@ -113,7 +113,7 @@ mod_plot_measurements_server <- function(id, dat, params){
         state           = s_state         %()% state,
         sequence        = sequence,
         log_x           = s_visualization %()% log_x,
-        show_aggregated = s_visualization %()% show_replicates
+        aggregated      = s_visualization %()% show_replicates
       ) %>%
         update_axes_and_labels(range_y = s_range[["y"]], labels = s_label, label_prefix = "mass_uptake") %>%
         suppressMessages()
