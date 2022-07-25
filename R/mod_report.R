@@ -88,7 +88,7 @@ mod_report_server <- function(id,
           component_group = list(dat_export[[component_module_name[[1]]]][[type]]),
           component = if (has_subcomponents)
             list(component_group[[component_module_name[[2]]]]())
-          else list(component_group[[1]]())) %>%
+          else list(component_group())) %>%
         pull(component, name = nice_name)
     })
 
