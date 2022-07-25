@@ -27,6 +27,10 @@ mod_report_ui <- function(id){
                 label = glue::glue("{.x} Plot"),
                 value = FALSE
               )
+            ),
+            actionButton(
+              inputId = ns("select_all_plots"),
+              label = "Select all plots"
             )
           ),
           column(
@@ -38,6 +42,10 @@ mod_report_ui <- function(id){
                 label = glue::glue("{.x} Data"),
                 value = FALSE
               )
+            ),
+            actionButton(
+              inputId = ns("select_all_data"),
+              label = "Select all data"
             )
           )
         ),
@@ -91,6 +99,26 @@ mod_report_server <- function(id,
           else list(component_group())) %>%
         pull(component, name = nice_name)
     })
+
+    observe({
+      for (name in names(exportable_components)) {
+        updateCheckboxInput(
+          session = session,
+          inputId = glue::glue("include_{name}_plot"),
+          value = TRUE
+        )
+      }
+    }) %>% bindEvent(input[["select_all_plots"]])
+
+    observe({
+      for (name in names(exportable_components)) {
+        updateCheckboxInput(
+          session = session,
+          inputId = glue::glue("include_{name}_dat"),
+          value = TRUE
+        )
+      }
+    }) %>% bindEvent(input[["select_all_data"]])
 
     output[["export"]] <- downloadHandler(
       filename = "HaDeX_Report.html",
