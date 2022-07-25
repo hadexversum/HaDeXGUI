@@ -12,14 +12,14 @@ mod_settings_time_ui <- function(id, mode = "LIMITS AND POINTS"){
                         "SINGLE POINT", "LIMITS AND SINGLE EXPOSURE"))
   ns <- NS(id)
 
-  deut_0 <- selectInput_h(
+  deut_0 <- selectizeInput_h(
     inputId = ns("0"),
     label = "Deut 0% Exposure",
     choices = "",
     selected = ""
   )
 
-  deut_100 <- selectInput_h(
+  deut_100 <- selectizeInput_h(
     inputId = ns("100"),
     label = "Deut 100% Exposure",
     choices = "",

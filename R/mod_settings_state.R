@@ -18,19 +18,19 @@ mod_settings_state_ui <- function(id, mode){
       DOUBLE = tagList(
         p("Differential plot presents the uptake difference between State 1 and State 2."),
         splitLayout(
-          selectInput_h(
+          selectizeInput_h(
             inputId = ns("state_1"),
             label = "State 1",
             choices = ""
           ),
-          selectInput_h(
+          selectizeInput_h(
             inputId = ns("state_2"),
             label = "State 2",
             choices = ""
           )
         )
       ),
-      SINGLE = selectInput_h(
+      SINGLE = selectizeInput_h(
         inputId = ns("state"),
         label = "Choose state:",
         choices = "",

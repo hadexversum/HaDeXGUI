@@ -45,9 +45,6 @@ decorate_with_hadex_spinner <- function(fun)
 
 # manually decorating to specify default parameter values
 
-selectInput_h <- function(inputId, label, choices = "", ...)
-  decorate_with_helper(shiny::selectInput)(inputId, label, choices, ...)
-
 selectizeInput_h <- function(inputId, label, choices = "", ...,
                              options = list(dropdownParent = "body"))
   decorate_with_helper(shiny::selectizeInput)(inputId, label = label, choices = choices, options = options, ...)

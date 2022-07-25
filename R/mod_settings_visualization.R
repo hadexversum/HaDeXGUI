@@ -33,13 +33,13 @@ mod_settings_visualization_ui <- function(id, mode){
       label = "Show uncertainty?",
       value = TRUE
     ),
-    uncertainty_type = selectInput_h(
+    uncertainty_type = selectizeInput_h(
       inputId = ns("uncertainty_type"),
       label = "Show uncertainty as:",
       choices = c("ribbon", "bars", "bars + line"),
       selected = "ribbon"
     ),
-    shown_interval = selectInput_h(
+    shown_interval = selectizeInput_h(
       inputId = ns("shown_interval"),
       label = "Show confidence limit for: ",
       choices = c("All time points", "Selected time points"),

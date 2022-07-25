@@ -29,14 +29,14 @@ mod_settings_test_ui <- function(id, mode){
       ),
       column(
         width = 6,
-        selectInput_h(
+        selectizeInput_h(
           inputId = ns("confidence_level"),
           label = "Select confidence level:",
           choices = c("80%" = 0.8, "90%" = 0.9, "95%" = 0.95, "98%" = 0.98, "99%" = 0.99, "99.9%" = 0.999),
           selected = 0.98
         ),
         toggleable(
-          selectInput_h(
+          selectizeInput_h(
             inputId = ns("p_adjustment_method"),
             label = "Choose method of adjustment:",
             choices = c("none", "BH", "bonferroni"),
@@ -47,13 +47,13 @@ mod_settings_test_ui <- function(id, mode){
       )
     ) else if (mode == "FIXED") {
       tagList(
-        selectInput_h(
+        selectizeInput_h(
           inputId = ns("confidence_level"),
           label = "Select confidence level:",
           choices = c("80%" = 0.8, "90%" = 0.9, "95%" = 0.95, "98%" = 0.98, "99%" = 0.99, "99.9%" = 0.999),
           selected = 0.98
         ),
-        selectInput_h(
+        selectizeInput_h(
           inputId = ns("p_adjustment_method"),
           label = "Choose method of adjustment:",
           choices = c("none", "BH", "bonferroni"),

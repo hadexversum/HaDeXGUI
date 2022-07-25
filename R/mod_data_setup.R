@@ -12,20 +12,20 @@ mod_data_setup_ui <- function(id){
   hadex_panel_settings_section(
     title = "Select the parameters:",
 
-    selectInput_h(
+    selectizeInput_h(
       inputId = ns("chosen_protein"),
       label = "Choose protein: ",
       choices = "",
       selected = "",
       width = "100%"
     ),
-    selectInput_h(
+    selectizeInput_h(
       inputId = ns("chosen_control"),
       label = "Maximal exchange control: ",
       choices = "",
       width = "100%"
     ),
-    selectInput_h(
+    selectizeInput_h(
       inputId = ns("no_deut_control"),
       label = "No deuterated time point:",
       choices = "",
