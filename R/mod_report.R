@@ -136,6 +136,29 @@ mod_report_server <- function(id,
         )
       }
     )
+
+    ### validator
+
+    iv <- InputValidator$new()
+    iv$add_rule("include_uptake_plot", compose_rules(
+      ~ if (. && !(dat_export[["uptake"]][["report_validation_peptide_selected"]]())) "You need to select a peptide in Uptake Curve tab!",
+    ))
+    iv$add_rule("include_uptake_dat", compose_rules(
+      ~ if (. && !(dat_export[["uptake"]][["report_validation_peptide_selected"]]())) "You need to select a peptide in Uptake Curve tab!",
+    ))
+    iv$add_rule("include_measurements-measurements_plot", compose_rules(
+      ~ if (. && !(dat_export[["measurements"]][["report_validation_peptide_selected"]]())) "You need to select a peptide in Measurements tab!",
+    ))
+    iv$add_rule("include_measurements-measurements_dat", compose_rules(
+      ~ if (. && !(dat_export[["measurements"]][["report_validation_peptide_selected"]]())) "You need to select a peptide in Measurements tab!",
+    ))
+    iv$add_rule("include_measurements-mass_uptake_plot", compose_rules(
+      ~ if (. && !(dat_export[["measurements"]][["report_validation_peptide_selected"]]())) "You need to select a peptide in Measurements tab!",
+    ))
+    iv$add_rule("include_measurements-mass_uptake_dat", compose_rules(
+      ~ if (. && !(dat_export[["measurements"]][["report_validation_peptide_selected"]]())) "You need to select a peptide in Measurements tab!",
+    ))
+    iv$enable()
   })
 }
 
