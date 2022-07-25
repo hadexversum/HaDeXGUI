@@ -33,7 +33,8 @@ mod_plot_uptake_ui <- function(id, differential) {
     display = mod_display_plot_ui(
       ns("display_plot"),
       plot_label = construct_plot_label("Uptake curves", differential),
-      additional_data_info = cosntruct_uptake_plots_data_info(differential)
+      additional_data_info = cosntruct_uptake_plots_data_info(differential),
+      additional_plot_info = !differential
     )
   )
 }
@@ -129,6 +130,11 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       )
     })
 
+    info_out <- reactive({
+      data <- HaDeX::calculate_auc(dat_processed(), state = s_state %()% states)
+      glue::glue_data(data, "{Sequence}-{State} AUC: {round(auc, 4)}")
+    }) %nullify if% differential
+
     range_specs <- list(
       y = if (differential) range_spec({
         if (s_calculation[["fractional"]]()) {
@@ -190,7 +196,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       )
     )
 
-    mod_display_plot_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out, info_out = info_out)
 
     return(
       autoreturn()
