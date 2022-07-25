@@ -18,7 +18,7 @@ mod_plot_measurements_ui <- function(id){
       modes = c(
         state = "SINGLE",
         time = "SINGLE POINT",
-        peptide = "SINGLE PEPTIDE",
+        peptide = "SINGLE",
         visualization = "MEASUREMENTS"
       ),
       params = list(
@@ -183,7 +183,7 @@ mod_plot_measurements_server <- function(id, dat, params){
       modes = c(
         state = "SINGLE",
         time = "SINGLE POINT",
-        peptide = "SINGLE PEPTIDE",
+        peptide = "SINGLE",
         visualization = "MEASUREMENTS"
       )
     )

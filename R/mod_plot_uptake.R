@@ -19,9 +19,9 @@ mod_plot_uptake_ui <- function(id, differential) {
       ),
       modes = c(
         time = "ONLY LIMITS",
-        state = if (differential) "DOUBLE" else "DISABLED",
+        state = if (differential) "DOUBLE" else "MULTIPLE",
         test = if (differential) "SELECTIBLE" else "DISABLED",
-        peptide = if (differential) "SINGLE PEPTIDE" else "MULTIPLE PEPTIDES AND STATES",
+        peptide = "SINGLE",
         visualization = "UPTAKE"
       ),
       params = list(
@@ -45,16 +45,10 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    peptide_table <- if (differential) reactive({
+    peptide_table <- reactive({
       dat() %>%
         filter(Protein == params[["chosen_protein"]]()) %>%
         select(Sequence, Start, End) %>%
-        unique(.) %>%
-        arrange(Start, End)
-    }) else reactive({
-      dat() %>%
-        filter(Protein == params[["chosen_protein"]]()) %>%
-        select(Sequence, State, Start, End) %>%
         unique(.) %>%
         arrange(Start, End)
     })
@@ -76,18 +70,23 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       )
     }) else reactive({
       validate(need(s_peptide[["selected"]](),
-                    "Please select at least one peptide from the table on the left."))
-      validate(need(sum(s_time[["0"]]() < params[["times"]]() &
-                          params[["times"]]() < s_time[["100"]]()),
+                    "Please select one peptide from the table on the left."))
+      validate(need(sum((s_time %()% 0) < (params %()% times) &
+                          (params %()% times) < (s_time %()% 100)),
                     "Not enough time points between Deut 0% and Deut 100%"))
 
-      HaDeX::create_kinetic_dataset(
-        dat = dat(),
-        peptide_list = peptide_table()[s_peptide[["selected"]](), ],
-        protein = params[["chosen_protein"]](),
-        deut_part = params[["deut_part"]](),
-        time_0 = s_time[["0"]](),
-        time_100 = s_time[["100"]]()
+      peptide_subset <- peptide_table()[s_peptide %()% selected, ]
+
+      HaDeX::calculate_peptide_kinetics(
+        dat       = dat(),
+        protein   = params  %()% chosen_protein,
+        sequence  = peptide_subset[["Sequence"]],
+        states    = s_state %()% states,
+        start     = peptide_subset[["Start"]],
+        end       = peptide_subset[["End"]],
+        deut_part = params  %()% deut_part,
+        time_0    = s_time  %()% 0,
+        time_100  = s_time  %()% 100
       )
     })
 
@@ -184,9 +183,9 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       ),
       modes = c(
         time = "ONLY LIMITS",
-        state = if (differential) "DOUBLE" else "SINGLE",
+        state = if (differential) "DOUBLE" else "MULTIPLE",
         test = if (differential) "SELECTIBLE" else "DISABLED",
-        peptide = if (differential) "SINGLE PEPTIDE" else "MULTIPLE PEPTIDES AND STATES",
+        peptide = "SINGLE",
         visualization = "UPTAKE"
       )
     )
