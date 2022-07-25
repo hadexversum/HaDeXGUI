@@ -7,7 +7,7 @@ vis_mode_map <- list(
   MANHATTAN = c("show_length", "split_timepoints"),
   UNCERTAINTY = c("show_aggregated", "split_timepoints"),
   MEASUREMENTS = c("log_x", "show_replicates"),
-  SEQUENCE_DATA = c("show_residues")
+  `SEQUENCE DATA` = c("show_residues")
 )
 
 #' settings_visualization UI Function
