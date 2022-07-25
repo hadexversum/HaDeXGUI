@@ -20,27 +20,21 @@ mod_settings_state_ui <- function(id, mode){
         splitLayout(
           selectizeInput_h(
             inputId = ns("state_1"),
-            label = "State 1",
-            choices = ""
+            label = "State 1"
           ),
           selectizeInput_h(
             inputId = ns("state_2"),
-            label = "State 2",
-            choices = ""
+            label = "State 2"
           )
         )
       ),
       SINGLE = selectizeInput_h(
         inputId = ns("state"),
-        label = "Choose state:",
-        choices = "",
-        selected = ""
+        label = "Choose state:"
       ),
       MULTIPLE = checkboxGroupInput_h(
         inputId = ns("states"),
-        label = "Choose states for comparison:",
-        choices = "",
-        selected = ""
+        label = "Choose states for comparison:"
       )
     ),
     fancy_icon = "atom"

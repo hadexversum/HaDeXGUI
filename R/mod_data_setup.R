@@ -14,29 +14,21 @@ mod_data_setup_ui <- function(id){
 
     selectizeInput_h(
       inputId = ns("chosen_protein"),
-      label = "Choose protein: ",
-      choices = "",
-      selected = "",
-      width = "100%"
+      label = "Choose protein:",
     ),
     selectizeInput_h(
       inputId = ns("chosen_control"),
-      label = "Maximal exchange control: ",
-      choices = "",
-      width = "100%"
+      label = "Maximal exchange control:"
     ),
     selectizeInput_h(
       inputId = ns("no_deut_control"),
-      label = "No deuterated time point:",
-      choices = "",
-      selected = ""
+      label = "No deuterated time point:"
     ),
     numericInput_h(
       inputId = ns("deut_part"),
       label = "Choose D20 concentration [%]: ",
       value = 90,
-      min = 0, max = 100, step = 1,
-      width = "100%"
+      min = 0, max = 100, step = 1
     ),
 
     fluidRow(
@@ -45,19 +37,14 @@ mod_data_setup_ui <- function(id){
         numericInput_h(
           inputId = ns("sequence_start_shift"),
           label = "Sequence start:",
-          value = 1, step = 1, min = 1,
-          width = "100%"
+          value = 1, step = 1, min = 1
         ),
       ),
       column(
         width = 6,
         numericInput_h(
           inputId = ns("sequence_length"),
-          label = "Sequence length:",
-          value = 0,
-          step = 1,
-          min = 0,
-          width = "100%"
+          label = "Sequence length:"
         )
       )
     ),

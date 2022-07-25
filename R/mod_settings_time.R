@@ -14,23 +14,17 @@ mod_settings_time_ui <- function(id, mode = "LIMITS AND POINTS"){
 
   deut_0 <- selectizeInput_h(
     inputId = ns("0"),
-    label = "Deut 0% Exposure",
-    choices = "",
-    selected = ""
+    label = "Deut 0% Exposure:"
   )
 
   deut_100 <- selectizeInput_h(
     inputId = ns("100"),
-    label = "Deut 100% Exposure",
-    choices = "",
-    selected = ""
+    label = "Deut 100% Exposure:"
   )
 
   timepoints <- checkboxGroupInput_h(
     inputId = ns("points"),
-    label = "Show time points: ",
-    choices = "",
-    selected = ""
+    label = "Show time points:"
   )
 
   exposure <- selectizeInput_h( #TODO: fix this cropping issue also for other selects

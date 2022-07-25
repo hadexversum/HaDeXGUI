@@ -32,7 +32,7 @@ mod_settings_test_ui <- function(id, mode){
         selectizeInput_h(
           inputId = ns("confidence_level"),
           label = "Select confidence level:",
-          choices = c("80%" = 0.8, "90%" = 0.9, "95%" = 0.95, "98%" = 0.98, "99%" = 0.99, "99.9%" = 0.999),
+          choices = c("80%" = 0.8, "90%" = 0.9, "95%" = 0.95, "98%" = 0.98, "99%" = 0.99, "99.9%" = 0.999), #TODO: should those stay fixed?
           selected = 0.98
         ),
         toggleable(

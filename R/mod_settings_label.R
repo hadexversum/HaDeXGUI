@@ -16,10 +16,9 @@ mod_settings_label_ui <- function(id, label_labs){
       column(
         width = 10,
         lapply(seq_along(label_labs), function(i) {
-          textInput(
+          textInput_h(
             inputId = ns(names(label_labs)[i]),
-            label = label_labs[i],
-            value = "" # updatable by observer
+            label = label_labs[i]
           )
         })
       ),
