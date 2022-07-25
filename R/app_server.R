@@ -38,7 +38,8 @@ app_server <- function(input, output, session) {
       "measurements",
       ### SEQUENCE DATA
       "sequence_data",
-      "coverage"
+      "coverage",
+      "coverage_heatmap"
     ),
     dat_source = dat_source
   )

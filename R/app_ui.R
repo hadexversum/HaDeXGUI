@@ -36,7 +36,8 @@ app_ui <- function(request) {
       navbarMenu(
         title = "Sequence data",
         mod_plot_sequence_data_ui("sequence_data"),
-        mod_plot_coverage_ui("coverage")
+        mod_plot_coverage_ui("coverage"),
+        mod_plot_coverage_heatmap_ui("coverage_heatmap")
       ),
       mod_page_summary_ui("page_summary"), #TODO: shouldn't this tab be merged with Sequence data?
       mod_report_ui("report"),
