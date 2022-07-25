@@ -1,3 +1,15 @@
+vis_mode_map <- list(
+  UPTAKE = c("log_x", "uncertainty_type"),
+  CHICLET = c("show_uncertainty"),
+  BUTTERFLY = c("uncertainty_type"),
+  VOLCANO = c("shown_interval", "distinguish_timepoints", "hide_insignificant", "show_insignificant_grey"),
+  WOODS = c("hide_insignificant"),
+  MANHATTAN = c("show_length", "split_timepoints"),
+  UNCERTAINTY = c("show_aggregated", "split_timepoints"),
+  MEASUREMENTS = c("log_x", "show_replicates"),
+  SEQUENCE_DATA = c("show_residues")
+)
+
 #' settings_visualization UI Function
 #'
 #' @description A shiny Module.
@@ -9,87 +21,77 @@
 #' @importFrom shiny NS tagList
 mod_settings_visualization_ui <- function(id, mode){
   ns <- NS(id)
-  collapsible_card(
-    title = "Visualization",
 
-    checkboxInput_h(
+  vis_settings <- list(
+    log_x = checkboxInput_h(
       inputId = ns("log_x"),
-      label = "Logaritmic x scale",
+      label = "Logarithmic x scale for uptake plot?",
       value = TRUE
-    ) %nullify if% !(mode %in% c("UPTAKE")),
-    checkboxInput_h(
+    ),
+    show_uncertainty = checkboxInput_h(
       inputId = ns("show_uncertainty"),
-      label = "Show uncertainty",
+      label = "Show uncertainty?",
       value = TRUE
-    ) %nullify if% !(mode %in% c("CHICLET")),
-    selectInput_h(
+    ),
+    uncertainty_type = selectInput_h(
       inputId = ns("uncertainty_type"),
       label = "Show uncertainty as:",
       choices = c("ribbon", "bars", "bars + line"),
       selected = "ribbon"
-    ) %nullify if% !(mode %in% c("UPTAKE", "BUTTERFLY")),
-    tagList(
-      selectInput_h(
-        inputId = ns("shown_interval"),
-        label = "Show confidence limit for: ",
-        choices = c("All time points", "Selected time points"),
-        selected = "All time points"
-      ),
-      checkboxInput_h(
-        inputId = ns("distinguish_timepoints"),
-        label = "Distinguish timepoints by color",
-        value = TRUE
-      ),
-      checkboxInput_h(
-        inputId = ns("hide_insignificant"),
-        label = "Hide insignificant values?",
-        value = FALSE
-      ),
-      checkboxInput_h(
-        inputId = ns("show_insignificant_grey"),
-        label = "Show insignificant values in grey?",
-        value = FALSE
-      )
-    ) %nullify if% !(mode %in% c("VOLCANO")),
-    checkboxInput_h(
+    ),
+    shown_interval = selectInput_h(
+      inputId = ns("shown_interval"),
+      label = "Show confidence limit for: ",
+      choices = c("All time points", "Selected time points"),
+      selected = "All time points"
+    ),
+    distinguish_timepoints = checkboxInput_h(
+      inputId = ns("distinguish_timepoints"),
+      label = "Distinguish timepoints by color?",
+      value = TRUE
+    ),
+    hide_insignificant = checkboxInput_h(
       inputId = ns("hide_insignificant"),
       label = "Hide insignificant values?",
       value = FALSE
-    ) %nullify if% !(mode %in% c("WOODS")),
-    checkboxInput_h(
+    ),
+    show_insignificant_grey = checkboxInput_h(
+      inputId = ns("show_insignificant_grey"),
+      label = "Show insignificant values in grey?",
+      value = FALSE
+    ),
+    show_length = checkboxInput_h(
       inputId = ns("show_length"),
-      label = "Show peptide length and position in the sequence? ",
+      label = "Show peptide length and position in the sequence?",
       value = TRUE
-    ) %nullify if% (mode != "MANHATTAN"),
-    checkboxInput_h(
+    ),
+    show_aggregated = checkboxInput_h(
       inputId = ns("show_aggregated"),
-      label = "Show aggregated data? ",
+      label = "Show aggregated data?",
       value = TRUE
-    ) %nullify if% (mode != "UNCERTAINTY"),
-    checkboxInput_h(
+    ),
+    split_timepoints = checkboxInput_h(
       inputId = ns("split_timepoints"),
       label = "Show time points separately?",
       value = FALSE
-    ) %nullify if% !(mode %in% c("MANHATTAN", "UNCERTAINTY")),
-    tagList(
-      checkboxInput_h(
-        inputId = ns("show_replicates"),
-        label = "Show replicate values?",
-        value = FALSE
-      ),
-      checkboxInput_h(
-        inputId = ns("log_x"),
-        label = "Logaritmic x scale for Mass Uptake Plot?",
-        value = FALSE
-      )
-    ) %nullify if% !(mode == "MEASUREMENTS"),
-    selectizeInput(
+    ),
+    show_replicates = checkboxInput_h(
+      inputId = ns("show_replicates"),
+      label = "Show replicate values?",
+      value = FALSE
+    ),
+    show_residues = selectizeInput(
       inputId = ns("show_residues"),
       label = "Select group of residues to display: ",
       choices = c("Hydrophilic and hydrophobic", "Only hydrophilic", "Only hydrophobic"),
       selected = "Hydrophilic and hydrophobic",
       options = list(dropdownParent = 'body')
-    ) %nullify if% (mode != "SEQUENCE DATA"),
+    )
+  )
+
+  collapsible_card(
+    title = "Visualization",
+    vis_settings[vis_mode_map[[mode]]],
     fancy_icon = "image"
   )
 }
@@ -102,23 +104,7 @@ mod_settings_visualization_server <- function(id, mode){
     ns <- session$ns
 
     return(
-      c(
-        if (mode == "CHICLET") list(show_uncertainty = input_r("show_uncertainty")) else NULL,
-        if (mode %in% c("UPTAKE", "BUTTERFLY")) list(uncertainty_type = input_r("uncertainty_type")) else NULL,
-        if (mode == "UPTAKE") list(log_x = input_r("log_x")) else NULL,
-        if (mode == "VOLCANO") list(
-          shown_interval = input_r("shown_interval"),
-          distinguish_timepoints = input_r("distinguish_timepoints"),
-          show_insignificant_grey = input_r("show_insignificant_grey")
-        ) else NULL,
-        if (mode %in% c("VOLCANO", "WOODS")) list(
-          hide_insignificant = input_r("hide_insignificant")
-        ),
-        if (mode == "MANHATTAN") input_r_list("show_length", "split_timepoints"),
-        if (mode == "UNCERTAINTY") input_r_list("show_aggregated", "split_timepoints"),
-        if (mode == "MEASUREMENTS") input_r_list("log_x", "show_replicates"),
-        if (mode == "SEQUENCE DATA") input_r_list("show_residues")
-      )
+      input_r_list(vis_mode_map[[mode]])
     )
   })
 }
