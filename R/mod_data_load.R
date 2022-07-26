@@ -86,7 +86,8 @@ mod_data_load_server <- function(id) {
       data_file <- input[["data_file"]]
 
       if (is.null(data_file)) {
-        HaDeX::read_hdx("./inst/app/data/KD_180110_CD160_HVEM.csv")
+        data("example_data", package = "HaDeXGUI", verbose = FALSE, envir = environment())
+        example_data
       } else {
         validate(need(try({
           file <- HaDeX::read_hdx(data_file[["datapath"]])
