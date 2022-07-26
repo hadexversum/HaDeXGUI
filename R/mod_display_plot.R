@@ -7,7 +7,10 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_display_plot_ui <- function(id, plot_labels, additional_data_info = NULL, additional_plot_info = FALSE) {
+mod_display_plot_ui <- function(id, plot_labels,
+                                additional_data_info = NULL,
+                                additional_plot_info = FALSE,
+                                additional_button_server = NULL) {
   ns <- NS(id)
   div(
     class = "HaDeX-tab-content-element HaDeX-plot-display-panel",
@@ -19,7 +22,9 @@ mod_display_plot_ui <- function(id, plot_labels, additional_data_info = NULL, ad
           title = plot_labels,
           girafeOutput_h(ns("plot")),
           verbatimTextOutput(ns("plot_info")) %nullify if% !additional_plot_info,
-          downloadButton(ns("plot_download_button"), "Save chart (.svg)")),
+          downloadButton(ns("plot_download_button"), "Save chart (.svg)"),
+          additional_button_server
+        ),
         tabPanel(
           "Data",
           dataTableOutput_h(ns("data")),

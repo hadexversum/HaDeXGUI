@@ -120,3 +120,5 @@ install_settings_ui <- function(names, modes, params = list(), ns) {
   })
   rlang::exec(hadex_panel_settings, !!!uis)
 }
+
+column_6 <- function(...) column(width = 6, ...)

@@ -3,7 +3,6 @@ HaDeX_ggtheme <- theme_bw() %+replace%
   theme(plot.background = element_rect(fill = NA, color = NA))
 
 #' @importFrom icecream ic_enable
-#' @importFrom withr with_options
 #' @importFrom ggplot2 theme_set
 apply_server_settings <- function() {
   if (getOption("golem.app.prod")) {

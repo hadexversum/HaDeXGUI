@@ -34,7 +34,8 @@ mod_plot_uptake_ui <- function(id, differential) {
       ns("display_plot"),
       plot_label = construct_plot_label("Uptake curves", differential),
       additional_data_info = cosntruct_uptake_plots_data_info(differential),
-      additional_plot_info = !differential
+      additional_plot_info = !differential,
+      additional_button_server = mod_download_uptake_ui(ns("download_uptake"))
     )
   )
 }
@@ -197,6 +198,11 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
     )
 
     mod_display_plot_server("display_plot", plot_out, dat_out, info_out = info_out)
+
+    mod_download_uptake_server(
+      id = "download_uptake",
+      dat, params, peptide_table, s_time, s_calculation, s_visualization
+    )
 
     return(
       c(
