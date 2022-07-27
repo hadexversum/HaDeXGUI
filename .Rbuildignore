@@ -3,5 +3,6 @@
 ^data-raw$
 dev_history.R
 ^dev$
+^.idea$
 $run_dev.*
 ^LICENSE\.md$
