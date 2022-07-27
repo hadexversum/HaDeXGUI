@@ -3,7 +3,6 @@
 #' @param name [character(1)]
 #'     Name of the input value.
 #' @param env the environment
-#' @param ... Any number of characters or character vectors
 #'
 #' `input_r` is a helper function that automatically wraps input as a reactive
 #' value. `input_r_numeric` does the same, but additionally applies `as.numeric`
@@ -18,13 +17,14 @@ input_r <- function(name, env = parent.frame()) {
   eval(rlang::expr(reactive({ input[[!!name]] }, env = env)))
 }
 
-#' @noRd
+#' @rdname input_r
 input_r_numeric <- function(name, env = parent.frame()) {
   env <- new.env(parent = env)
   eval(rlang::expr(reactive({ as.numeric(input[[!!name]]) }, env = env)))
 }
 
-#' @noRd
+#' @param ... Any number of characters or character vectors
+#' @rdname input_r
 input_r_list <- function(..., env = parent.frame()) {
   names <- unlist(list(...))
   setNames(lapply(names, input_r, env = env), names)

@@ -2,23 +2,29 @@
 % Please edit documentation in R/utils_reactivity.R
 \name{input_r}
 \alias{input_r}
+\alias{input_r_numeric}
+\alias{input_r_list}
 \title{Get input as a reactive value}
 \usage{
 input_r(name, env = parent.frame())
+
+input_r_numeric(name, env = parent.frame())
+
+input_r_list(..., env = parent.frame())
 }
 \arguments{
 \item{name}{[character(1)]
 Name of the input value.}
 
-\item{env}{the environment}
-
-\item{...}{Any number of characters or character vectors
+\item{env}{the environment
 
 `input_r` is a helper function that automatically wraps input as a reactive
 value. `input_r_numeric` does the same, but additionally applies `as.numeric`
 transformation on input. `input_r_list` takes an arbitrary number of
 characters and returns a named list of reactive values, which is equivalent
 to manually applying `input_r` to each of the strings.}
+
+\item{...}{Any number of characters or character vectors}
 }
 \description{
 Get input as a reactive value

@@ -78,9 +78,8 @@ HaDeX_DT_format <- function(dat, cols = colnames(dat), dom = "tBip") {
 #'     a vector of names of servers. This should be only the direct name of a
 #'     server, eg. name of `mod_settings_*_server` should be provided as
 #'     `"*"`.
-#' @param const_params [named list]
-#'     a list of constant parameters passed to a servers if they are able to
-#'     accept non-reactive replacements of some of their parameters. Emply list
+#' @param modes [named character]
+#'     a list of modes passed to corresponding servers. Empty vector by default.
 #'     by default.
 #' @param env [environment]
 #'     an environment in which the servers should be installed. Calling
@@ -91,7 +90,7 @@ HaDeX_DT_format <- function(dat, cols = colnames(dat), dom = "tBip") {
 #' this function. This function creates one object named `s_*` per each server
 #' name provided, where `*` is the name of the server. This object is a return
 #' value of the server.
-invoke_settings_servers <- function(names, modes = list(), env = parent.frame()) {
+invoke_settings_servers <- function(names, modes = character(), env = parent.frame()) {
   for (name in names) {
     # transform name into server function
     server_fun <- getFromNamespace(paste0("mod_settings_", name, "_server"), "HaDeXGUI")
