@@ -43,3 +43,8 @@ button.dt-button, div.dt-button, a.dt-button, input.dt-button {
   line-height: 22px;
   padding: 6px 12px;
 }
+
+/* fixing (kinda) overflowing */
+.dataTables_wrapper {
+  overflow-x: auto;
+}

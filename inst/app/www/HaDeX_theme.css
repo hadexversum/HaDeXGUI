@@ -231,15 +231,6 @@ body {
   margin: 15px;
 }
 
-#file_req {
-  margin: 0 auto;
-}
-
-#peptide_list_data,
-#rep_sequence {
-  overflow-x: auto;
-}
-
 #page_summary-table {
   margin: 20px auto;
 }
