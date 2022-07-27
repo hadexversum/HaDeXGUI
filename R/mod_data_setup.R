@@ -103,8 +103,7 @@ mod_data_setup_server <- function(id, dat_adjusted){
       dat_adjusted() %>%
         mutate(Start = Start + input[["sequence_start_shift"]] - 1,
                End = End + input[["sequence_start_shift"]] - 1) %>%
-        # TODO: this function IS NOT exported from HaDeX due to empty line
-        HaDeX:::create_control_dataset(
+        HaDeX::create_control_dataset(
           control_protein = input[["chosen_protein"]],
           control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
           control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3]
