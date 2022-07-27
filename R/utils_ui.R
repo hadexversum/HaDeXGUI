@@ -86,16 +86,9 @@ add_fancy_icon <- function(fancy_icon)
   icon(fancy_icon, class = "fancy-icon")
 
 #' @importFrom xtable xtable
-htmlize_data <- function(dataset_name) {
-  data("file_req", package = "HaDeXGUI", envir = environment())
-  HTML(paste(capture.output(print(xtable(file_req), type = "html"))))
+htmlize_data <- function(dset) {
+  HTML(paste(capture.output(print(xtable(dset), type = "html"))))
 }
-
-get_amino_prop <- function() {
-  data("amino_prop", package = "HaDeXGUI", envir = environment())
-  amino_prop
-}
-
 
 install_settings_ui <- function(names, modes, params = list(), ns) {
   uis <- lapply(names, function(name) {

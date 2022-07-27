@@ -44,7 +44,7 @@ mod_data_load_ui <- function(id){
     p("For the program to behave correctly, please make sure supplied file fulfills all requirements."),
     collapsible_card(
       title = "Show requirements",
-      htmlize_data("file_req"),
+      htmlize_data(file_req), #TODO: maybe do it in some other way?
       init_collapsed = TRUE
     ),
 
@@ -86,7 +86,6 @@ mod_data_load_server <- function(id) {
       data_file <- input[["data_file"]]
 
       if (is.null(data_file)) {
-        data("example_data", package = "HaDeXGUI", verbose = FALSE, envir = environment())
         example_data
       } else {
         validate(need(try({

@@ -70,7 +70,7 @@ mod_plot_sequence_data_server <- function(id, dat, params){
         apply(1, function(x) data.frame(position = x[1]:x[2], amino = strsplit(x[3], '')[[1]], stringsAsFactors = FALSE)) %>%
         bind_rows() %>%
         unique(.) %>%
-        left_join(get_amino_prop())
+        left_join(amino_prop)
     })
 
     plot_out <- reactive({
