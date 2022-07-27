@@ -1,37 +1,40 @@
 Package: HaDeXGUI
 Title: GUI for the HaDeX app
 Version: 0.0.0.9000
-Authors@R: c(person("Weronika", "Puchala", 
-           email = "puchala.weronika@gmail.com", 
-           comment = c(ORCID = "0000-0003-2163-1429"),
-           role = c("cre", "aut")),
-           person("Michal", "Burdukiewicz", 
-           email = "michalburdukiewicz@gmail.com", 
-           comment = c(ORCID = "0000-0001-8926-582X"),
-           role = c("aut")),
-           person("Dominik", "Rafacz", 
-           email = "d.rafacz@student.mini.pw.edu.pl",
-           comment = c(ORCID = "0000-0003-0925-1909"),
-           role = c("aut")))
-Description: PKG_DESC.
+Authors@R: c(
+    person("Weronika", "Puchala", , "puchala.weronika@gmail.com", role = c("cre", "aut"),
+           comment = c(ORCID = "0000-0003-2163-1429")),
+    person("Michal", "Burdukiewicz", , "michalburdukiewicz@gmail.com", role = "aut",
+           comment = c(ORCID = "0000-0001-8926-582X")),
+    person("Dominik", "Rafacz", , "d.rafacz@student.mini.pw.edu.pl", role = "aut",
+           comment = c(ORCID = "0000-0003-0925-1909"))
+  )
+Description: Runs GUI for HaDeX package. Main function of the app is `run_app()`.
 License: What license is it under?
 Depends: 
     R (>= 2.10)
 Imports: 
+    colourpicker,
     config (>= 0.3.1),
     dplyr,
     DT,
     ggiraph,
     ggplot2,
+    glue,
     golem (>= 0.3.2),
+    gridExtra,
     HaDeX,
     icecream,
+    purrr,
     reactlog,
+    rlang,
+    rmarkdown,
     shiny (>= 1.6.0),
     shinycustomloader,
     shinyhelper,
     shinyjs,
     shinyvalidate,
+    tools,
     xtable
 Suggests: 
     testthat (>= 3.0.0)
