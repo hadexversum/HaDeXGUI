@@ -350,13 +350,22 @@ h4, .h4 {
 .nav-tabs .nav-link,
 .nav-tabs ul.nav.navbar-nav > li > a,
 .nav-tabs > li > a,
-.nav-tabs .nav-pills > li > a,
-.nav-tabs .nav-link:hover,
-.nav-tabs .nav-link:focus {
+.nav-tabs .nav-pills > li > a {
   color: #7C7E8A;
-  background-color: #D3D3D7;
+  background-color: #E5E0EA;
   border-color: #BEBEC3;
 }
+
+
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus,
+.nav-tabs ul.nav.navbar-nav > li > a:hover,
+.nav-tabs > li > a:hover,
+.nav-tabs .nav-pills > li > a:hover{
+  background-color: #bfb1cc;
+  color: #FFFEFD;
+}
+
 
 .irs--shiny .irs-bar {
   border-top: 1px solid #776274 !important;

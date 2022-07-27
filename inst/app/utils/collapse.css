@@ -7,19 +7,19 @@
 .collapsible-card > .card-header {
   display: flex;
 
-  margin: -1px;
+  margin: -2px;
   padding: 10px;
 
-  border: solid 1px #7c7e8a;
-  border-radius: 3px;
+  border: solid 1px #c1c1c1;
+  border-radius: 4px;
 
-  background: #d3d3d7 linear-gradient(180deg, #d3d3d7, #b6b6bd) repeat-x;
+  background: #e5e0ea linear-gradient(180deg, #e5e0ea, #dfd3ec) repeat-x;
   color: #777;
 }
 
 .collapsible-card > .card-header:hover {
-  background: #b6b6bd linear-gradient(180deg, #b6b6bd, #9a9a9e) repeat-x;
-  color: #fff;
+  background: #bfb1cc linear-gradient(180deg, #bfb1cc, #a590b9) repeat-x;
+  color: #FFFEFD;
 }
 
 .collapsible-card > .card-header > p {
