@@ -1,6 +1,11 @@
-#' @importFrom ggplot2 theme_bw theme element_rect %+replace%
-HaDeX_ggtheme <- theme_bw() %+replace%
-  theme(plot.background = element_rect(fill = NA, color = NA))
+#' @importFrom ggplot2 theme_bw theme element_rect
+hadex_ggtheme <- function() {
+  thm <- theme_bw()
+  thm_sub <- theme(plot.background = element_rect(fill = NA, color = NA))
+  thm[names(thm_sub)] <- thm_sub
+  thm
+}
+
 
 #' @importFrom icecream ic_enable
 #' @importFrom ggplot2 theme_set
@@ -10,7 +15,7 @@ apply_server_settings <- function() {
     options(icecream.always.include.context = TRUE)
   }
 
-  theme_set(HaDeX_ggtheme)
+  theme_set(hadex_ggtheme())
 
   shinyhelper::observe_helpers(help_dir = app_sys("app/helpfiles"))
 }
