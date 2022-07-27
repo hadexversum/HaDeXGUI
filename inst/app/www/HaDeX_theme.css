@@ -370,20 +370,20 @@ h4, .h4 {
   overflow: visible;
 }
 
-#fullsize-website {
+#hadex-full {
   display: block;
 }
 
-#mobile-website {
+#hadex-mobile {
   display: none;
 }
 
 @media (max-width: 767px) {
-  #fullsize-website {
+  #hadex-full {
     display: none;
   }
 
-  #mobile-website {
+  #hadex-mobile {
     display: block;
   }
 }
