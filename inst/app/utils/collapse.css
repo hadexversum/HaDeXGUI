@@ -15,8 +15,6 @@
 
   background: #d3d3d7 linear-gradient(180deg, #d3d3d7, #b6b6bd) repeat-x;
   color: #777;
-
-  text-transform: uppercase;
 }
 
 .collapsible-card > .card-header:hover {
