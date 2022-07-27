@@ -293,11 +293,17 @@ a {
   background-color: transparent;
 }
 
-.btn-default,
-.btn-secondary {
+.btn-default {
   color: #FFFEFD;
   background: #485696 linear-gradient(180deg, #636fa5, #485696) repeat-x;
   border-color: #485696;
+  white-space: normal;
+}
+
+.btn-secondary {
+  color: #FFFEFD;
+  background: #7484d0 linear-gradient(180deg, #a1a9d2, #7484d0) repeat-x;
+  border-color: #7484d0;
   white-space: normal;
 }
 

@@ -71,7 +71,10 @@ app_ui <- function(request) {
           img(id = "HaDeX-logo", src = "www/logo.png")
         )
       )
-    )
+    ),
+
+    # included here as a walk-around for late inclusion of DT css
+    includeCSS(path = app_sys("app/utils/datatable.css"))
   )
 }
 
