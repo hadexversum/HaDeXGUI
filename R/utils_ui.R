@@ -85,11 +85,6 @@ gen_random_id <- function(prefix = "")
 add_fancy_icon <- function(fancy_icon)
   icon(fancy_icon, class = "fancy-icon")
 
-#' @importFrom xtable xtable
-htmlize_data <- function(dset) {
-  HTML(paste(capture.output(print(xtable(dset), type = "html"))))
-}
-
 install_settings_ui <- function(names, modes, params = list(), ns) {
   uis <- lapply(names, function(name) {
     ui_fun <- getFromNamespace(paste0("mod_settings_", name, "_ui"), "HaDeXGUI")

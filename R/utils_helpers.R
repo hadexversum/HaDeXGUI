@@ -40,7 +40,7 @@ decorate_with_hadex_spinner <- function(fun)
   function(id, ...) shinycustomloader::withLoader(
     fun(id, ...),
     type = "image",
-    loader = "www/HaDeX_loader.gif"
+    loader = "www/loader.gif"
   )
 
 # manually decorating to specify default parameter values

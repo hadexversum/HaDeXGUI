@@ -12,28 +12,24 @@ mod_settings_label_ui <- function(id, label_labs){
 
   collapsible_card(
     title = "Labels",
-    fluidRow(
+    purrr::imap(label_labs, ~ fluidRow(
       column(
-        width = 10,
-        lapply(seq_along(label_labs), function(i) {
-          textInput_h(
-            inputId = ns(names(label_labs)[i]),
-            label = label_labs[i]
-          )
-        })
+        width = 9,
+        textInput_h(
+          inputId = ns(.y),
+          label = .x
+        )
       ),
       column(
-        width = 2,
-        lapply(names(label_labs), function(lab) {
-          numericInput_h(
-            inputId = ns(paste0(lab, "_size")),
-            label = "Size:",
-            value = 15,
-            min = 5
-          )
-        })
+        width = 3,
+        numericInput_h(
+          inputId = ns(glue::glue("{.y}_size")),
+          label = "Size:",
+          value = 15,
+          min = 5
+        )
       )
-    ),
+    )),
     p("The axis ticks have the same size as the axis label.
       The legend text size is the same as the x axis label."),
     init_collapsed = TRUE,

@@ -44,7 +44,7 @@ mod_data_load_ui <- function(id){
     p("For the program to behave correctly, please make sure supplied file fulfills all requirements."),
     collapsible_card(
       title = "Show requirements",
-      htmlize_data(file_req), #TODO: maybe do it in some other way?
+      DT::datatable(file_req, options(dom = "t", pageLength = 15), width = "100%", height = "auto"),
       init_collapsed = TRUE
     ),
 

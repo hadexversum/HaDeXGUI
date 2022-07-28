@@ -77,3 +77,6 @@ collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL, fanc
     )
   )
 }
+
+secondary_button <- function(inputId, label, icon = NULL, width = NULL, ...)
+  actionButton(inputId, label, icon, width, ..., class = "btn-secondary")
