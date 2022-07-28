@@ -74,7 +74,8 @@ app_ui <- function(request) {
     ),
 
     # included here as a walk-around for late inclusion of DT css
-    includeCSS(path = app_sys("app/utils/datatable.css"))
+    includeCSS(path = app_sys("app/utils/datatable.css")),
+    includeCSS(path = app_sys("app/utils/selectize.css"))
   )
 }
 
