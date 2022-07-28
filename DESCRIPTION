@@ -34,8 +34,7 @@ Imports:
     shinyhelper,
     shinyjs,
     shinyvalidate,
-    tools,
-    xtable
+    tools
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
