@@ -419,3 +419,8 @@ h4, .h4 {
 .HaDeX-plot-display-panel .tab-pane {
   padding: 10px;
 }
+
+.form-control {
+  font-size: 16px;
+  height: 36px;
+}
