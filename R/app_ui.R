@@ -19,10 +19,16 @@ app_ui <- function(request) {
         title = "Deuterium uptake",
         mod_plot_comparison_and_woods_ui("comparison_and_woods"),
         mod_plot_volcano_ui("volcano"),
-        mod_plot_butterfly_ui("butterfly", differential = FALSE),
-        mod_plot_butterfly_ui("butterfly_diff", differential = TRUE),
-        mod_plot_chiclet_ui("chiclet", differential = FALSE),
-        mod_plot_chiclet_ui("chiclet_diff", differential = TRUE),
+        navbarMenu(
+          title = "Butterfly",
+          mod_plot_butterfly_ui("butterfly", differential = FALSE),
+          mod_plot_butterfly_ui("butterfly_diff", differential = TRUE),
+        ),
+        navbarMenu(
+          title = "Chiclet",
+          mod_plot_chiclet_ui("chiclet", differential = FALSE),
+          mod_plot_chiclet_ui("chiclet_diff", differential = TRUE),
+        ),
         mod_plot_uptake_ui("uptake", differential = FALSE),
         mod_plot_uptake_ui("uptake_diff", differential = TRUE)
       ),
@@ -84,6 +90,7 @@ golem_add_external_resources <- function() {
 
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
-    golem::activate_js()
+    golem::activate_js(),
+    tags$script(src = "utils/nested-dropdowns.js", type = "text/javascript")
   )
 }
