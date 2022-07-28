@@ -397,3 +397,25 @@ h4, .h4 {
     display: block;
   }
 }
+
+.shiny-output-error {
+  width: 100%;
+  text-align: center;
+  padding-top: 20px;
+  color: #2b2e43;
+}
+
+.datatables {
+  min-height: 400px;
+}
+.HaDeX-plot-display-panel .tab-content {
+  border-width: 0px 1px 1px 1px;
+  border-style: solid;
+  border-color: #ddd;
+  border-radius: 0px 0px 4px 4px;
+  margin-bottom: 10px;
+}
+
+.HaDeX-plot-display-panel .tab-pane {
+  padding: 10px;
+}
