@@ -1,19 +1,37 @@
+#' Indicate that element can be toggled
+#'
+#' @param ... html elements
+#' @param id id of the toggleable
+#'
+#' @examples
+#' toggleable(span("you can toggle this"), id = "elem")
+#'
+#' \dontrun{
+#' # use in server context
+#' toggle_id(TRUE, "elem")
+#' }
+#'
+#' @noRd
 toggleable <- function(..., id) div(..., id = id)
-
-`%nullify if%` <- function(x, condition) if (condition) NULL else x
-
-gen_random_id <- function(prefix = "")
-  paste0(prefix, paste0(sample(c(0:9, letters[1:6]), 16, TRUE), collapse = ''))
 
 add_fancy_icon <- function(fancy_icon)
   icon(fancy_icon, class = "fancy-icon")
 
-install_settings_ui <- function(names, modes, params = list(), ns) {
-  uis <- lapply(names, function(name) {
-    ui_fun <- getFromNamespace(paste0("mod_settings_", name, "_ui"), "HaDeXGUI")
-    arg_names <- names(formals(ui_fun))
+#' Function to automatically create settings modules in ui
+#'
+#' @param names name of servers to install
+#' @param modes named vector of modes to pass to corresponding uis
+#' @param params named list of parameters to pass to corresponding uis
+#' @param ns namespace function
+#'
+#' @noRd
+install_settings_ui <- function(names, modes = character(), params = list(), ns) {
+  hadex_gui_env <- rlang::ns_env("HaDeXGUI")
+  uis <- purrr::map(names, function(name) {
+    ui_fun <- rlang::ns_env("HaDeXGUI")[[glue::glue("mod_settings_{name}_ui")]]
+    arg_names <- rlang::fn_fmls_names(ui_fun)
 
-    args <- setNames(lapply(
+    args <- rlang::set_names(purrr::map(
       arg_names,
       function(arg) {
         if (arg == "id") ns(name)
@@ -25,11 +43,14 @@ install_settings_ui <- function(names, modes, params = list(), ns) {
       }
     ), arg_names)
 
-    args <- args[sapply(args, not_null)]
+    args <- args[purrr::map_lgl(args, not_null)]
 
-    do.call(ui_fun, args = args)
+    rlang::exec(ui_fun, !!!args)
   })
   rlang::exec(hadex_panel_settings, !!!uis)
 }
 
+#' Shorthand for column(width = 6, ...)
+#'
+#' @noRd
 column_6 <- function(...) column(width = 6, ...)

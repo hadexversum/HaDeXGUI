@@ -37,3 +37,8 @@ not_null <- Negate(is.null)
 #' 5 %?>% exp
 #' NULL %?>% exp
 `%?>%` <- function(x, f) if (is.null(x)) NULL else f(x)
+
+`%nullify if%` <- function(x, condition) if (condition) NULL else x
+
+gen_random_id <- function(prefix = "")
+  paste0(prefix, paste0(sample(c(0:9, letters[1:6]), 16, TRUE), collapse = ''))
