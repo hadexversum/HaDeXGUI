@@ -26,3 +26,20 @@ test_that("middle works", {
   expect_equal(middle(NULL), NULL)
 
 })
+
+test_that("not_null works", {
+  expect_true(not_null(1))
+  expect_false(not_null(NULL))
+})
+
+test_that("%?>% works", {
+  expect_equal(
+    NULL %?>% exp,
+    NULL
+  )
+  expect_equal(
+    1 %?>% exp,
+    exp(1)
+  )
+})
+
