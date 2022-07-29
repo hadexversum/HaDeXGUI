@@ -63,3 +63,17 @@ app_server <- function(input, output, session) {
   if (getOption("shiny.reactlog", default = FALSE) && is_installed("reactlog"))
     reactlog::reactlog_module_server()
 }
+
+#' Apply some global settings on server startup
+#'
+#' @noRd
+apply_server_settings <- function() {
+  if (getOption("golem.app.prod") && is_installed("icecream")) {
+    icecream::ic_enable()
+    options(icecream.always.include.context = TRUE)
+  }
+
+  ggplot2::theme_set(hadex_ggtheme())
+
+  shinyhelper::observe_helpers(help_dir = app_sys("app/helpfiles"))
+}

@@ -28,7 +28,7 @@ add_fancy_icon <- function(fancy_icon)
 install_settings_ui <- function(names, modes = character(), params = list(), ns) {
   hadex_gui_env <- rlang::ns_env("HaDeXGUI")
   uis <- purrr::map(names, function(name) {
-    ui_fun <- rlang::ns_env("HaDeXGUI")[[glue::glue("mod_settings_{name}_ui")]]
+    ui_fun <- hadex_gui_env[[glue::glue("mod_settings_{name}_ui")]]
     arg_names <- rlang::fn_fmls_names(ui_fun)
 
     args <- rlang::set_names(purrr::map(

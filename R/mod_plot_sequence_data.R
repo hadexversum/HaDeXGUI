@@ -54,7 +54,7 @@ mod_plot_sequence_data_server <- function(id, dat, params){
         Property = c("Protein name", "Length", "Coverage", "Number of cysteins"),
         Value = .
       ) %>%
-      HaDeX_DT_format(dom = "t")
+      hadex_datatable(dom = "t")
     })
 
     output[["colored_sequence"]] <- renderUI({
