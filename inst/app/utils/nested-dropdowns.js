@@ -39,7 +39,9 @@ $(document).ready(function(){
       .attr({
         "aria-expanded": true,
         "aria-selected": true
-      });
+      })
+      .trigger("change");
+
 
     // Add aria attribute to all active tab buttons within the tab currently selected
     $(".tab-pane[data-value='" + dv + "'] .nav li.active > a")
@@ -48,10 +50,22 @@ $(document).ready(function(){
         "aria-selected": true
       });
 
+    $(".tab-pane[data-value='" + dv + "'] .tab-pane.active .shiny-bound-output")
+      .each(function () {
+        const $this = $(this),
+        binding = $this.data("shinyOutputBinding");
+
+        $this.trigger({
+          type: "shiny:visualchange",
+          visible: true,
+          binding: binding,
+        });
+      });
+
     //Close the dropdowns
     $(".dropdown").removeClass("open");
 
-    e.stopPropagation();
-    e.preventDefault();
+    //e.stopPropagation();
+    //e.preventDefault();
   });
 });
