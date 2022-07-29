@@ -38,7 +38,37 @@ not_null <- Negate(is.null)
 #' NULL %?>% exp
 `%?>%` <- function(x, f) if (is.null(x)) NULL else f(x)
 
-`%nullify if%` <- function(x, condition) if (condition) NULL else x
+#' Nullify conditionally
+#'
+#' @param x an expression
+#' @param condition condition to test
+#'
+#' For %.?%: if condition is true, returns x, else NULL.
+#' For %.?!%: if condtiton is true, returns NULL, else x
+#'
+#' Note that those operators binds weekly to other expressions, so if condition
+#' is compound, parentheses are required. That is the justification to having
+#' two versions of the operator -- to remove some redundancy.
+#'
+#' @examples
+#' exp(12) %.?% (5 > 0)
+#' exp(12) %.?% (5 > 10)
+#' exp(12) %.?!% (5 > 0)
+#' exp(12) %.?!% (5 > 10)
+#'
+#' @noRd
+`%.?%` <- function(x, condition) if (condition) x else NULL
 
+`%.?!%` <- function(x, condition) if (condition) NULL else x
+
+#' Get random id
+#'
+#' @param prefix to the random id value
+#'
+#' @examples
+#' get_random_id()
+#' get_random_id("xyz")
+#'
+#' @noRd
 gen_random_id <- function(prefix = "")
   paste0(prefix, paste0(sample(c(0:9, letters[1:6]), 16, TRUE), collapse = ''))

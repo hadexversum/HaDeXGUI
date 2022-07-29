@@ -134,7 +134,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
     info_out <- reactive({
       data <- HaDeX::calculate_auc(dat_processed(), state = s_state %()% states)
       glue::glue_data(data, "{Sequence}-{State} AUC: {round(auc, 4)}")
-    }) %nullify if% differential
+    }) %.?!% differential
 
     range_specs <- list(
       y = if (differential) range_spec({

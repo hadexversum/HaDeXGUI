@@ -38,7 +38,7 @@ mod_settings_state_ui <- function(id, mode){
       )
     ),
     fancy_icon = "atom"
-  ) %nullify if% (mode == "DISABLED")
+  ) %.?!% (mode == "DISABLED")
 }
 
 #' settings_state Server Functions
@@ -114,5 +114,5 @@ mod_settings_state_server <- function(id, mode,
         })
       )
     )
-  }) %nullify if% (mode == "DISABLED")
+  }) %.?!% (mode == "DISABLED")
 }

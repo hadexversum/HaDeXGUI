@@ -16,7 +16,7 @@ mod_page_start_ui <- function(id, mobile = FALSE){
       tags$b(
         "For better user experience please use device with wider screen (at least 900px)."
       )
-    ) %nullify if% !mobile,
+    ) %.?% mobile,
 
     fluidPage(
       fluidRow(

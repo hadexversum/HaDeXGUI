@@ -43,3 +43,37 @@ test_that("%?>% works", {
   )
 })
 
+test_that("%.?% works", {
+  expect_equal(
+    123 %.?% (1 > 0),
+    123
+  )
+  expect_equal(
+    123 %.?% (1 > 2),
+    NULL
+  )
+})
+
+test_that("%.?!% works", {
+  expect_equal(
+    123 %.?!% (1 > 0),
+    NULL
+  )
+  expect_equal(
+    123 %.?!% (1 > 2),
+    123
+  )
+})
+
+test_that("gen_random_id works", {
+  set.seed(42)
+
+  expect_equal(
+    gen_random_id(),
+    "040893190fe76384"
+  )
+  expect_equal(
+    gen_random_id("div_"),
+    "div_d391e288a34ec431"
+  )
+})

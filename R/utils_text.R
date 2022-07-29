@@ -59,7 +59,7 @@ construct_auto_label_lab_set <- function(plot_label, id_prefix = NULL) {
       c("title", "axis x label", "axis y label"),
       function(label_type) construct_auto_label_lab(plot_label, label_type)
     ),
-    paste0((paste0(id_prefix, "_") %nullify if% is.null(id_prefix)), c("title", "x", "y"))
+    paste0((paste0(id_prefix, "_") %.?% not_null(id_prefix)), c("title", "x", "y"))
   )
 }
 
@@ -95,9 +95,9 @@ cosntruct_uptake_plots_data_info <- function(differential) {
 
 construct_var_name <- function(diff, theo, frac, var)
   paste0(
-    "diff_" %nullify if% (!diff),
-    "theo_" %nullify if% (!theo),
-    "frac_" %nullify if% (!frac),
+    "diff_" %.?% (diff),
+    "theo_" %.?% (theo),
+    "frac_" %.?% (frac),
     var
   )
 

@@ -21,7 +21,7 @@ mod_display_plot_ui <- function(id, plot_labels,
         tabPanel(
           title = plot_labels,
           girafeOutput_h(ns("plot")),
-          verbatimTextOutput(ns("plot_info")) %nullify if% !additional_plot_info,
+          verbatimTextOutput(ns("plot_info")) %.?% additional_plot_info,
           downloadButton(ns("plot_download_button"), "Save chart (.svg)"),
           additional_button_server
         ),
