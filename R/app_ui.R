@@ -2,7 +2,6 @@
 #'
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
-#' @importFrom reactlog reactlog_module_ui
 #' @noRd
 app_ui <- function(request) {
   tagList(
@@ -45,8 +44,8 @@ app_ui <- function(request) {
         mod_report_ui("report"),
         mod_page_about_ui("page_about"),
 
-        if (getOption("shiny.reactlog", default = FALSE))
-          tabPanel(title = "reactlog", reactlog_module_ui()),
+        if (getOption("shiny.reactlog", default = FALSE) && is_installed("reactlog"))
+          tabPanel(title = "reactlog", reactlog::reactlog_module_ui()),
 
         # TODO: maybe make some more clever injection?
         header = actionLink(
@@ -84,7 +83,6 @@ app_ui <- function(request) {
 #' This function is internally used to add external
 #' resources inside the Shiny application.
 #'
-#' @importFrom shinyjs useShinyjs
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
 golem_add_external_resources <- function() {

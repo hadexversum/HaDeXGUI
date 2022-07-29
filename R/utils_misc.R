@@ -72,3 +72,9 @@ not_null <- Negate(is.null)
 #' @noRd
 gen_random_id <- function(prefix = "")
   paste0(prefix, paste0(sample(c(0:9, letters[1:6]), 16, TRUE), collapse = ''))
+
+#' Function that check for presence of other suggested packages
+#'
+#' @noRd
+is_installed <- function(package)
+  length(find.package(package, quiet = TRUE)) > 0

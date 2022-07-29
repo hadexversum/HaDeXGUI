@@ -2,8 +2,6 @@
 #'
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
-#' @importFrom icecream ic_disable ic_enable
-#' @importFrom reactlog reactlog_module_server
 #' @noRd
 app_server <- function(input, output, session) {
   apply_server_settings()
@@ -62,5 +60,6 @@ app_server <- function(input, output, session) {
     params = dat_source[["params"]]
   )
 
-  if (getOption("shiny.reactlog", default = FALSE)) reactlog_module_server()
+  if (getOption("shiny.reactlog", default = FALSE) && is_installed("reactlog"))
+    reactlog::reactlog_module_server()
 }
