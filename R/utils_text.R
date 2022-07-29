@@ -1,3 +1,10 @@
+#' Sets the first letter of a word as capital or non-capital
+#'
+#' @examples
+#' capitalize("asdf")
+#' decapitalize("Asdf")
+#'
+#' @noRd
 capitalize <- function(x) {
   first_letter <- substr(x, 1, 1)
   substr(x, 1, 1) <- toupper(first_letter)
@@ -10,17 +17,32 @@ decapitalize <- function(x) {
   x
 }
 
+#' Make id-compliant string from name-like value
+#'
+#' @examples
+#' idize("some text")
+#'
+#' @noRd
 idize <- function(x) gsub(" ", "_", tolower(x))
 
+#' Create reactive value with y label for generalised uptake plots
+#'
+#' Requires s_calculation reactive lists in calling environment
+#'
+#' @noRd
 react_construct_uptake_lab_y <- function(differential, env = parent.frame()) rlang::inject(
   reactive({
     frac_str <- if (s_calculation[["fractional"]]()) "Fractional " else ""
     diff_str <- if (!!differential) "difference [%]" else if (s_calculation[["fractional"]]()) "[%]" else "[Da]"
-    capitalize(glue("{frac_str}deuterium uptake {diff_str}"))
+    capitalize(glue::glue("{frac_str}deuterium uptake {diff_str}"))
   }, env = env)
 )
 
-#' @importFrom glue glue
+#' Create reactive value generating uptake plot titles
+#'
+#' Requires s_time, s_state, params and s_calculation reactive lists
+#' conditionally, basing on inclusion parameters
+#' @noRd
 react_construct_uptake_title <- function(plot_name, differential = FALSE, include_state = TRUE,
                                          include_exposure = FALSE,
                                          env = parent.frame()) rlang::inject(
@@ -28,19 +50,19 @@ react_construct_uptake_title <- function(plot_name, differential = FALSE, includ
     plot_name <- !!plot_name
     theo_str <- if (s_calculation[["theoretical"]]()) "Theoretical " else ""
     states_str <- if (!!differential) {
-      glue("between {s_state[['state_1']]()} and {s_state[['state_2']]()}")
+      glue::glue("between {s_state[['state_1']]()} and {s_state[['state_2']]()}")
     } else {
-      state_str <- if (!!include_state) glue("for state {s_state[['state']]()} ") else ""
-      glue("{state_str}for {params[['chosen_protein']]()}")
+      state_str <- if (!!include_state) glue::glue("for state {s_state[['state']]()} ") else ""
+      glue::glue("{state_str}for {params[['chosen_protein']]()}")
     }
-    exposure_str <- if (!!include_exposure && !s_time[["multiple"]]()) glue("in {s_time[['t']]()} min ") else ""
+    exposure_str <- if (!!include_exposure && !s_time[["multiple"]]()) glue::glue("in {s_time[['t']]()} min ") else ""
 
-    capitalize(glue("{theo_str}{plot_name} plot {exposure_str}{states_str}"))
+    capitalize(glue::glue("{theo_str}{plot_name} plot {exposure_str}{states_str}"))
 
   }, env = env)
 )
 
-
+#'
 construct_plot_label <- function(plot_name, differential = FALSE)
   glue::glue("{capitalize(plot_name)} {if (differential) 'Differential ' else ''}Plot")
 
