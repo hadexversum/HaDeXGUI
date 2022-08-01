@@ -62,6 +62,8 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
+
     dat_processed_comparison <- reactive({
       states <- s_comparison_state %()% states # calculated outside to handle validation error correctly
 
@@ -107,6 +109,8 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
                                s_label, label_prefix = "comparison") %>%
         suppressMessages()
     })
+
+    ### OUT REACTIVES
 
     plot_out_woods <- reactive({
       (dat() %>%
@@ -164,6 +168,8 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
                Start >= (s_range %()% x) [[1]],
                End   <= (s_range %()% x) [[2]])
     })
+
+    ### VALUES FOR RANGE AND LABEL SERVERS
 
     range_specs <- list(
       x = range_spec({
@@ -224,7 +230,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
       woods_x = label_spec("Position in sequence")
     )
 
-    ### run settings servers
+    ### SERVER AND PLOT SETTINGS INVOCATION
 
     invoke_settings_servers(
       names = c("calculation", "time", "test", "visualization", "range", "label"),
@@ -263,6 +269,9 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
         woods = dat_out_woods
       )
     )
+
+    ### RETURN OF THE PLOT AND DATA
+
 
     return(
       autoreturn("comparison", "woods")

@@ -42,8 +42,9 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
+
     dat_processed <- if (differential) reactive({
-      # TODO: check which validates are really needed
       wait_for(s_time[["points"]]())
 
       HaDeX::create_diff_uptake_dataset(
@@ -67,6 +68,8 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       ) %>%
         filter(Exposure %in% s_time[["points"]]())
     })
+
+    ### OUT REACTIVES
 
     plot_out <- if (differential) reactive({
       (dat() %>%
@@ -102,8 +105,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_label) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
-      validate(need(s_time[["points"]](),
-                    "Wait for parameters to be loaded"))
+      wait_for(s_time %()% points)
 
       (dat_processed() %>%
         HaDeX::plot_butterfly(
@@ -135,7 +137,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
                ID <= s_range[["x"]]()[[2]])
     })
 
-    ### server reactives
+    ### VALUES FOR RANGE AND LABEL SERVERS
 
     range_specs <- list(
       x = range_spec({
@@ -179,7 +181,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       y = label_spec(react_construct_uptake_lab_y(differential))
     )
 
-    ### server settings
+    ### SERVER AND PLOT SETTINGS INVOCATION
 
     invoke_settings_servers(
       names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
@@ -191,6 +193,8 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     )
 
     mod_display_plot_server("display_plot", plot_out, dat_out)
+
+    ### RETURN OF THE PLOT AND DATA
 
     return(
       autoreturn()

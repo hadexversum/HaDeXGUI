@@ -44,6 +44,8 @@ mod_plot_measurements_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
+
     peptide_table <- reactive({
       state <- s_state %()% state
       dat() %>%
@@ -63,6 +65,7 @@ mod_plot_measurements_server <- function(id, dat, params){
         filter(Exposure < MAX_TIME)
     })
 
+    ### OUT REACTIVES
 
     dat_processed_mass_uptake <- reactive({
       func <- if (s_visualization %()% show_replicates) function(data) {
@@ -103,7 +106,6 @@ mod_plot_measurements_server <- function(id, dat, params){
         update_axes_and_labels(labels = s_label, label_prefix = "measurements") %>%
         suppressMessages()
     })
-
 
     plot_out_mass_uptake <- reactive({
       sequence = selected_sequence()
@@ -152,6 +154,8 @@ mod_plot_measurements_server <- function(id, dat, params){
       }
     })
 
+    ### VALUES FOR RANGE AND LABEL SERVERS
+
     range_specs <- list(
       y = range_spec({
         wait_for(nrow(dat_processed_mass_uptake()) > 0)
@@ -175,6 +179,10 @@ mod_plot_measurements_server <- function(id, dat, params){
       mass_uptake_x = label_spec("Time point [min]")
     )
 
+    ### SERVER AND PLOT SETTINGS INVOCATION
+
+    # Assigning null because time server require this parameter
+    # even though it is unused in this mode;
     # TODO: find a workaroud
     s_calculation <- NULL
 
@@ -200,9 +208,12 @@ mod_plot_measurements_server <- function(id, dat, params){
       )
     )
 
+    ### RETURN OF THE PLOT AND DATA
+
     return(
       c(
         autoreturn("measurements", "mass_uptake"),
+        # additionally return flag
         list(report_validation_peptide_selected = s_peptide[["selected_flag"]])
       )
     )
