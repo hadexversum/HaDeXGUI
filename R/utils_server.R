@@ -1,53 +1,8 @@
-#' @importFrom ggplot2 theme_bw theme element_rect
-hadex_ggtheme <- function() {
-  thm <- theme_bw()
-  thm_sub <- theme(plot.background = element_rect(fill = NA, color = NA))
-  thm[names(thm_sub)] <- thm_sub
-  thm
-}
-
-
-#' @importFrom icecream ic_enable
-#' @importFrom ggplot2 theme_set
-apply_server_settings <- function() {
-  if (getOption("golem.app.prod")) {
-    ic_enable()
-    options(icecream.always.include.context = TRUE)
-  }
-
-  theme_set(hadex_ggtheme())
-
-  shinyhelper::observe_helpers(help_dir = app_sys("app/helpfiles"))
-}
-
-extract_limits_from_range <- function(range) c(range()[[1]], range()[[2]])
-
-update_axes_and_labels <- function(
-    plt, range_x = NULL, range_y = NULL,
-    labels, label_prefix = NULL) {
-  wrap <- if (is.null(label_prefix)) identity else function(id) paste0(label_prefix, "_", id)
-
-  plt +
-    coord_cartesian(
-      xlim = range_x %?>% extract_limits_from_range,
-      ylim = range_y %?>% extract_limits_from_range
-    ) +
-    labs(
-      title = labels[[wrap("title")]](),
-      x = labels[[wrap("x")]](),
-      y = labels[[wrap("y")]]()
-    ) +
-    theme(
-      plot.title = element_text(size = labels[[wrap("title_size")]]()),
-      axis.text.x = element_text(size = labels[[wrap("x_size")]]()),
-      axis.title.x = element_text(size = labels[[wrap("x_size")]]()),
-      axis.title.y = element_text(size = labels[[wrap("y_size")]]()),
-      axis.text.y = element_text(size = labels[[wrap("y_size")]]()),
-      legend.text = element_text(size = labels[[wrap("x_size")]]()),
-      legend.title = element_text(size = labels[[wrap("x_size")]]())
-    )
-}
-
+#' Function to toggle visibility of elements
+#'
+#' see toggleable
+#'
+#' @noRd
 toggle_id <- function(condition, id) {
   golem::invoke_js(
     if (condition) "showid" else "hideid",
@@ -55,7 +10,10 @@ toggle_id <- function(condition, id) {
   )
 }
 
-HaDeX_DT_format <- function(dat, cols = colnames(dat), dom = "tBip") {
+#' Wrap DT object with unified style
+#'
+#' @noRd
+hadex_datatable <- function(dat, cols = colnames(dat), dom = "tBip") {
   DT::datatable(
     data = dat,
     colnames = cols,
@@ -90,25 +48,27 @@ HaDeX_DT_format <- function(dat, cols = colnames(dat), dom = "tBip") {
 #' this function. This function creates one object named `s_*` per each server
 #' name provided, where `*` is the name of the server. This object is a return
 #' value of the server.
-invoke_settings_servers <- function(names, modes = character(), env = parent.frame()) {
-  for (name in names) {
+#'
+#' @noRd
+invoke_settings_servers <- function(names, modes = character(), env = rlang::caller_env()) {
+  hadex_gui_env <- rlang::ns_env("HaDeXGUI")
+  purrr::walk(names, function(name){
     # transform name into server function
-    server_fun <- getFromNamespace(paste0("mod_settings_", name, "_server"), "HaDeXGUI")
+    server_fun <- hadex_gui_env[[glue::glue("mod_settings_{name}_server")]]
     # get names of arguments to the function
-    arg_names <- names(formals(server_fun))
+    arg_names <- rlang::fn_fmls_names(server_fun)
 
     # call helper function
-    args <- setNames(
+    args <- rlang::set_names(
       # bind appropriate value to each parameter
-      lapply(
+      purrr::map(
         arg_names,
         function(arg) {
           # id is the special case, because we have the value provided directly
           if (arg == "id") name
           # if mode argument is provided in modes, use it; otherwise default to NULL
           else if (arg == "mode") {
-            if (name %in% names(modes)) modes[[name]]
-            else NULL
+            modes[[name]] %.?% (name %in% names(modes))
             # if name of arg starts with p_, the reactive value is present in
             # params object available in main server
           } else if (startsWith(arg, "p_")) get("params", env)[[substring(arg, 3)]]
@@ -120,21 +80,33 @@ invoke_settings_servers <- function(names, modes = character(), env = parent.fra
     )
 
     # remove parameters with NULL values from the call
-    args <- args[sapply(args, not_null)]
+    args <- args[purrr::map_lgl(args, not_null)]
 
     # call the server and do the assignment in a given environment
-    assign(paste0("s_", name), do.call(server_fun, args = args), envir = env)
-  }
+    rlang::env_bind(env, !!(glue::glue("s_{name}")) := rlang::exec(server_fun, !!!args))
+  })
   invisible()
 }
 
-invoke_plot_servers <- function(server_names, dat_source, env = parent.frame()) {
+#' Function to invoke multiple plot servers in main server
+#'
+#' @param server_names names of the plot servers
+#' @param dat_source list of reactive values returned by module_data_load
+#' @param env environment to invoke servers in, defaulting to parent frame
+#'
+#' If server has differential parameter, it runs two servers with both possible
+#' values for the variable: TRUE and FALSE and append the former server name
+#' with "_diff"
+#'
+#' @noRd
+invoke_plot_servers <- function(server_names, dat_source, env = rlang::caller_env()) {
   ret <- list()
-  for (name in server_names) {
+  hadex_gui_env <- rlang::ns_env("HaDeXGUI")
+  purrr::walk(server_names, function(name) {
     # transform name into server function
-    server_fun <- getFromNamespace(paste0("mod_plot_", name, "_server"), "HaDeXGUI")
+    server_fun <- hadex_gui_env[[glue::glue("mod_plot_{name}_server")]]
     # get names of arguments to the function
-    arg_names <- names(formals(server_fun))
+    arg_names <- rlang::fn_fmls_names(server_fun)
 
     args <- list()
     args[["id"]] <- name
@@ -147,18 +119,28 @@ invoke_plot_servers <- function(server_names, dat_source, env = parent.frame()) 
       ret[[name]] <- rlang::exec(server_fun, !!!args)
 
       args[["differential"]] <- TRUE
-      name <- paste0(name, "_diff")
+      name <- glue::glue("{name}_diff")
       args[["id"]] <- name
       ret[[name]] <- rlang::exec(server_fun, !!!args)
 
     } else {
       ret[[name]] <- rlang::exec(server_fun, !!!args)
     }
-  }
+  })
   ret
 }
 
-autoreturn <- function(..., env = parent.frame()) {
+#' Function to return plot and data from plot server modules
+#'
+#' @param ... multiple strings containing specific names of plot
+#'
+#' @return If ... is empty, function returns list of two elements named
+#' "plot" and "dat", containing plot and data table generated within calling
+#' module. If ... is non-empty, "plot" and "dat" are list of plots and list of
+#' tables with names corresponding to names passed in ...
+#'
+#' @noRd
+autoreturn <- function(..., env = rlang::caller_env()) {
   plot_names <- list(...)
   if (length(plot_names) == 0) {
     list(

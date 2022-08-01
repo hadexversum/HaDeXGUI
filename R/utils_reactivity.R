@@ -3,6 +3,7 @@
 #' @param name [character(1)]
 #'     Name of the input value.
 #' @param env the environment
+#' @param ... Any number of characters or character vectors
 #'
 #' `input_r` is a helper function that automatically wraps input as a reactive
 #' value. `input_r_numeric` does the same, but additionally applies `as.numeric`
@@ -10,26 +11,21 @@
 #' characters and returns a named list of reactive values, which is equivalent
 #' to manually applying `input_r` to each of the strings.
 #'
-#' @importFrom shiny getDefaultReactiveDomain reactive
-#' @importFrom rlang expr
-input_r <- function(name, env = parent.frame()) {
-  env <- new.env(parent = env)
-  eval(rlang::expr(reactive({ input[[!!name]] }, env = env)))
-}
+#' @noRd
+input_r <- function(name, env = rlang::caller_env())
+  rlang::inject(reactive({ input[[!!name]] }, env = env))
 
-#' @rdname input_r
-input_r_numeric <- function(name, env = parent.frame()) {
-  env <- new.env(parent = env)
-  eval(rlang::expr(reactive({ as.numeric(input[[!!name]]) }, env = env)))
-}
+input_r_numeric <- function(name, env = rlang::caller_env())
+  rlang::inject(reactive({ as.numeric(input[[!!name]]) }, env = env))
 
-#' @param ... Any number of characters or character vectors
-#' @rdname input_r
-input_r_list <- function(..., env = parent.frame()) {
+input_r_list <- function(..., env = rlang::caller_env()) {
   names <- unlist(list(...))
-  setNames(lapply(names, input_r, env = env), names)
+  rlang::set_names(purrr::map(names, input_r, env = env), names)
 }
 
+#' Function to wait for parameters
+#'
+#' @noRd
 wait_for <- function(expr, message = "Wait for the parameters to be loaded...") {
   validate(need(expr, message))
 }
@@ -43,4 +39,6 @@ wait_for <- function(expr, message = "Wait for the parameters to be loaded...") 
 #' @param rhs [symbol]
 #'     name of the element of the list being the reactive value, unquoted
 #' @return A value of reactive expression
-`%()%` <- function(lhs, rhs) lhs[[deparse(substitute(rhs))]]()
+#'
+#' @noRd
+`%()%` <- function(lhs, rhs) lhs[[rlang::expr_deparse(rlang::enexpr(rhs))]]()

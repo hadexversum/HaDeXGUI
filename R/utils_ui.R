@@ -1,101 +1,37 @@
-#' Hide or display a tag or whole list of tags
+#' Indicate that element can be toggled
 #'
-#' @param x the tag or the tag list
-#'
-#' @details Those functions are adapted from automatically generated utility
-#' functions from golem package
-#'
-#' @return a tag
-#' @noRd
+#' @param ... html elements
+#' @param id id of the toggleable
 #'
 #' @examples
-#' ## Hide
-#' a <- shiny::tags$p(src = "plop", "pouet")
-#' undisplay(a)
-#' b <- shiny::actionButton("go_filter", "go")
-#' undisplay(b)
-#' @importFrom shiny tagList
-undisplay <- function(x) {
-  UseMethod("undisplay")
-}
-
-undisplay.shiny.tag <- function(x) {
-  # if not already hidden
-  if (
-    !is.null(x$attribs$style) &&
-      !grepl("display:\\s+none", x$attribs$style)
-  ) {
-    x$attribs$style <- paste(
-      "display: none;",
-      x$attribs$style
-    )
-  } else {
-    x$attribs$style <- "display: none;"
-  }
-  x
-}
-
-undisplay.shiny.tag.list <- function(x) {
-  force(x)
-  ret <- lapply(x, undisplay)
-  class(ret) <- class(x)
-  ret
-}
-
-#' @importFrom shiny tagList
-display <- function(x) {
-  UseMethod("display")
-}
-
-display.shiny.tag <- function(x) {
-  if (
-    !is.null(x$attribs$style) &&
-      grepl("display:\\s+none", x$attribs$style)
-  ) {
-    x$attribs$style <- gsub(
-      "(\\s)*display:(\\s)*none(\\s)*(;)*(\\s)*",
-      "",
-      x$attribs$style
-    )
-  }
-  x
-}
-
-display.shiny.tag.list <- function(x) {
-  ret <- lapply(x, display)
-  class(ret) <- class(x)
-  ret
-}
-
-`%visible if%` <- function(tag, condition)
-  (if (condition) display else undisplay)(tag)
-
+#' toggleable(span("you can toggle this"), id = "elem")
+#'
+#' \dontrun{
+#' # use in server context
+#' toggle_id(TRUE, "elem")
+#' }
+#'
+#' @noRd
 toggleable <- function(..., id) div(..., id = id)
-
-`%nullify if%` <- function(x, condition) if (condition) NULL else x
-
-.S3method("undisplay", "shiny.tag", undisplay.shiny.tag)
-.S3method("undisplay", "shiny.tag.list", undisplay.shiny.tag.list)
-.S3method("display", "shiny.tag", display.shiny.tag)
-.S3method("display", "shiny.tag.list", display.shiny.tag.list)
-
-gen_random_id <- function(prefix = "")
-  paste0(prefix, paste0(sample(c(0:9, letters[1:6]), 16, TRUE), collapse = ''))
 
 add_fancy_icon <- function(fancy_icon)
   icon(fancy_icon, class = "fancy-icon")
 
-#' @importFrom xtable xtable
-htmlize_data <- function(dset) {
-  HTML(paste(capture.output(print(xtable(dset), type = "html"))))
-}
+#' Function to automatically create settings modules in ui
+#'
+#' @param names name of servers to install
+#' @param modes named vector of modes to pass to corresponding uis
+#' @param params named list of parameters to pass to corresponding uis
+#' @param ns namespace function
+#'
+#' @noRd
+install_settings_ui <- function(names, modes = character(), params = list(), ns) {
+  hadex_gui_env <- rlang::ns_env("HaDeXGUI")
+  uis <- purrr::map(names, function(name) {
+    ui_fun <- hadex_gui_env[[glue::glue("mod_settings_{name}_ui")]]
+    arg_names <- rlang::fn_fmls_names(ui_fun)
 
-install_settings_ui <- function(names, modes, params = list(), ns) {
-  uis <- lapply(names, function(name) {
-    ui_fun <- getFromNamespace(paste0("mod_settings_", name, "_ui"), "HaDeXGUI")
-    arg_names <- names(formals(ui_fun))
-
-    args <- setNames(lapply(
+    args <- rlang::set_names(purrr::map(
       arg_names,
       function(arg) {
         if (arg == "id") ns(name)
@@ -107,11 +43,14 @@ install_settings_ui <- function(names, modes, params = list(), ns) {
       }
     ), arg_names)
 
-    args <- args[sapply(args, not_null)]
+    args <- args[purrr::map_lgl(args, not_null)]
 
-    do.call(ui_fun, args = args)
+    rlang::exec(ui_fun, !!!args)
   })
   rlang::exec(hadex_panel_settings, !!!uis)
 }
 
+#' Shorthand for column(width = 6, ...)
+#'
+#' @noRd
 column_6 <- function(...) column(width = 6, ...)

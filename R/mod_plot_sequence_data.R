@@ -38,28 +38,7 @@ mod_plot_sequence_data_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    output[["protein_info"]] <- DT::renderDataTable({
-      c(
-        name     = params %()% chosen_protein,
-        length   = params %()% sequence_length, # TODO: should there be max_range?
-        coverage = HaDeX::get_protein_coverage(
-          dat            = dat(),
-          protein        = params %()% chosen_protein,
-          protein_length = params %()% max_range
-        ) %>%
-          paste0(., "%"),
-        cysteins = length(gregexpr("C", params %()% protein_sequence)[[1]])
-      ) %>%
-      data.frame(
-        Property = c("Protein name", "Length", "Coverage", "Number of cysteins"),
-        Value = .
-      ) %>%
-      HaDeX_DT_format(dom = "t")
-    })
-
-    output[["colored_sequence"]] <- renderUI({
-      color_cysteins(params %()% protein_sequence)
-    })
+    ### REACTIVES FOR DATA PROCESSING
 
     dat_processed <- reactive({
       # TODO: this should be in HaDeX, not in GUI
@@ -87,6 +66,35 @@ mod_plot_sequence_data_server <- function(id, dat, params){
         )
     })
 
+    ### CUSTOM OUTPUTS
+
+    # here, instead of creating specified module,
+    # everything is contained here as it is unique to
+    # this tab
+
+    output[["protein_info"]] <- DT::renderDataTable({
+      c(
+        name     = params %()% chosen_protein,
+        length   = params %()% sequence_length, # TODO: should there be max_range?
+        coverage = HaDeX::get_protein_coverage(
+          dat            = dat(),
+          protein        = params %()% chosen_protein,
+          protein_length = params %()% max_range
+        ) %>%
+          paste0(., "%"),
+        cysteins = length(gregexpr("C", params %()% protein_sequence)[[1]])
+      ) %>%
+        data.frame(
+          Property = c("Protein name", "Length", "Coverage", "Number of cysteins"),
+          Value = .
+        ) %>%
+        hadex_datatable(dom = "t")
+    })
+
+    output[["colored_sequence"]] <- renderUI({
+      color_cysteins(params %()% protein_sequence)
+    })
+
     output[["plot_composition"]] <- renderGirafe({
       girafe(ggobj = plot_out())
     })
@@ -99,12 +107,8 @@ mod_plot_sequence_data_server <- function(id, dat, params){
       }
     )
 
+    ### SERVER AND PLOT SETTINGS INVOCATION
+
     s_visualization <- mod_settings_visualization_server("visualization", mode = "SEQUENCE DATA")
   })
 }
-
-## To be copied in the UI
-# mod_plot_sequence_data_ui("plot_sequence_data_1")
-
-## To be copied in the server
-# mod_plot_sequence_data_server("plot_sequence_data_1")

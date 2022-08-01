@@ -41,12 +41,10 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    ### reactives for data processing
+    ### REACTIVES FOR DATA PROCESSING
 
     dat_processed <- if (differential) reactive({
-      # TODO: check which validates are really needed
-      validate(need(s_time[["points"]](),
-                    "Wait for parameters to be loaded"))
+      wait_for(s_time %()% points)
 
       HaDeX::create_diff_uptake_dataset(
         dat(),
@@ -72,6 +70,8 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       ) %>%
         filter(Exposure %in% s_time[["points"]]())
     })
+
+    ### OUT REACTIVES
 
     plot_out <- if (differential) reactive({
       (dat() %>%
@@ -120,7 +120,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
                ID <= s_range[["x"]]()[[2]])
     })
 
-    ### reactives for settings servers
+    ### VALUES FOR RANGE AND LABEL SERVERS
 
     range_specs <- list(
       x = range_spec({
@@ -139,7 +139,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       x = label_spec("Peptide ID")
     )
 
-    ### settings servers
+    ### SERVER AND PLOT SETTINGS INVOCATION
 
     invoke_settings_servers(
       names = c(
@@ -152,7 +152,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       )
     )
 
-    ### plot server
+    ### RETURN OF THE PLOT AND DATA
 
     mod_display_plot_server("display_plot", plot_out, dat_out)
 

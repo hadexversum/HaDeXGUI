@@ -20,7 +20,7 @@ mod_settings_peptide_ui <- function(id, mode){
       )[mode]
     ),
     dataTableOutput_h(ns("peptide_list")),
-    actionButton(
+    secondary_button(
       inputId = ns("reset"),
       label = "Reset selection"
     ),

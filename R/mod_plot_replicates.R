@@ -38,6 +38,8 @@ mod_plot_replicates_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
+
     dat_processed_per_peptide_for_time <- reactive({
       HaDeX::create_replicate_dataset(
         dat(),
@@ -54,6 +56,8 @@ mod_plot_replicates_server <- function(id, dat, params){
         state   = s_state %()% state
       )
     })
+
+    ### OUT REACTIVES
 
     dat_out_per_peptide_for_time <- reactive({
       HaDeX::show_replicate_histogram_data(dat_processed_per_peptide_for_time())
@@ -84,7 +88,11 @@ mod_plot_replicates_server <- function(id, dat, params){
       )
     })
 
-    # TODO: replace this quickfix for time server with something better
+    ### SERVER AND PLOT SETTINGS INVOCATION
+
+    # Assigning null because time server require this parameter
+    # even though it is unused in this mode;
+    # TODO: find a workaroud
     s_calculation <- NULL
 
     invoke_settings_servers(
@@ -108,6 +116,8 @@ mod_plot_replicates_server <- function(id, dat, params){
         per_time = dat_out_per_time
       )
     )
+
+    ### RETURN OF THE PLOT AND DATA
 
     return(
       autoreturn("per_peptide_for_time", "per_peptide_all_times", "per_time")

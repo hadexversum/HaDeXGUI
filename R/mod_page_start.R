@@ -7,10 +7,17 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_page_start_ui <- function(id){
+mod_page_start_ui <- function(id, mobile = FALSE){
   hadex_tab_other(
     title = "",
     h1("Welcome to HaDeX GUI!"),
+
+    span(
+      tags$b(
+        "For better user experience please use device with wider screen (at least 900px)."
+      )
+    ) %.?% mobile,
+
     fluidPage(
       fluidRow(
         column(

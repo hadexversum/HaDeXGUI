@@ -37,6 +37,8 @@ mod_plot_coverage_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
+
     dat_processed_position_frequency <- reactive({
       state <- s_state     %()% state
       HaDeX::create_overlap_distribution_dataset(
@@ -48,6 +50,8 @@ mod_plot_coverage_server <- function(id, dat, params){
         protein_sequence = params      %()% protein_sequence
       )
     })
+
+    ### OUT REACTIVES
 
     plot_out_peptide_coverage <- reactive({
       HaDeX::plot_coverage(
@@ -89,6 +93,8 @@ mod_plot_coverage_server <- function(id, dat, params){
         )
     })
 
+    ### SERVER AND PLOT SETTINGS INVOCATION
+
     invoke_settings_servers(
       names = c("state", "subregion"),
       modes = c(
@@ -108,14 +114,10 @@ mod_plot_coverage_server <- function(id, dat, params){
       )
     )
 
+    ### RETURN OF THE PLOT AND DATA
+
     return(
       autoreturn("peptide_coverage", "position_frequency")
     )
   })
 }
-
-## To be copied in the UI
-# mod_coverage_ui("coverage_1")
-
-## To be copied in the server
-# mod_coverage_server("coverage_1")

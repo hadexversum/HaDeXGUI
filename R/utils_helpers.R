@@ -1,11 +1,23 @@
-#' helpers
+#' Finds suitable name of helper for given input/output id
 #'
-#' @description A utils function
+#' @param id id of the input/output
 #'
-#' @return The return value, if any, from executing the utility.
+#' Function splits id by "-" and "_" symbols and tries to match file name in
+#' app/helpfiles folder with the longest name possible. E.g. if you have id
+#' "some_server-some_input" it will look for following files in order:
+#'
+#' - some-server-some-input.md
+#' - server-some-input.md
+#' - some-input.md
+#' - input.md
+#'
+#' In this way, you can create a helpfiles meant precisely for a particular input
+#' in particular tab and have a fallback with general description.
+#'
+#' @return name of the file containing helper for input (without full path and
+#' extension)
 #'
 #' @noRd
-#' @importFrom shinyhelper helper
 match_helper_content <- function(id) {
   split <- strsplit(id, split = "-|_")[[1]]
   n <- length(split)
@@ -23,52 +35,90 @@ match_helper_content <- function(id) {
   ret
 }
 
-decorate_with_helper <- function(fun) function(id, ...) {
-  content <- match_helper_content(id)
-  if (not_null(content)) shinyhelper::helper(
-    shiny_tag = fun(id, ...),
-    content = content,
-    type = "markdown",
-    buttonLabel = "Close",
-    easyClose = TRUE,
-    icon = "far fa-question-circle",
-    colour = "#856C9D"
-  ) else fun(id, ...)
+#' Wrap output with hadex spinner
+#'
+#' @param tag a shiny tag
+#'
+#' @examples
+#' hadex_with_spinner(plotOutput("some_id"))
+#'
+#' @noRd
+hadex_with_spinner <- function(tag) shinycustomloader::withLoader(
+  tag,
+  type = "image",
+  loader = "www/loader.gif"
+)
+
+#' Wrap output with hadex helper
+#'
+#' @param tag a shiny tag
+#' @param content name of the helpfile; if NULL no helper is created
+#'
+#' @examples
+#' hadex_wiht_helper(plotOutput("some_id"), "a-file")
+#'
+#' @noRd
+hadex_with_helper <- function(tag, content) if (not_null(content)) shinyhelper::helper(
+  shiny_tag = tag,
+  content = content,
+  type = "markdown",
+  buttonLabel = "Close",
+  easyClose = TRUE,
+  icon = "far fa-question-circle",
+  colour = "#856C9D"
+) else tag
+
+#' Function for decorating inputs/ouptuts
+#'
+#' @param fun input/output function to decorate
+#' @param with_helper should helper be added to the tag?
+#' @param is_output is the wrapped function input/output?
+#' @param with_spinner should the spinner be added to function?
+#'
+#' @return a function for creating inputs/outputs
+#'
+#' This is a function meant to use only on development level, it creates inputs
+#' and outputs from other inputs/outputs. It operates on the function level,
+#' not on the particular tag level.
+#' See examples in file utils_helpers.R
+#'
+#' @noRd
+hadex_decorate <- function(fun, with_helper = TRUE, is_output = TRUE, with_spinner = is_output) {
+  spinner_wrapper <- if (with_spinner) hadex_with_spinner else identity
+  helper_wrapper <- if (with_helper) function(tag, id) {
+    content <- match_helper_content(id)
+    hadex_with_helper(tag, content)
+  } else function(tag, id) tag
+
+  # TODO: make use of rlang::fmls
+  if (is_output) rlang::inject({
+    function(outputId, ...) {
+      (!!(helper_wrapper))((!!(spinner_wrapper))(fun(outputId, ...)), outputId)
+    }
+  }) else rlang::inject({
+    function(inputId, ...) {
+      (!!(helper_wrapper))((!!(spinner_wrapper))(fun(inputId, ...)), inputId)
+    }
+  })
 }
 
-decorate_with_hadex_spinner <- function(fun)
-  function(id, ...) shinycustomloader::withLoader(
-    fun(id, ...),
-    type = "image",
-    loader = "www/HaDeX_loader.gif"
-  )
 
 # manually decorating to specify default parameter values
 
 selectizeInput_h <- function(inputId, label, choices = "", ...,
                              options = list(dropdownParent = "body"))
-  decorate_with_helper(shiny::selectizeInput)(inputId, label = label, choices = choices, options = options, ...)
+  hadex_decorate(shiny::selectizeInput, is_output = FALSE)(inputId, label = label, choices = choices, options = options, ...)
 
-textInput_h <- function(inputId, ...)
-  decorate_with_helper(shiny::textInput)(inputId, ...)
-
-checkboxInput_h <- function(inputId, ...)
-  decorate_with_helper(shiny::checkboxInput)(inputId, ...)
+textInput_h <- hadex_decorate(shiny::textInput, is_output = FALSE)
+checkboxInput_h <- hadex_decorate(shiny::checkboxInput, is_output = FALSE)
 
 numericInput_h <- function(inputId, label, value = 0, ...)
-  decorate_with_helper(shiny::numericInput)(inputId, label, value, ...)
+  hadex_decorate(shiny::numericInput, is_output = FALSE)(inputId, label, value, ...)
 
 checkboxGroupInput_h <- function(inputId, label, choices = "", ...)
-  decorate_with_helper(shiny::checkboxGroupInput)(inputId, label, choices, ...)
+  hadex_decorate(shiny::checkboxGroupInput, is_output = FALSE)(inputId, label, choices, ...)
 
-plotOutput_h <- function(outputId, ...)
-  decorate_with_helper(decorate_with_hadex_spinner(shiny::plotOutput))(outputId, ...)
-
-uiOutput_h <- function(outputId, ...)
-  decorate_with_helper(decorate_with_hadex_spinner(shiny::uiOutput))(outputId, ...)
-
-dataTableOutput_h <- function(outputId, ...)
-  decorate_with_helper(decorate_with_hadex_spinner(DT::dataTableOutput))(outputId, ...)
-
-girafeOutput_h <- function(outputId, ...)
-  decorate_with_helper(decorate_with_hadex_spinner(ggiraph::girafeOutput))(outputId, ...)
+plotOutput_h <- hadex_decorate(shiny::plotOutput)
+uiOutput_h <- hadex_decorate(shiny::uiOutput)
+dataTableOutput_h <- hadex_decorate(DT::dataTableOutput)
+girafeOutput_h <- hadex_decorate(ggiraph::girafeOutput)

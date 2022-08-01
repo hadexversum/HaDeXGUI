@@ -40,12 +40,16 @@ mod_plot_uncertainty_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
+
     dat_processed <- reactive({
       times <- s_time %()% points
 
       dat() %>%
         filter(Exposure %in% times)
     })
+
+    ### OUT REACTIVES
 
     plot_out <- reactive({
       HaDeX::plot_uncertainty(
@@ -77,7 +81,11 @@ mod_plot_uncertainty_server <- function(id, dat, params){
                err_avg_mass = round(err_avg_mass, 4))
     })
 
-    # fix values for calculation
+    ### SERVER AND PLOT SETTINGS INVOCATION
+
+    # Assigning null because time server require this parameter
+    # even though it is unused in this mode;
+    # TODO: find a workaroud
     s_calculation <- list(
       fractional = reactive({ FALSE }),
       theoretical = reactive({ TRUE })
@@ -93,6 +101,8 @@ mod_plot_uncertainty_server <- function(id, dat, params){
     )
 
     mod_display_plot_server("display_plot", plot_out, dat_out)
+
+    ### RETURN OF THE PLOT AND DATA
 
     return(
       autoreturn()

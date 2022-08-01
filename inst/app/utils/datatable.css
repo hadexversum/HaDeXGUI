@@ -1,0 +1,50 @@
+/* those values are mimicking values from main theme */
+
+/* pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  color: #FFFEFD !important; /* because its importanted in DT */
+  background: #7484d0 linear-gradient(180deg, #a1a9d2, #7484d0) repeat-x;
+  border-color: #7484d0;
+  white-space: normal;
+  border-radius: 4px;
+  line-height: 22px;
+  padding: 6px 12px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+button.dt-button:hover:not(.disabled),
+div.dt-button:hover:not(.disabled),
+a.dt-button:hover:not(.disabled),
+input.dt-button:hover:not(.disabled) {
+  background: #3c477c linear-gradient(180deg, #59638f, #3c477c) repeat-x;
+  border-color: #374274;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
+  cursor: default;
+  color: #7c7e8a !important;
+  border: 1px solid #bebec3;
+  background: #cbcbd0;
+  box-shadow: none;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  color: #555 !important;
+  border: 1px solid #ddd;
+  background: #fff;
+}
+
+/* PDF and EXCEL buttons -- just like primary */
+button.dt-button, div.dt-button, a.dt-button, input.dt-button {
+  border-radius: 4px;
+  border: 1px solid #485696;
+  background: #485696 linear-gradient(180deg, #636fa5, #485696) repeat-x;
+  color: #FFFEFD;
+  line-height: 22px;
+  padding: 6px 12px;
+}
+
+/* fixing (kinda) overflowing */
+.dataTables_wrapper {
+  overflow-x: auto;
+}

@@ -28,7 +28,7 @@ mod_report_ui <- function(id){
                 value = FALSE
               )
             ),
-            actionButton(
+            secondary_button(
               inputId = ns("select_all_plots"),
               label = "Select all plots"
             )
@@ -43,7 +43,7 @@ mod_report_ui <- function(id){
                 value = FALSE
               )
             ),
-            actionButton(
+            secondary_button(
               inputId = ns("select_all_data"),
               label = "Select all data"
             )

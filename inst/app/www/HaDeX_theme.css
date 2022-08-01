@@ -160,7 +160,6 @@ body {
 .navbar .nav-pills > li > a {
   line-height: 22px;
   font-weight: 500;
-  text-transform: uppercase;
 }
 
 .navbar-default .navbar-nav > .active > a,
@@ -232,16 +231,7 @@ body {
   margin: 15px;
 }
 
-#file_req {
-  margin: 0 auto;
-}
-
-#peptide_list_data,
-#rep_sequence {
-  overflow-x: auto;
-}
-
-#summary_table {
+#page_summary-table {
   margin: 20px auto;
 }
 
@@ -252,9 +242,14 @@ body {
 }
 
 .HaDeX-tab-content-element {
-
   max-height: calc(100vh - 110px); /* TODO: recalculate value */
   overflow-y: auto;
+}
+
+/* settings panel outer flex container is the first child of tab-content
+ -- we want to fix the max widht as requested in #4 */
+.HaDeX-plot-tab-content > .flexfill-item:first-child {
+  max-width: 500px;
 }
 
 .HaDeX-plot-display-panel {
@@ -293,11 +288,17 @@ a {
   background-color: transparent;
 }
 
-.btn-default,
-.btn-secondary {
+.btn-default {
   color: #FFFEFD;
   background: #485696 linear-gradient(180deg, #636fa5, #485696) repeat-x;
   border-color: #485696;
+  white-space: normal;
+}
+
+.btn-secondary {
+  color: #FFFEFD;
+  background: #7484d0 linear-gradient(180deg, #a1a9d2, #7484d0) repeat-x;
+  border-color: #7484d0;
   white-space: normal;
 }
 
@@ -345,13 +346,22 @@ h4, .h4 {
 .nav-tabs .nav-link,
 .nav-tabs ul.nav.navbar-nav > li > a,
 .nav-tabs > li > a,
-.nav-tabs .nav-pills > li > a,
-.nav-tabs .nav-link:hover,
-.nav-tabs .nav-link:focus {
+.nav-tabs .nav-pills > li > a {
   color: #7C7E8A;
-  background-color: #D3D3D7;
+  background-color: #E5E0EA;
   border-color: #BEBEC3;
 }
+
+
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus,
+.nav-tabs ul.nav.navbar-nav > li > a:hover,
+.nav-tabs > li > a:hover,
+.nav-tabs .nav-pills > li > a:hover{
+  background-color: #bfb1cc;
+  color: #FFFEFD;
+}
+
 
 .irs--shiny .irs-bar {
   border-top: 1px solid #776274 !important;
@@ -370,20 +380,47 @@ h4, .h4 {
   overflow: visible;
 }
 
-#fullsize-website {
+#hadex-full {
   display: block;
 }
 
-#mobile-website {
+#hadex-mobile {
   display: none;
 }
 
 @media (max-width: 767px) {
-  #fullsize-website {
+  #hadex-full {
     display: none;
   }
 
-  #mobile-website {
+  #hadex-mobile {
     display: block;
   }
+}
+
+.shiny-output-error {
+  width: 100%;
+  text-align: center;
+  padding-top: 20px;
+  color: #2b2e43;
+}
+
+.datatables {
+  min-height: 400px;
+}
+.HaDeX-plot-display-panel .tab-content {
+  border-width: 0px 1px 1px 1px;
+  border-style: solid;
+  border-color: #ddd;
+  border-radius: 0px 0px 4px 4px;
+  margin-bottom: 10px;
+}
+
+.HaDeX-plot-display-panel .tab-pane {
+  padding: 10px;
+}
+
+.form-control {
+  font-size: 16px;
+  height: 36px;
 }
