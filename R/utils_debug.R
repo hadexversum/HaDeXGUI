@@ -1,4 +1,5 @@
-#' debug
+#' This function is meant to be used with HaDeX read_hdx function to
+#' catch errors
 #'
 #' @description A utils function
 #'

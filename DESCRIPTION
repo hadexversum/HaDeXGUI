@@ -24,9 +24,7 @@ Imports:
     golem (>= 0.3.2),
     gridExtra,
     HaDeX,
-    icecream,
     purrr,
-    reactlog,
     rlang,
     rmarkdown,
     shiny (>= 1.6.0),
@@ -36,7 +34,9 @@ Imports:
     shinyvalidate,
     tools
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    icecream,
+    reactlog
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true

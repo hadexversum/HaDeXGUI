@@ -59,11 +59,10 @@ mod_data_load_ui <- function(id){
         mod_data_setup_ui(ns("setup"))
       ),
 
-      undisplay(
-        wellPanel(
-          id = "HaDeX-examiner-settings-panel",
-          mod_data_hdexaminer_ui(ns("hdexaminer"))
-        )
+      wellPanel(
+        id = "HaDeX-examiner-settings-panel",
+        mod_data_hdexaminer_ui(ns("hdexaminer")),
+        style = "display: none;"
       ),
       flex = c(NA, 1)
     )

@@ -47,6 +47,8 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
+
     peptide_table <- reactive({
       dat() %>%
         filter(Protein == params[["chosen_protein"]]()) %>%
@@ -92,6 +94,8 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       )
     })
 
+    ### OUT REACTIVES
+
     plot_out <- if (differential) reactive({
       HaDeX::plot_differential_uptake_curve(
         diff_p_uptake_dat = dat_processed(),
@@ -134,7 +138,9 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
     info_out <- reactive({
       data <- HaDeX::calculate_auc(dat_processed(), state = s_state %()% states)
       glue::glue_data(data, "{Sequence}-{State} AUC: {round(auc, 4)}")
-    }) %nullify if% differential
+    }) %.?!% differential
+
+    ### VALUES FOR RANGE AND LABEL SERVERS
 
     range_specs <- list(
       y = if (differential) range_spec({
@@ -197,12 +203,16 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       )
     )
 
+    ### SERVER AND PLOT SETTINGS INVOCATION
+
     mod_display_plot_server("display_plot", plot_out, dat_out, info_out = info_out)
 
     mod_download_uptake_server(
       id = "download_uptake",
       dat, params, peptide_table, s_time, s_calculation, s_visualization
     )
+
+    ### RETURN OF THE PLOT AND DATA
 
     return(
       c(

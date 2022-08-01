@@ -6,5 +6,7 @@
 #'
 #' @details Function reexported from package `{plyr}`
 #'
+#' @noRd
+#'
 #' @return Value of x rounded to nearest multiple of accuracy using function f
 round_any <- function(x, accuracy, f = round) f(x / accuracy) * accuracy

@@ -46,9 +46,9 @@ mod_plot_volcano_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    # TODO: ask why here ticking off `fractional` hides also deut 0%
+    ### REACTIVES FOR DATA PROCESSING
 
-    ### reactives for data processing
+    # TODO: ask why here ticking off `fractional` hides also deut 0%
 
     dat_processed <- reactive({
       validate(need(!params[["has_modifications"]](),
@@ -113,6 +113,8 @@ mod_plot_volcano_server <- function(id, dat, params){
       -log(1 - s_test %()% confidence_level)
     })
 
+    ### OUT REACTIVES
+
     dat_out <- reactive({
       HaDeX::show_volcano_data(
         dat_filtered(),
@@ -176,7 +178,7 @@ mod_plot_volcano_server <- function(id, dat, params){
       )
     })
 
-    ### reactives for settings servers
+    ### VALUES FOR RANGE AND LABEL SERVERS
 
     range_specs <- list(
       x = range_spec({
@@ -218,7 +220,7 @@ mod_plot_volcano_server <- function(id, dat, params){
       y = label_spec("-log(P value)")
     )
 
-    ### settings servers
+    ### SERVER AND PLOT SETTINGS INVOCATION
 
     invoke_settings_servers(
       names = c(
@@ -236,6 +238,8 @@ mod_plot_volcano_server <- function(id, dat, params){
     )
 
     mod_display_plot_server("display_plot", plot_out, dat_out, info_out = info_out)
+
+    ### RETURN OF THE PLOT AND DATA
 
     return(
       autoreturn()

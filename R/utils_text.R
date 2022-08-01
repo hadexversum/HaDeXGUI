@@ -1,3 +1,10 @@
+#' Sets the first letter of a word as capital or non-capital
+#'
+#' @examples
+#' capitalize("asdf")
+#' decapitalize("Asdf")
+#'
+#' @noRd
 capitalize <- function(x) {
   first_letter <- substr(x, 1, 1)
   substr(x, 1, 1) <- toupper(first_letter)
@@ -10,17 +17,32 @@ decapitalize <- function(x) {
   x
 }
 
+#' Make id-compliant string from name-like value
+#'
+#' @examples
+#' idize("some text")
+#'
+#' @noRd
 idize <- function(x) gsub(" ", "_", tolower(x))
 
+#' Create reactive value with y label for generalised uptake plots
+#'
+#' Requires s_calculation reactive lists in calling environment
+#'
+#' @noRd
 react_construct_uptake_lab_y <- function(differential, env = parent.frame()) rlang::inject(
   reactive({
     frac_str <- if (s_calculation[["fractional"]]()) "Fractional " else ""
     diff_str <- if (!!differential) "difference [%]" else if (s_calculation[["fractional"]]()) "[%]" else "[Da]"
-    capitalize(glue("{frac_str}deuterium uptake {diff_str}"))
+    capitalize(glue::glue("{frac_str}deuterium uptake {diff_str}"))
   }, env = env)
 )
 
-#' @importFrom glue glue
+#' Create reactive value generating uptake plot titles
+#'
+#' Requires s_time, s_state, params and s_calculation reactive lists
+#' conditionally, basing on inclusion parameters
+#' @noRd
 react_construct_uptake_title <- function(plot_name, differential = FALSE, include_state = TRUE,
                                          include_exposure = FALSE,
                                          env = parent.frame()) rlang::inject(
@@ -28,19 +50,21 @@ react_construct_uptake_title <- function(plot_name, differential = FALSE, includ
     plot_name <- !!plot_name
     theo_str <- if (s_calculation[["theoretical"]]()) "Theoretical " else ""
     states_str <- if (!!differential) {
-      glue("between {s_state[['state_1']]()} and {s_state[['state_2']]()}")
+      glue::glue("between {s_state[['state_1']]()} and {s_state[['state_2']]()}")
     } else {
-      state_str <- if (!!include_state) glue("for state {s_state[['state']]()} ") else ""
-      glue("{state_str}for {params[['chosen_protein']]()}")
+      state_str <- if (!!include_state) glue::glue("for state {s_state[['state']]()} ") else ""
+      glue::glue("{state_str}for {params[['chosen_protein']]()}")
     }
-    exposure_str <- if (!!include_exposure && !s_time[["multiple"]]()) glue("in {s_time[['t']]()} min ") else ""
+    exposure_str <- if (!!include_exposure && !s_time[["multiple"]]()) glue::glue("in {s_time[['t']]()} min ") else ""
 
-    capitalize(glue("{theo_str}{plot_name} plot {exposure_str}{states_str}"))
+    capitalize(glue::glue("{theo_str}{plot_name} plot {exposure_str}{states_str}"))
 
   }, env = env)
 )
 
-
+#' Automatially construct labels for plots, ranges and labels (sic!)
+#'
+#' @noRd
 construct_plot_label <- function(plot_name, differential = FALSE)
   glue::glue("{capitalize(plot_name)} {if (differential) 'Differential ' else ''}Plot")
 
@@ -48,18 +72,18 @@ construct_auto_range_lab <- function(plot_name, ax, differential = FALSE)
   glue::glue("Choose {ax} range for the {construct_plot_label(plot_name, differential)}:")
 
 construct_auto_range_labs <- function(plot_name, axes = c("x", "y"), differential = FALSE)
-  sapply(axes, function(ax) construct_auto_range_lab(plot_name, ax, differential), USE.NAMES = TRUE)
+  rlang::set_names(purrr::map_chr(axes, ~ construct_auto_range_lab(plot_name, .x, differential)), axes)
 
 construct_auto_label_lab <- function(plot_label, label_type)
   glue::glue("{plot_label} {label_type}:")
 
 construct_auto_label_lab_set <- function(plot_label, id_prefix = NULL) {
-  setNames(
-    sapply(
+  rlang::set_names(
+    purrr::map_chr(
       c("title", "axis x label", "axis y label"),
-      function(label_type) construct_auto_label_lab(plot_label, label_type)
+      ~ construct_auto_label_lab(plot_label, .x)
     ),
-    paste0((paste0(id_prefix, "_") %nullify if% is.null(id_prefix)), c("title", "x", "y"))
+    paste0((glue::glue("{id_prefix}_") %.?% not_null(id_prefix)), c("title", "x", "y"))
   )
 }
 
@@ -68,15 +92,16 @@ construct_auto_label_labs <- function(plot_names, differential = FALSE) {
     construct_auto_label_lab_set(construct_plot_label(plot_names, differential = differential))
   else rlang::exec(
     c,
-    !!!lapply(plot_names, function(plot_name) {
-      construct_auto_label_lab_set(
-        construct_plot_label(plot_name, differential),
-        id_prefix = idize(plot_name)
-      )
-    })
+    !!!purrr::map(plot_names, ~ construct_auto_label_lab_set(
+      construct_plot_label(.x, differential),
+      id_prefix = idize(.x)
+    ))
   )
 }
 
+#' Create additional data description for some plots
+#'
+#' @noRd
 cosntruct_uptake_plots_data_info <- function(differential) {
   if (differential) {
     "The table presents data from the chosen x plot range.
@@ -93,14 +118,20 @@ cosntruct_uptake_plots_data_info <- function(differential) {
   }
 }
 
+#' Construct variable name
+#'
+#' @noRd
 construct_var_name <- function(diff, theo, frac, var)
   paste0(
-    "diff_" %nullify if% (!diff),
-    "theo_" %nullify if% (!theo),
-    "frac_" %nullify if% (!frac),
+    "diff_" %.?% (diff),
+    "theo_" %.?% (theo),
+    "frac_" %.?% (frac),
     var
   )
 
+#' Create html text with coloured cysteins
+#'
+#' @noRd
 color_cysteins <- function(protein_sequence) {
   n <- nchar(protein_sequence)
 
@@ -111,7 +142,7 @@ color_cysteins <- function(protein_sequence) {
     paste0(
       sapply(1:ceiling(n / 50), function(i) {
         line <- split[(50 * (i - 1) + 1):(50 * i)]
-        line <- line[not_na(line)]
+        line <- line[!is.na(line)]
         line[grepl("C", line)] <- "<font color='red'>C</font>"
         paste(line, collapse = "")
       }),

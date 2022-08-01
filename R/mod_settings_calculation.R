@@ -17,7 +17,7 @@ mod_settings_calculation_ui <- function(id, mode = "FRAC AND THEO"){
       inputId = ns("theoretical"),
       label = "Theoretical calculations",
       value = FALSE
-    ) %nullify if% !(mode == "FRAC AND THEO"),
+    ) %.?% (mode == "FRAC AND THEO"),
     checkboxInput_h(
       inputId = ns("fractional"),
       label = "Fractional values",

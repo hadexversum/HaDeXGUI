@@ -41,6 +41,7 @@ mod_plot_manhattan_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
 
     dat_processed <- reactive({
       state_1 <- s_state %()% state_1
@@ -53,6 +54,8 @@ mod_plot_manhattan_server <- function(id, dat, params){
         p_adjustment_method = s_test  %()% p_adjustment_method
       )
     })
+
+    ### OUT REACTIVES
 
     plot_out <- reactive({
       HaDeX::plot_manhattan(
@@ -75,16 +78,20 @@ mod_plot_manhattan_server <- function(id, dat, params){
                log_p_value = round(log_p_value, 4))
     })
 
-    # fix values for calculation
-    s_calculation <- list(
-      fractional = reactive({ FALSE }),
-      theoretical = reactive({ TRUE })
-    )
+    ### VALUES FOR RANGE AND LABEL SERVERS
 
     label_specs <- list(
       title = label_spec(react_construct_uptake_title("deuterium uptake difference", differential = TRUE)),
       x = label_spec("Peptide position"),
       y = label_spec("-log(P value)")
+    )
+
+    ### SERVER AND PLOT SETTINGS INVOCATION
+
+    # fix values for calculation
+    s_calculation <- list(
+      fractional = reactive({ FALSE }),
+      theoretical = reactive({ TRUE })
     )
 
     invoke_settings_servers(
@@ -98,6 +105,8 @@ mod_plot_manhattan_server <- function(id, dat, params){
     )
 
     mod_display_plot_server("display_plot", plot_out, dat_out)
+
+    ### RETURN OF THE PLOT AND DATA
 
     return(
       autoreturn()

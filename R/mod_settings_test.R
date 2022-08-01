@@ -62,7 +62,7 @@ mod_settings_test_ui <- function(id, mode){
       )
     },
     fancy_icon = "chart-bar"
-  ) %nullify if% (mode == "DISABLED")
+  ) %.?!% (mode == "DISABLED")
 }
 
 #' settings_test Server Functions
@@ -98,6 +98,6 @@ mod_settings_test_server <- function(id, mode){
         )
       )
     )
-  }) %nullify if% (mode == "DISABLED")
+  }) %.?!% (mode == "DISABLED")
 }
 

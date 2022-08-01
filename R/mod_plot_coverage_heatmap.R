@@ -34,6 +34,8 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    ### REACTIVES FOR DATA PROCESSING
+
     dat_processed <- reactive({
       variable <- s_variable %()% variable
 
@@ -62,6 +64,8 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
       }
     })
 
+    ### OUT REACTIVES
+
     plot_out <- reactive({
       HaDeX::plot_coverage_heatmap(
         x_dat = dat_processed(),
@@ -73,6 +77,8 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     dat_out <- reactive({
       dat_processed
     })
+
+    ### SERVER AND PLOT SETTINGS INVOCATION
 
     s_calculation <- list({
       theoretical = reactive({ FALSE })
@@ -87,6 +93,8 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     )
 
     mod_display_plot_server("display_plot", plot_out, dat_out)
+
+    ### RETURN OF THE PLOT AND DATA
 
     return(
       autoreturn()

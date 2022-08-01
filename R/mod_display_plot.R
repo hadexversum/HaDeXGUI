@@ -21,7 +21,7 @@ mod_display_plot_ui <- function(id, plot_labels,
         tabPanel(
           title = plot_labels,
           girafeOutput_h(ns("plot")),
-          verbatimTextOutput(ns("plot_info")) %nullify if% !additional_plot_info,
+          verbatimTextOutput(ns("plot_info")) %.?% additional_plot_info,
           downloadButton(ns("plot_download_button"), "Save chart (.svg)"),
           additional_button_server
         ),
@@ -54,7 +54,7 @@ mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
   moduleServer(id, function(input, output, session) {
     if (is.reactive(plot_out)) {
       output[["plot"]] <- renderGirafe({ girafe(ggobj = plot_out(), width_svg = 17, height_svg = 9) })
-      output[["data"]] <- renderDataTable({ HaDeX_DT_format(dat_out()) })
+      output[["data"]] <- renderDataTable({ hadex_datatable(dat_out()) })
       output[["plot_download_button"]] <- downloadHandler(
         paste0(id, ".svg"),
         content = function(file) {
@@ -71,7 +71,7 @@ mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
         name <- names(plot_out)[i]
         rlang::inject({
           output[[paste0("plot_", !!name)]] <- renderGirafe({ girafe(ggobj = plot_out[[!!name]](), width_svg = 17, height_svg = 9) })
-          output[[paste0("data_", !!name)]] <- renderDataTable({ HaDeX_DT_format(dat_out[[!!name]]()) })
+          output[[paste0("data_", !!name)]] <- renderDataTable({ hadex_datatable(dat_out[[!!name]]()) })
           output[[paste0("plot_download_button_", !!name)]] <- downloadHandler(
             paste0(!!name, "-", id,".svg"),
             content = function(file) {

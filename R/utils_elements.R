@@ -1,8 +1,4 @@
-#' helpers
-#'
-#' @description A utils function
-#'
-#' @return The return value, if any, from executing the utility.
+#' Elements of HaDeX GUI
 #'
 #' @noRd
 hadex_tab_plot <- function(title, settings, display) tabPanel(
@@ -50,6 +46,9 @@ hadex_panel_settings_section <- function(..., title = NULL) tagList(
   ...
 )
 
+#' Collapsible card
+#'
+#' @noRd
 collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL, fancy_icon = NULL) {
   obj_id <- if (!is.null(id)) id else gen_random_id("collapsible_")
 
@@ -78,5 +77,8 @@ collapsible_card <- function(title, ..., init_collapsed = FALSE, id = NULL, fanc
   )
 }
 
+#' Secondary button
+#'
+#' @noRd
 secondary_button <- function(inputId, label, icon = NULL, width = NULL, ...)
   actionButton(inputId, label, icon, width, ..., class = "btn-secondary")
