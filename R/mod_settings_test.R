@@ -19,7 +19,7 @@ mod_settings_test_ui <- function(id, mode){
         checkboxInput_h(
           inputId = ns("show_houde"),
           label = "Houde test",
-          value = FALSE
+          value = TRUE
         ),
         checkboxInput_h(
           inputId = ns("show_tstud"),

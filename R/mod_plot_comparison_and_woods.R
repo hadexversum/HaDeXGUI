@@ -100,6 +100,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
           HaDeX::plot_state_comparison(
             theoretical = s_calculation %()% theoretical,
             fractional  = s_calculation %()% fractional,
+            skip_amino  = s_visualization %()% skip_amino,
             time_t      = s_time        %()% t,
             all_times   = s_time        %()% multiple
           ) +
@@ -113,6 +114,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     ### OUT REACTIVES
 
     plot_out_woods <- reactive({
+      # browser()
       (dat() %>%
          HaDeX::create_p_diff_uptake_dataset(
            diff_uptake_dat     = dat_processed_woods(),
@@ -128,6 +130,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
          HaDeX::plot_differential(
            diff_uptake_dat          = dat_processed_woods(),
            diff_p_uptake_dat        = .,
+           skip_amino               = s_visualization %()% skip_amino,
            theoretical              = s_calculation %()% theoretical,
            fractional               = s_calculation %()% fractional,
            show_houde_interval      = s_test        %()% show_houde,

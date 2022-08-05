@@ -52,8 +52,10 @@ mod_plot_uncertainty_server <- function(id, dat, params){
     ### OUT REACTIVES
 
     plot_out <- reactive({
+
       HaDeX::plot_uncertainty(
         dat            = dat_processed(),
+        skip_amino     = s_visualization %()% skip_amino,
         protein        = params          %()% chosen_protein,
         state          = s_state         %()% state,
         aggregated     = s_visualization %()% show_aggregated,

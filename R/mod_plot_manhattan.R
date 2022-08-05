@@ -61,6 +61,7 @@ mod_plot_manhattan_server <- function(id, dat, params){
       HaDeX::plot_manhattan(
         p_dat                 = dat_processed(),
         plot_title            = "Difference uptake",
+        skip_amino            = s_visualization %()% skip_amino,
         confidence_level      = s_test          %()% confidence_level,
         times                 = s_time          %()% points,
         separate_times        = s_visualization %()% split_timepoints,

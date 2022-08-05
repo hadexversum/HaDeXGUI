@@ -3,9 +3,9 @@ vis_mode_map <- list(
   CHICLET = c("show_uncertainty"),
   BUTTERFLY = c("uncertainty_type"),
   VOLCANO = c("shown_interval", "distinguish_timepoints", "hide_insignificant", "show_insignificant_grey"),
-  WOODS = c("hide_insignificant"),
-  MANHATTAN = c("show_length", "split_timepoints"),
-  UNCERTAINTY = c("show_aggregated", "split_timepoints"),
+  WOODS = c("hide_insignificant", "skip_amino"),
+  MANHATTAN = c("show_length", "split_timepoints", "skip_amino"),
+  UNCERTAINTY = c("show_aggregated", "split_timepoints", "skip_amino"),
   MEASUREMENTS = c("log_x", "show_replicates"),
   `SEQUENCE DATA` = c("show_residues")
 )
@@ -54,6 +54,11 @@ mod_settings_visualization_ui <- function(id, mode){
       inputId = ns("hide_insignificant"),
       label = "Hide insignificant values?",
       value = FALSE
+    ),
+    skip_amino = checkboxInput_h(
+      inputId = ns("skip_amino"),
+      label = "Hide first amino?",
+      value = TRUE
     ),
     show_insignificant_grey = checkboxInput_h(
       inputId = ns("show_insignificant_grey"),
