@@ -14,9 +14,10 @@ mod_plot_coverage_heatmap_ui <- function(id){
     title = "Coverage Heatmap Plot",
 
     settings = install_settings_ui(
-      names = c("variable", "time"),
+      names = c("variable", "calculation", "state" , "time"),
       modes = list(
-        time = "SINGLE POINT"
+        time = "SINGLE POINT",
+        state = "SINGLE" ## add option
       ),
       ns = ns
     ),
@@ -37,31 +38,46 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     ### REACTIVES FOR DATA PROCESSING
 
     dat_processed <- reactive({
-      variable <- s_variable %()% variable
+      # variable <- cov_variable()
 
-      if (grepl("diff", variable)){
+      browser()
+
+      if (grepl("diff", cov_variable())){
         HaDeX::calculate_diff_uptake(
           dat = dat(),
           time_t = s_time %()% t
         )
-      } else if (variable == "auc") {
+      } else if (cov_variable() == "auc") {
         dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
         HaDeX::calculate_auc(
           HaDeX::create_uptake_dataset(dat_tmp),
           preserve_values = FALSE
         )
-      } else if (variable == "back_exchange") {
+      } else if (cov_variable() == "back_exchange") {
         dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
         HaDeX::calculate_back_exchange(
           dat_tmp,
-          states = dat()[["State"]][1]
+          states = s_state[["state"]]()
         )
       } else {
         HaDeX::calculate_state_uptake(
           dat = dat(),
+          state = s_state[["state"]](),
           time_t = s_time %()% t
         )
       }
+    })
+
+    ### GET VARIABLE
+
+    cov_variable <- reactive({
+
+      get_coverage_heatmap_variable(
+        type = s_variable %()% variable,
+        theoretical = s_calculation[["theoretical"]](),
+        fractional = s_calculation[["fractional"]]()
+      )
+
     })
 
     ### OUT REACTIVES
@@ -69,7 +85,7 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     plot_out <- reactive({
       HaDeX::plot_coverage_heatmap(
         x_dat = dat_processed(),
-        value = s_variable %()% variable
+        value = cov_variable()
       ) %>%
         suppressMessages()
     })
@@ -86,9 +102,10 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     })
 
     invoke_settings_servers(
-      names = c("variable", "time"),
+      names = c("variable", "time", "calculation", "state"),
       modes = c(
-        time = "SINGLE POINT"
+        time = "SINGLE POINT",
+        state = "SINGLE"
       )
     )
 
