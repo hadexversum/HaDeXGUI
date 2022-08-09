@@ -91,16 +91,8 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
            uncertainty_type = s_visualization[["uncertainty_type"]](),
            show_houde_interval = s_test[["show_houde"]](),
            show_tstud_confidence = s_test[["show_tstud"]](),
-           confidence_level = s_test[["confidence_level"]]()
-         ) +
-         geom_point_interactive(
-           data = dat_processed(),
-           aes(x = ID, y = 10, tooltip = paste0( #PLACEHOLDER
-             Sequence,
-             "<br/>Position: ", Start, "-", End,
-             "<br/>Value: PLACEHOLDER", #TODO: find a way of obtaining this value seamlessly
-             "<br/>Exposure: ", Exposure, " min"
-           ))
+           confidence_level = s_test[["confidence_level"]](),
+           interactive = TRUE
          )
       ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_label) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
@@ -111,16 +103,9 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         HaDeX::plot_butterfly(
           theoretical = s_calculation[["theoretical"]](),
           fractional = s_calculation[["fractional"]](),
-          uncertainty_type = s_visualization[["uncertainty_type"]]()
-        ) +
-          geom_point_interactive( #TODO: fix this redundancy?
-            aes(tooltip = paste0(
-              Sequence,
-              "<br/>Position: ", Start, "-", End,
-              "<br/>Value: ", round(value, 2),
-              "<br/>Exposure: ", Exposure, " min"
-            ))
-          )
+          uncertainty_type = s_visualization[["uncertainty_type"]](),
+          interactive = TRUE
+        )
       ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_label) %>%
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
