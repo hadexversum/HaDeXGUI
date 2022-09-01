@@ -8,13 +8,13 @@ app_server <- function(input, output, session) {
 
   # USING LOGO AS LINK TO START PAGE
   # TODO: do it with js instead
-  observe({
+  bindEvent(observe({
     updateTabsetPanel(
       session = session,
       inputId = "navbar",
       selected = "start"
     )
-  }) %>% bindEvent({ input[["logo_link"]] })
+  }), { input[["logo_link"]] })
 
   dat_source <- mod_data_load_server("data_load")
 
