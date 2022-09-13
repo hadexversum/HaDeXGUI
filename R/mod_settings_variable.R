@@ -15,26 +15,11 @@ mod_settings_variable_ui <- function(id){
       inputId = ns("variable"),
       label = "Select variable to map for color:",
       choices = c(
-        "back_exchange",
-        "theo_frac_deut_uptake",
-        "deut_uptake",
-        "frac_deut_uptake",
-        "theo_deut_uptake",
-        "diff_frac_deut_uptake",
-        "diff_deut_uptake",
-        "diff_theo_frac_deut_uptake",
-        "diff_theo_deut_uptake",
-        "err_frac_deut_uptake",
-        "err_deut_uptake",
-        "err_theo_frac_deut_uptake",
-        "err_theo_deut_uptake",
-        "err_diff_frac_deut_uptake",
-        "err_diff_deut_uptake",
-        "err_diff_theo_frac_deut_uptake",
-        "err_diff_theo_deut_uptake",
-        "auc"
+        "AUC", "Back-exchange",
+        "Deuterium uptake", "Uncertainty(Deuterium uptake)",
+        "Differential deuterium uptake", "Uncertainty(Differential deuterium uptake)"
       ),
-      selected = "frac_deut_uptake"
+      selected = "AUC"
     ),
     fancy_icon = "table"
   )
