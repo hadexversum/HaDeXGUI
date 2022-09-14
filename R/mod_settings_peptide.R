@@ -50,10 +50,9 @@ mod_settings_peptide_server <- function(id, peptide_table, mode){
 
     peptide_list_proxy <- DT::dataTableProxy("peptide_list", session = session)
 
-    observe({
-      bindEvent(DT::selectRows(peptide_list_proxy, NULL),
-                input[["reset"]])
-    })
+    bindEvent(observe({
+      DT::selectRows(peptide_list_proxy, NULL)
+    }), input[["reset"]])
 
     return(
       list(
