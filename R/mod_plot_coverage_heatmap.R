@@ -40,8 +40,6 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     dat_processed <- reactive({
       # variable <- cov_variable()
 
-      browser()
-
       if (grepl("diff", cov_variable())){
         HaDeX::calculate_diff_uptake(
           dat = dat(),
