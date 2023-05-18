@@ -116,11 +116,10 @@ mod_plot_volcano_server <- function(id, dat, params){
     ### OUT REACTIVES
 
     dat_out <- reactive({
-      HaDeX::show_volcano_data(
-        dat_filtered(),
-        D_diff_threshold = houde_intervals()[2],
-        log_P_threshold = alpha_interval(),
-        confidence_level = s_test %()% vol_confidence_level,
+
+      HaDeX::show_p_diff_uptake_data(
+        p_diff_uptake_dat = dat_filtered(),
+        theoretical = FALSE, # only exp on volcano
         fractional = s_calculation %()% fractional
       )
     })
