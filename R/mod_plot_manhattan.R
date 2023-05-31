@@ -76,7 +76,8 @@ mod_plot_manhattan_server <- function(id, dat, params){
         select(Protein, Sequence, ID, Start, End, Exposure, diff_deut_uptake, P_value, log_p_value) %>%
         mutate(diff_deut_uptake = round(diff_deut_uptake, 4),
                P_value = round(P_value, 4),
-               log_p_value = round(log_p_value, 4))
+               log_p_value = round(log_p_value, 4)) %>%
+        filter(Exposure %in% c(s_time %()% points))
     })
 
     ### VALUES FOR RANGE AND LABEL SERVERS
