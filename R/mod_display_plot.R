@@ -10,7 +10,8 @@
 mod_display_plot_ui <- function(id, plot_labels,
                                 additional_data_info = NULL,
                                 additional_plot_info = FALSE,
-                                additional_button_server = NULL) {
+                                additional_button_server = NULL,
+                                additional_button_below = NULL) {
   ns <- NS(id)
   div(
     class = "HaDeX-tab-content-element HaDeX-plot-display-panel",
@@ -47,7 +48,7 @@ mod_display_plot_ui <- function(id, plot_labels,
 
       )
     ),
-    additional_button_server)
+    additional_button_below)
   )
 }
 

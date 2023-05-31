@@ -51,7 +51,7 @@ mod_plot_comparison_and_woods_ui <- function(id){
         comparison = cosntruct_uptake_plots_data_info(differential = FALSE),
         woods = cosntruct_uptake_plots_data_info(differential = TRUE)
       ),
-      additional_button_server = mod_export_hdxviewer_ui(ns("export_hdxviewer"))
+      additional_button_below = mod_export_hdxviewer_ui(ns("export_hdxviewer"))
     )
 
 
