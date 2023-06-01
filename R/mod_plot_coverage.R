@@ -85,11 +85,12 @@ mod_plot_coverage_server <- function(id, dat, params){
     })
 
     dat_out_position_frequency <- reactive({
+
       dat_processed_position_frequency() %>%
         rename(
-          pos      = "Position",
-          amino    = "Amino acid",
-          coverage = "Coverage"
+          Position        = "pos",
+          `Amino acid`    = "amino",
+          Coverage        = "coverage"
         )
     })
 
