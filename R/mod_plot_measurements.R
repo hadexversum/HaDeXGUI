@@ -122,12 +122,13 @@ mod_plot_measurements_server <- function(id, dat, params){
     })
 
     dat_out_measurements <- reactive({
+
       sequence <- selected_sequence()
       dat_processed_measurements() %>%
         HaDeX::calculate_exp_masses_per_replicate() %>%
         HaDeX::show_peptide_mass_measurement(
           protein  = params  %()% chosen_protein,
-          state    = s_state %()% state_1,
+          state    = s_state %()% state,
           sequence = sequence,
           time_t   = s_time  %()% t
         )
