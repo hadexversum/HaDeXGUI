@@ -81,6 +81,7 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     ### OUT REACTIVES
 
     plot_out <- reactive({
+
       HaDeX::plot_coverage_heatmap(
         x_dat = dat_processed(),
         value = cov_variable()
