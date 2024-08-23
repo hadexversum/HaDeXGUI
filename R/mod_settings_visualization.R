@@ -7,6 +7,7 @@ vis_mode_map <- list(
   MANHATTAN = c("show_length", "split_timepoints", "skip_amino"),
   UNCERTAINTY = c("show_aggregated", "split_timepoints", "skip_amino"),
   MEASUREMENTS = c("log_x", "show_replicates"),
+  HEATMAP = c("show_panels"), #TODO more
   `SEQUENCE DATA` = c("show_residues")
 )
 
@@ -23,6 +24,11 @@ mod_settings_visualization_ui <- function(id, mode){
   ns <- NS(id)
 
   vis_settings <- list(
+    show_panels <- checkboxInput_h(
+      inputId = ns("show_panels"),
+      label = "Show devided into panels?",
+      value = TRUE
+    ),
     log_x = checkboxInput_h(
       inputId = ns("log_x"),
       label = "Logarithmic x scale for uptake plot?",

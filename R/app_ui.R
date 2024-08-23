@@ -34,6 +34,11 @@ app_ui <- function(request) {
           mod_plot_manhattan_ui("manhattan"),
           mod_plot_uncertainty_ui("uncertainty")
         ),
+        navbarMenu(
+          title = "Hires",
+          mod_plot_structure_heatmap_ui("heatmap_state", differential = FALSE),
+          mod_plot_structure_heatmap_ui("heatmap_diff", differential = TRUE)
+        ),
         mod_plot_measurements_ui("measurements"),
         navbarMenu(
           title = "Sequence data",

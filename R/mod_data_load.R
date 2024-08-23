@@ -58,7 +58,10 @@ mod_data_load_ui <- function(id){
         id = "HaDeX-standard-settings-panel",
         mod_data_setup_ui(ns("setup"))
       ),
-
+      wellPanel(
+        id = "structure-uptake-panel",
+        mod_data_structure_load_ui(ns("upload_str"))
+      ),
       wellPanel(
         id = "HaDeX-examiner-settings-panel",
         mod_data_hdexaminer_ui(ns("hdexaminer")),

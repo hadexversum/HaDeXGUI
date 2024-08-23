@@ -17,6 +17,7 @@ app_server <- function(input, output, session) {
   }), { input[["logo_link"]] })
 
   dat_source <- mod_data_load_server("data_load")
+  str_path <- mod_data_structure_load_server("str_load")
 
   ### AUTOMATIC INVOCATION OF PLOTTING SERVERS
 
@@ -32,6 +33,8 @@ app_server <- function(input, output, session) {
       "replicates",
       "manhattan",
       "uncertainty",
+      ### HIRES
+      "structure_heatmap", # +diff
       ### MEASUREMENTS
       "measurements",
       ### SEQUENCE DATA
@@ -41,6 +44,14 @@ app_server <- function(input, output, session) {
     ),
     dat_source = dat_source
   )
+
+  ## HEATMAP & STRUCTURE
+
+  mod_plot_structure_heatmap_server(id = "heatmap_state",
+                                    differential = FALSE,
+                                    str_path = str_path,
+                                    dat = dat_source[["dat"]],
+                                    params = NULL)
 
   ### SUMMARY
 
