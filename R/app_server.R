@@ -40,18 +40,20 @@ app_server <- function(input, output, session) {
       ### SEQUENCE DATA
       "sequence_data",
       "coverage",
-      "coverage_heatmap"
+      "coverage_heatmap",
+      ### TEST,
+      "hires_heatmap"
     ),
     dat_source = dat_source
   )
 
   ## HEATMAP & STRUCTURE
 
-  mod_plot_structure_heatmap_server(id = "heatmap_state",
-                                    differential = FALSE,
-                                    str_path = str_path,
-                                    dat = dat_source[["dat"]],
-                                    params = NULL)
+  # mod_plot_structure_heatmap_server(id = "heatmap_state",
+  #                                   differential = FALSE,
+  #                                   str_path = str_path,
+  #                                   dat = dat_source[["dat"]],
+  #                                   params = dat_source[["params"]])
 
   ### SUMMARY
 

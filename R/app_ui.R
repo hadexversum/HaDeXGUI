@@ -18,7 +18,6 @@ app_ui <- function(request) {
         mod_data_load_ui("data_load"),
         navbarMenu(
           title = "Deuterium uptake",
-
           mod_plot_comparison_and_woods_ui("comparison_and_woods"),
           mod_plot_volcano_ui("volcano"),
           mod_plot_butterfly_ui("butterfly", differential = FALSE),
@@ -36,8 +35,7 @@ app_ui <- function(request) {
         ),
         navbarMenu(
           title = "Hires",
-          mod_plot_structure_heatmap_ui("heatmap_state", differential = FALSE),
-          mod_plot_structure_heatmap_ui("heatmap_diff", differential = TRUE)
+          mod_plot_hires_heatmap_ui("hires_heatmap")
         ),
         mod_plot_measurements_ui("measurements"),
         navbarMenu(
