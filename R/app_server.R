@@ -17,7 +17,7 @@ app_server <- function(input, output, session) {
   }), { input[["logo_link"]] })
 
   dat_source <- mod_data_load_server("data_load")
-  str_path <- mod_data_structure_load_server("str_load")
+  # str_path <- mod_data_structure_load_server("str_load")
 
   ### AUTOMATIC INVOCATION OF PLOTTING SERVERS
 
@@ -40,20 +40,21 @@ app_server <- function(input, output, session) {
       ### SEQUENCE DATA
       "sequence_data",
       "coverage",
-      "coverage_heatmap",
+      "coverage_heatmap"
       ### TEST,
-      "hires_heatmap"
+      # "hires_heatmap"
     ),
     dat_source = dat_source
   )
 
   ## HEATMAP & STRUCTURE
 
-  # mod_plot_structure_heatmap_server(id = "heatmap_state",
-  #                                   differential = FALSE,
-  #                                   str_path = str_path,
-  #                                   dat = dat_source[["dat"]],
-  #                                   params = dat_source[["params"]])
+  mod_plot_hires_heatmap_server(id = "hires_heatmap",
+                                dat = dat_source[["dat"]],
+                                params = dat_source[["params"]],
+                                structure_path = dat_source[["str_path"]])
+
+
 
   ### SUMMARY
 

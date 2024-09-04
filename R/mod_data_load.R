@@ -132,9 +132,12 @@ mod_data_load_server <- function(id) {
 
     dat <- mod_data_setup_server("setup", dat_adjusted = dat_adjusted)
 
+    str_path <- mod_data_structure_load_server("upload_str")
+
     return(
       c(
         dat,
+        str_path = str_path,
         list(input_info = reactive({
           data_file <- input[["data_file"]]
 

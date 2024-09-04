@@ -17,13 +17,14 @@ mod_plot_hires_heatmap_ui <- function(id){
       names = c("calculation", "state", "time"),
       modes = c(
         state = "SINGLE",
-        time = "ONLY LIMITS"
+        time = "LIMITS AND EXPOSURE"
       ),
       ns = ns
     ),
-    display = mod_display_plot_ui(
+    display = mod_display_plot_structure_ui(
       ns("display_plot"),
-      plot_label = "Heatmap"
+      plot_label = "Heatmap",
+      structure = TRUE,
     )
   )
 }
@@ -31,11 +32,12 @@ mod_plot_hires_heatmap_ui <- function(id){
 #' plot_chiclet Server Functions
 #'
 #' @noRd
-mod_plot_hires_heatmap_server <- function(id, dat, params) {
+mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     ### REACTIVES FOR DATA PROCESSING
+
 
     dat_processed <-  reactive({
 
@@ -49,6 +51,25 @@ mod_plot_hires_heatmap_server <- function(id, dat, params) {
         HaDeX::create_aggregated_uptake_dataset()
     })
 
+    ### STRUCTURE
+
+
+    protein_structure <- reactive({
+
+      HaDeX::plot_aggregated_uptake_structure(
+        aggregated_dat = dat_processed(),
+        differential = FALSE,
+        time_t = s_time[["t"]](),
+        pdb_file_path = structure_path()
+        )
+
+    })
+
+    structure_out <- reactive({
+
+      protein_structure()
+
+    })
     ### OUT REACTIVES
 
     plot_out <- reactive({
@@ -81,13 +102,14 @@ mod_plot_hires_heatmap_server <- function(id, dat, params) {
         "calculation", "state", "time"
       ),
       modes = c(
-        state = "SINGLE"
+        state = "SINGLE",
+        time = "LIMITS AND EXPOSURE"
       )
     )
 
     ### RETURN OF THE PLOT AND DATA
 
-    mod_display_plot_server("display_plot", plot_out, dat_out)
+    mod_display_plot_structure_server("display_plot", plot_out, dat_out, structure_out)
 
     return(
       autoreturn()

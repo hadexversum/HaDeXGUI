@@ -20,6 +20,11 @@ mod_data_structure_load_ui <- function(id){
               multiple = FALSE,
               accept = ".pdb",
               placeholder = "No file selected")
+
+    # numericInput(inputId = ns("nmb"),
+    #              label = "Five",
+    #              value = 5
+    #              )
   )
 }
 
@@ -32,9 +37,16 @@ mod_data_structure_load_server <- function(id){
 
     structure_path <- reactive({
 
-      input[[ns("structure_file")]][["datapath"]]
+      # print("ns")
+      # print(ns("structure_file"))
+      input[["structure_file"]][["datapath"]]
 
     })
+
+    # test_nr <- reactive({
+    #   input[["nmb"]]
+    # })
+    return(structure_path)
 
   })
 }
