@@ -41,8 +41,6 @@ app_server <- function(input, output, session) {
       "sequence_data",
       "coverage",
       "coverage_heatmap"
-      ### TEST,
-      # "hires_heatmap"
     ),
     dat_source = dat_source
   )

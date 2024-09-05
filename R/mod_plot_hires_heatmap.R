@@ -25,6 +25,8 @@ mod_plot_hires_heatmap_ui <- function(id){
       ns("display_plot"),
       plot_label = "Heatmap",
       structure = TRUE,
+      additional_button_below = actionButton(ns("export_hdxviewer"),
+                                             label = "Export to hdxViewer?")
     )
   )
 }
@@ -59,6 +61,8 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path) {
       HaDeX::plot_aggregated_uptake_structure(
         aggregated_dat = dat_processed(),
         differential = FALSE,
+        fractional = s_calculation[["fractional"]](),
+        theoretical = s_calculation[["theoretical"]](),
         time_t = s_time[["t"]](),
         pdb_file_path = structure_path()
         )
@@ -76,7 +80,8 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path) {
       (dat_processed() %>%
          HaDeX::plot_aggregated_uptake(panels = F,
                                        fractional = s_calculation[["fractional"]](),
-                                       theoretical = s_calculation[["theoretical"]]())
+                                       theoretical = s_calculation[["theoretical"]](),
+                                       interactive = T)
       )  %>%
         suppressMessages()
     })
@@ -109,7 +114,8 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path) {
 
     ### RETURN OF THE PLOT AND DATA
 
-    mod_display_plot_structure_server("display_plot", plot_out, dat_out, structure_out)
+    mod_display_plot_structure_server("display_plot", plot_out, dat_out, structure_out,
+                                      info_out = "The structure presents the data of chosen time point")
 
     return(
       autoreturn()
