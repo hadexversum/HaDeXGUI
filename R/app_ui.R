@@ -35,7 +35,8 @@ app_ui <- function(request) {
         ),
         navbarMenu(
           title = "Hires",
-          mod_plot_hires_heatmap_ui("hires_heatmap")
+          mod_plot_hires_heatmap_ui("hires_heatmap"),
+          mod_plot_hires_heatmap_ui("diff_hires_heatmap", differential = TRUE)
         ),
         mod_plot_measurements_ui("measurements"),
         navbarMenu(

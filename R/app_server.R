@@ -52,6 +52,12 @@ app_server <- function(input, output, session) {
                                 params = dat_source[["params"]],
                                 structure_path = dat_source[["str_path"]])
 
+  mod_plot_hires_heatmap_server(id = "diff_hires_heatmap",
+                                dat = dat_source[["dat"]],
+                                params = dat_source[["params"]],
+                                structure_path = dat_source[["str_path"]],
+                                differential = TRUE)
+
 
 
   ### SUMMARY
