@@ -14,14 +14,14 @@ mod_plot_butterfly_ui <- function(id, differential) {
     title = construct_plot_label("Butterfly", differential),
 
     settings = install_settings_ui(
-      names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
+      names = c("calculation", "state", "time", "test", "visualization", "label"), ## "range" deleted
       modes = list(
         state = if (differential) "DOUBLE" else "SINGLE",
         test = if (differential) "SELECTIBLE" else "DISABLED",
         visualization = "BUTTERFLY"
       ),
       params = list(
-        range_labs = construct_auto_range_labs("Butterfly", differential = differential),
+        # range_labs = construct_auto_range_labs("Butterfly", differential = differential),
         label_labs = construct_auto_label_labs("Butterfly", differential = differential)
       ),
       ns = ns
@@ -94,7 +94,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
            confidence_level = s_test[["confidence_level"]](),
            interactive = TRUE
          )
-      ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_label) %>%
+      ) %>% update_axes_and_labels(labels = s_label) %>% ## s_range[["x"]], s_range[["y"]]
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
       wait_for(s_time %()% points)
@@ -106,7 +106,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
           uncertainty_type = s_visualization[["uncertainty_type"]](),
           interactive = TRUE
         )
-      ) %>% update_axes_and_labels(s_range[["x"]], s_range[["y"]], s_label) %>%
+      ) %>% update_axes_and_labels(labels = s_label) %>% ## s_range[["x"]], s_range[["y"]],
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
@@ -116,49 +116,49 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       dat_processed() %>%
         .show_fun(
           theoretical = s_calculation[["theoretical"]](),
-          fractional = s_calculation[["fractional"]]()
-        ) %>%
-        filter(ID >= s_range[["x"]]()[[1]] &
-               ID <= s_range[["x"]]()[[2]])
+          fractional = s_calculation[["fractional"]]())
+        # ) %>%
+        # filter(ID >= s_range[["x"]]()[[1]] &
+        #        ID <= s_range[["x"]]()[[2]])
     })
 
     ### VALUES FOR RANGE AND LABEL SERVERS
 
-    range_specs <- list(
-      x = range_spec({
-        wait_for(nrow(dat_processed()) > 0)
-
-        list(
-          min = min(dat_processed()[["ID"]]),
-          max = max(dat_processed()[["ID"]])
-        )
-      }),
-      y = range_spec({
-        wait_for(nrow(dat_processed()) > 0)
-
-        theo <- dat_processed()[[
-          construct_var_name(
-            differential,
-            TRUE,
-            s_calculation[["fractional"]](),
-            "deut_uptake"
-          )
-        ]]
-        ntheo <- dat_processed()[[
-          construct_var_name(
-            differential,
-            FALSE,
-            s_calculation[["fractional"]](),
-            "deut_uptake"
-          )
-        ]]
-
-        list(
-          min = floor(min(theo, ntheo, na.rm = TRUE)) - 1,
-          max = ceiling(max(theo, ntheo, na.rm = TRUE)) + 1
-        )
-      })
-    )
+    # range_specs <- list(
+    #   x = range_spec({
+    #     wait_for(nrow(dat_processed()) > 0)
+    #
+    #     list(
+    #       min = min(dat_processed()[["ID"]]),
+    #       max = max(dat_processed()[["ID"]])
+    #     )
+    #   }),
+    #   y = range_spec({
+    #     wait_for(nrow(dat_processed()) > 0)
+    #
+    #     theo <- dat_processed()[[
+    #       construct_var_name(
+    #         differential,
+    #         TRUE,
+    #         s_calculation[["fractional"]](),
+    #         "deut_uptake"
+    #       )
+    #     ]]
+    #     ntheo <- dat_processed()[[
+    #       construct_var_name(
+    #         differential,
+    #         FALSE,
+    #         s_calculation[["fractional"]](),
+    #         "deut_uptake"
+    #       )
+    #     ]]
+    #
+    #     list(
+    #       min = floor(min(theo, ntheo, na.rm = TRUE)) - 1,
+    #       max = ceiling(max(theo, ntheo, na.rm = TRUE)) + 1
+    #     )
+    #   })
+    # )
 
     label_specs <- list(
       title = label_spec(react_construct_uptake_title("butterfly", differential)),
@@ -169,7 +169,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     ### SERVER AND PLOT SETTINGS INVOCATION
 
     invoke_settings_servers(
-      names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
+      names = c("calculation", "state", "time", "test", "visualization", "label"), ## "range"
       modes = list(
         state = if (differential) "DOUBLE" else "SINGLE",
         test = if (differential) "SELECTIBLE" else "DISABLED",

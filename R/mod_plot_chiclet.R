@@ -14,14 +14,14 @@ mod_plot_chiclet_ui <- function(id, differential){
     title = construct_plot_label("Chiclet", differential),
 
     settings = install_settings_ui(
-      names = c("calculation", "state", "time", "test", "visualization", "range", "label"),
+      names = c("calculation", "state", "time", "test", "visualization", "label"), # range deleted
       modes = c(
         state = if (differential) "DOUBLE" else "SINGLE",
         test = if (differential) "SELECTIBLE" else "DISABLED",
         visualization = "CHICLET"
       ),
       params = list(
-        range_labs = construct_auto_range_labs("Chiclet", axes = "x", differential = differential),
+        # range_labs = construct_auto_range_labs("Chiclet", axes = "x", differential = differential),
         label_labs = construct_auto_label_labs("Chiclet", differential = differential)
       ),
       ns = ns
@@ -95,7 +95,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
            show_tstud_confidence = s_test[["show_tstud"]](),
            confidence_level = s_test[["confidence_level"]]()
          )
-      ) %>% update_axes_and_labels(range_x = s_range[["x"]], labels = s_label) %>%
+      ) %>% update_axes_and_labels(labels = s_label) %>% ## range_x = s_range[["x"]],
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
       (dat_processed() %>%
@@ -104,7 +104,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
            fractional = s_calculation[["fractional"]](),
            show_uncertainty = s_visualization[["show_uncertainty"]]()
          )
-      ) %>% update_axes_and_labels(s_range[["x"]], labels = s_label) %>%
+      ) %>% update_axes_and_labels(labels = s_label) %>% ## range_x = s_range[["x"]],
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
@@ -114,24 +114,24 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       dat_processed() %>%
         .show_fun(
           theoretical = s_calculation[["theoretical"]](),
-          fractional = s_calculation[["fractional"]]()
-        ) %>%
-        filter(ID >= s_range[["x"]]()[[1]] &
-               ID <= s_range[["x"]]()[[2]])
+          fractional = s_calculation[["fractional"]]())
+        # ) %>%
+        # filter(ID >= s_range[["x"]]()[[1]] &
+        #        ID <= s_range[["x"]]()[[2]])
     })
 
     ### VALUES FOR RANGE AND LABEL SERVERS
 
-    range_specs <- list(
-      x = range_spec({
-        wait_for(nrow(dat_processed()) > 0)
-
-        list(
-          min = min(dat_processed()[["ID"]]),
-          max = max(dat_processed()[["ID"]])
-        )
-      })
-    )
+    # range_specs <- list(
+    #   x = range_spec({
+    #     wait_for(nrow(dat_processed()) > 0)
+    #
+    #     list(
+    #       min = min(dat_processed()[["ID"]]),
+    #       max = max(dat_processed()[["ID"]])
+    #     )
+    #   })
+    # )
 
     label_specs <- list(
       title = label_spec(react_construct_uptake_title("Chiclet", differential)),
@@ -143,7 +143,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     invoke_settings_servers(
       names = c(
-        "calculation", "state", "time", "test", "visualization", "range", "label"
+        "calculation", "state", "time", "test", "visualization", "label" # "range"
       ),
       modes = c(
         state = if (differential) "DOUBLE" else "SINGLE",

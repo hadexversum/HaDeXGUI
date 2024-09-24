@@ -10,10 +10,10 @@
 #' @importFrom r3dmol r3dmolOutput renderR3dmol
 mod_display_plot_structure_ui <- function(id, plot_labels,
                                           structure = FALSE,
-                                additional_data_info = NULL,
-                                additional_plot_info = FALSE,
-                                additional_button_server = NULL,
-                                additional_button_below = NULL) {
+                                          additional_data_info = NULL,
+                                          additional_plot_info = FALSE,
+                                          additional_button_server = NULL,
+                                          additional_button_below = NULL) {
 
 
   ns <- NS(id)
@@ -30,7 +30,7 @@ mod_display_plot_structure_ui <- function(id, plot_labels,
           downloadButton(ns("plot_download_button"), "Save chart (.svg)"),
           additional_button_server,
           if(structure){
-            r3dmolOutput(ns("structure"))
+            r3dmolOutput(ns("structure"), height = "8in")
           }
         ),
         tabPanel(

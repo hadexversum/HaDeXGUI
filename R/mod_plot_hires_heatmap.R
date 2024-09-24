@@ -17,7 +17,7 @@ mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
       names = c("calculation", "state", "time"),
       modes = c(
         state = if (differential) "DOUBLE" else "SINGLE",
-        time = "LIMITS AND EXPOSURE"
+        time = "LIMITS AND EXPOSURE 2"
       ),
       ns = ns
     ),
@@ -25,7 +25,7 @@ mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
       ns("display_plot"),
       plot_label = "Heatmap",
       structure = TRUE,
-      additional_button_below = downloadButton(ns("export_hdxviewer"),
+      additional_button_server = downloadButton(ns("export_hdxviewer"),
                                              label = "Export to hdxViewer?")
     )
   )
@@ -112,15 +112,15 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
         suppressMessages()
     })
 
-    .show_fun <- if (differential) HaDeX::show_diff_uptake_data else HaDeX::show_uptake_data
 
     dat_out <- reactive({
-      dat_processed()
-      # %>% # TODO: prepare for this format
-      #   .show_fun(
-      #     theoretical = s_calculation[["theoretical"]](),
-      #     fractional = s_calculation[["fractional"]]()
-      #   )
+
+      HaDeX::show_aggregated_uptake_data(
+        dat_processed(),
+        differential = differential,
+        fractional = s_calculation[["fractional"]](),
+        theoretical = s_calculation[["theoretical"]]()
+      )
 
     })
 
@@ -139,7 +139,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
       ),
       modes = c(
         state = if(differential) "DOUBLE" else "SINGLE",
-        time = "LIMITS AND EXPOSURE"
+        time = "LIMITS AND EXPOSURE 2"
       )
     )
 
