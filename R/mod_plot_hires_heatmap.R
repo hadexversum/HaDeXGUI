@@ -74,6 +74,8 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
 
       validate(need(!is.null(structure_path()), "No PDB file supplied."))
 
+      # browser()
+
       HaDeX::plot_aggregated_uptake_structure(
         aggregated_dat = dat_processed(),
         differential = differential,

@@ -247,7 +247,12 @@ mod_settings_time_server <- function(id,
         if (mode == "LIMITS AND EXPOSURE") list(
           t = t_out,
           multiple = input_r("multiple_exposures")
-        ) else NULL
+        ) else if (mode == "LIMITS AND EXPOSURE 2") list(
+          t = input_r_numeric("t"),
+          `0` = time_0,
+          `100` = time_100
+        )
+          else NULL
       )
     )
   })

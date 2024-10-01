@@ -34,7 +34,7 @@ app_server <- function(input, output, session) {
       "manhattan",
       "uncertainty",
       ### HIRES
-      "structure_heatmap", # +diff
+      # "structure_heatmap", # +diff
       ### MEASUREMENTS
       "measurements",
       ### SEQUENCE DATA
