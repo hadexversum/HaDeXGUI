@@ -90,7 +90,10 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     })
 
     dat_out <- reactive({
-      dat_processed
+
+      ## TODO select and round
+      dat_processed()
+
     })
 
     ### SERVER AND PLOT SETTINGS INVOCATION
