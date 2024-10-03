@@ -83,7 +83,7 @@ mod_plot_manhattan_server <- function(id, dat, params){
     ### VALUES FOR RANGE AND LABEL SERVERS
 
     label_specs <- list(
-      title = label_spec(react_construct_uptake_title("deuterium uptake difference", differential = TRUE)),
+      title = label_spec(react_construct_uptake_title("P-value deuterium uptake difference ", differential = TRUE)),
       x = label_spec("Peptide position"),
       y = label_spec("-log(P value)")
     )
@@ -93,7 +93,7 @@ mod_plot_manhattan_server <- function(id, dat, params){
     # fix values for calculation
     s_calculation <- list(
       fractional = reactive({ FALSE }),
-      theoretical = reactive({ TRUE })
+      theoretical = reactive({ FALSE })
     )
 
     invoke_settings_servers(
