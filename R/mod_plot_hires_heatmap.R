@@ -72,7 +72,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
 
     protein_structure <- reactive({
 
-      validate(need(!is.null(structure_path()), "No PDB file supplied."))
+      validate(need(!is.null(structure_path()), "No PDB file supplied. This can be done in the `Input data` tab."))
 
       # browser()
 
