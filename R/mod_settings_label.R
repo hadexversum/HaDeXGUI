@@ -25,7 +25,7 @@ mod_settings_label_ui <- function(id, label_labs){
         numericInput_h(
           inputId = ns(glue::glue("{.y}_size")),
           label = "Size:",
-          value = 15,
+          value = 20,
           min = 5
         )
       )
