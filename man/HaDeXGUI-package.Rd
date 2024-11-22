@@ -8,3 +8,13 @@
 \description{
 Under heavy development.
 }
+\author{
+\strong{Maintainer}: Weronika Puchala \email{puchala.weronika@gmail.com} (\href{https://orcid.org/0000-0003-2163-1429}{ORCID})
+
+Authors:
+\itemize{
+  \item Michal Burdukiewicz \email{michalburdukiewicz@gmail.com} (\href{https://orcid.org/0000-0001-8926-582X}{ORCID})
+  \item Dominik Rafacz \email{d.rafacz@student.mini.pw.edu.pl} (\href{https://orcid.org/0000-0003-0925-1909}{ORCID})
+}
+
+}
