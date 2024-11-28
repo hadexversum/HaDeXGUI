@@ -25,8 +25,8 @@ mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
       ns("display_plot"),
       plot_label = "Heatmap",
       structure = TRUE,
-      additional_button_server = downloadButton(ns("export_hdxviewer"),
-                                             label = "Export to hdxViewer?")
+      additional_button_server = mod_export_hdxviewer_ui(ns("export_hdxviewer"))
+        # downloadButton(ns("export_hdxviewer"), label = "Export to hdxViewer?")
     )
   )
 }
@@ -147,16 +147,20 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
 
     ### HDX VIEWER EXPORT
 
-    output[["export_hdxviewer"]] <- downloadHandler(
-      paste0(id, ".csv"),
-      content = function(file) {
-        HaDeX::prepare_hdxviewer_export(dat_processed(),
-                                        differential = differential,
-                                        theoretical = s_calculation[["theoretical"]](),
-                                        fractional = s_calculation[["fractional"]]()) %>%
-          write.csv(., file, row.names = FALSE, quote=FALSE)
+    hdxviewer_dat <- reactive({
 
-      }
+      HaDeX::prepare_hdxviewer_export(dat_processed(),
+                                      differential = differential,
+                                      theoretical = s_calculation[["theoretical"]](),
+                                      fractional = s_calculation[["fractional"]]())
+      })
+
+
+    mod_export_hdxviewer_server(
+       id = "export_hdxviewer",
+       differential = differential,
+       hdxviewer_dat = hdxviewer_dat, params, content = "hdxviewer"
+       # dplyr::if_else(differential, paste0(s_state[["state_1"]](), "_", s_state[["state_2"]]()), s_state[["state"]]())
     )
 
     ### RETURN OF THE PLOT AND DATA

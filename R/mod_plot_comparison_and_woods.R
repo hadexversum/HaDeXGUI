@@ -50,8 +50,9 @@ mod_plot_comparison_and_woods_ui <- function(id){
       additional_data_info = c(
         comparison = cosntruct_uptake_plots_data_info(differential = FALSE),
         woods = cosntruct_uptake_plots_data_info(differential = TRUE)
-      ),
-      additional_button_below = mod_export_hdxviewer_ui(ns("export_hdxviewer"))
+      )
+      # ,
+      # additional_button_below = mod_export_hdxviewer_ui(ns("export_hdxviewer"))
     )
 
 
@@ -276,12 +277,12 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
       )
     )
 
-    ### HDXVIEWER EXPORT
-
-    mod_export_hdxviewer_server(
-      id = "export_hdxviewer",
-      dat, params, s_test, s_time, s_calculation, s_woods_state, dat_processed_woods
-      )
+    # ### HDXVIEWER EXPORT
+    #
+    # mod_export_hdxviewer_server(
+    #   id = "export_hdxviewer",
+    #   dat, params, s_test, s_time, s_calculation, s_woods_state, dat_processed_woods
+    #   )
 
     ### RETURN OF THE PLOT AND DATA
     return(
