@@ -39,7 +39,9 @@ mod_export_hdxviewer_server <- function(id, hdxviewer_dat, params, content, diff
                          label = "Open HDXviewer",
                          icon = icon("th"),
                          onclick ="window.open('http://proteotoul.ipbs.fr:8080/')")
-          )
+          ),
+          p("How to use HDXViewer?"),
+          p("Open the HDXViewer by clicking the button above. Then, select `HDX data type`: HDExaminer/csv. Click on the button `Upload PDB File` and select appropriate file. Select chain. Then, click the button `Upload CSV Files` and select the newly created file (obtained by clicking the `Create file` button above). Adjust the Viwer options and enjoy the results! ")
         )
       )
     }) %>% bindEvent(input[["show_hdxviewer_panel"]])
