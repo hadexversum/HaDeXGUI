@@ -103,6 +103,7 @@ invoke_plot_servers <- function(server_names, dat_source, env = rlang::caller_en
   ret <- list()
   hadex_gui_env <- rlang::ns_env("HaDeXGUI")
   purrr::walk(server_names, function(name) {
+
     # transform name into server function
     server_fun <- hadex_gui_env[[glue::glue("mod_plot_{name}_server")]]
     # get names of arguments to the function
@@ -121,10 +122,10 @@ invoke_plot_servers <- function(server_names, dat_source, env = rlang::caller_en
       args[["differential"]] <- TRUE
       name <- glue::glue("{name}_diff")
       args[["id"]] <- name
-      ret[[name]] <- rlang::exec(server_fun, !!!args)
+      ret[[name]] <<- rlang::exec(server_fun, !!!args)
 
     } else {
-      ret[[name]] <- rlang::exec(server_fun, !!!args)
+      ret[[name]] <<- rlang::exec(server_fun, !!!args)
     }
   })
   ret
