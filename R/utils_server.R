@@ -117,7 +117,7 @@ invoke_plot_servers <- function(server_names, dat_source, env = rlang::caller_en
 
     if ("differential" %in% arg_names) {
       args[["differential"]] <- FALSE
-      ret[[name]] <- rlang::exec(server_fun, !!!args)
+      ret[[name]] <<- rlang::exec(server_fun, !!!args)
 
       args[["differential"]] <- TRUE
       name <- glue::glue("{name}_diff")

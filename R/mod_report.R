@@ -76,6 +76,9 @@ mod_report_server <- function(id,
     ns <- session$ns
 
     selected_export_components <- reactive({
+
+      # browser()
+
       purrr::imap_dfr(
         exportable_components,
         ~ data.frame(
@@ -93,10 +96,11 @@ mod_report_server <- function(id,
                has_subcomponents = (lengths(component_module_name) > 1)) %>%
         rowwise() %>%
         mutate(
-          component_group = list(dat_export[[component_module_name[[1]]]][[type]]),
+          component_group = list(dat_export[[component_module_name[[1]]]][[type]]) ,
           component = if (has_subcomponents)
             list(component_group[[component_module_name[[2]]]]())
-          else list(component_group())) %>%
+          else list(component_group())
+          ) %>%
         pull(component, name = nice_name)
     })
 
@@ -157,7 +161,7 @@ mod_report_server <- function(id,
     ))
     iv$add_rule("include_measurements-mass_uptake_dat", compose_rules(
       ~ if (. && !(dat_export[["measurements"]][["report_validation_peptide_selected"]]())) "You need to select a peptide in Measurements tab!",
-    ))
+    )) # rule for upladed structure for hires
     iv$enable()
   })
 }
@@ -180,5 +184,9 @@ exportable_components <- c(
   `measurements-mass_uptake` = "Measurements - Mass Uptake",
   `replicates-per_peptide_for_time` = "Replicates (for each peptide for selected timepoint)",
   `replicates-per_peptide_all_times` = "Replicates (for each pepetide split by timepoints)",
-  `replicates-per_time` = "Replicates (for all peptides split by timepoints)"
+  `replicates-per_time` = "Replicates (for all peptides split by timepoints)",
+  # hires str
+  # hires diff str
+  `hires_heatmap` = "High-resolution Uptake",
+  `diff_hires_heatmap` = "High-resolution Differential Uptake"
 )
