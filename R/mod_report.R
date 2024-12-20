@@ -79,6 +79,13 @@ mod_report_server <- function(id,
 
       # browser()
 
+      ## checking the path in docker
+
+      print("$$$$$$$$$$")
+      print(getwd())
+      print(app_sys("app/report_template.Rmd"))
+      print("$$$$$$$$$$")
+
       purrr::imap_dfr(
         exportable_components,
         ~ data.frame(
@@ -128,8 +135,8 @@ mod_report_server <- function(id,
       filename = "HaDeX_Report.html",
       content = function(file) {
         rmarkdown::render(
-          # input = app_sys("app/report_template.Rmd"),
-          input = app_sys("/usr/local/lib/R/site-library/HaDeXGUI/app/report_template.Rmd"),
+          input = app_sys("app/report_template.Rmd"),
+          # input = app_sys("/usr/local/lib/R/site-library/HaDeXGUI/app/report_template.Rmd"),
           output_file = file,
           quiet = FALSE,
           params = list(
