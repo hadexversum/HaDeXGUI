@@ -131,6 +131,28 @@ invoke_plot_servers <- function(server_names, dat_source, env = rlang::caller_en
   ret
 }
 
+
+invoke_plot_servers_str <- function(server_name, dat_source, env = rlang::caller_env()) {
+  ret <- list()
+  hadex_gui_env <- rlang::ns_env("HaDeXGUI")
+
+  ret[[server_name]] <- mod_plot_hires_heatmap_server(id = server_name,
+                                dat = dat_source[["dat"]],
+                                params = dat_source[["params"]],
+                                structure_path = dat_source[["str_path"]],
+                                differential = FALSE)
+
+  ret[[glue::glue("diff_{server_name}")]] <- mod_plot_hires_heatmap_server(id = glue::glue("diff_{server_name}"),
+                                dat = dat_source[["dat"]],
+                                params = dat_source[["params"]],
+                                structure_path = dat_source[["str_path"]],
+                                differential = TRUE)
+
+  ret
+
+}
+
+
 #' Function to return plot and data from plot server modules
 #'
 #' @param ... multiple strings containing specific names of plot

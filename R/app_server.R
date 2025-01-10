@@ -47,18 +47,8 @@ app_server <- function(input, output, session) {
 
   ## HEATMAP & STRUCTURE
 
-  mod_plot_hires_heatmap_server(id = "hires_heatmap",
-                                dat = dat_source[["dat"]],
-                                params = dat_source[["params"]],
-                                structure_path = dat_source[["str_path"]])
-
-  mod_plot_hires_heatmap_server(id = "diff_hires_heatmap",
-                                dat = dat_source[["dat"]],
-                                params = dat_source[["params"]],
-                                structure_path = dat_source[["str_path"]],
-                                differential = TRUE)
-
-
+  dat_export_hires <- invoke_plot_servers_str(server_name = "hires_heatmap",
+                                              dat_source = dat_source )
 
   ### SUMMARY
 
@@ -72,7 +62,7 @@ app_server <- function(input, output, session) {
 
   mod_report_server(
     id = "report",
-    dat_export = dat_export,
+    dat_export = c(dat_export, dat_export_hires),
     dat_summary = dat_summary,
     input_info = dat_source[["input_info"]],
     params = dat_source[["params"]]
