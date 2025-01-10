@@ -77,15 +77,6 @@ mod_report_server <- function(id,
 
     selected_export_components <- reactive({
 
-      # browser()
-
-      ## checking the path in docker
-
-      print("$$$$$$$$$$")
-      print(getwd())
-      print(app_sys("app/report_template.Rmd"))
-      print("$$$$$$$$$$")
-
       purrr::imap_dfr(
         exportable_components,
         ~ data.frame(
