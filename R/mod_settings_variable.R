@@ -15,9 +15,9 @@ mod_settings_variable_ui <- function(id){
       inputId = ns("variable"),
       label = "Select variable to map for color:",
       choices = c(
-        "AUC", "Back-exchange",
-        "Deuterium uptake", "Uncertainty(Deuterium uptake)",
-        "Differential deuterium uptake", "Uncertainty(Differential deuterium uptake)"
+        "AUC", "Back-exchange" #,
+        # "Deuterium uptake", "Uncertainty(Deuterium uptake)",
+        # "Differential deuterium uptake", "Uncertainty(Differential deuterium uptake)"
       ),
       selected = "AUC"
     ),
