@@ -33,8 +33,9 @@ idize <- function(x) gsub(" ", "_", tolower(x))
 react_construct_uptake_lab_y <- function(differential, env = parent.frame()) rlang::inject(
   reactive({
     frac_str <- if (s_calculation[["fractional"]]()) "Fractional " else ""
-    diff_str <- if (!!differential) "difference [%]" else if (s_calculation[["fractional"]]()) "[%]" else "[Da]"
-    capitalize(glue::glue("{frac_str}deuterium uptake {diff_str}"))
+    diff_str <- if (!!differential) "difference "
+    unit_str <- if (s_calculation[["fractional"]]()) "[%]" else "[Da]"
+    capitalize(glue::glue("{frac_str}deuterium uptake {diff_str} {unit_str}"))
   }, env = env)
 )
 
