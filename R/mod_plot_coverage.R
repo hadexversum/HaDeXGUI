@@ -57,7 +57,7 @@ mod_plot_coverage_server <- function(id, dat, params){
       HaDeX::plot_coverage(
         dat = dat(),
         protein = params  %()% chosen_protein,
-        state   = s_state %()% state,
+        state   = s_state %()% state
       ) +
         coord_cartesian(xlim = c(
           s_subregion %()% start,
