@@ -77,8 +77,11 @@ mod_data_setup_server <- function(id, dat_adjusted){
       max(ends)
     })
 
-    # using dat() instead of dat_adjusted() so the chosen control is additional tim epoint
-    times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
+    # using dat() instead of dat_adjusted() so the chosen control is additional time epoint
+    # times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
+    # manually adding control data point to avoid additional waiting
+    times_from_file <- reactive({ c(sort(round(unique(dat_adjusted()[["Exposure"]]), digits = 3)), 99999) })
+
 
     # TODO: -\\-, i'm using times_from_file() bc of that
     times_with_control <- reactive({
