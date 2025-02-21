@@ -21,14 +21,14 @@ body {
   font-family: 'Fira Code';
   font-style: normal;
   font-weight: 400;
-  src: url('fonts/FiraCode-Regular.ttf') format('truetype');
+  src: url('./fonts/FiraCode-Regular.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Lato';
   font-style: normal;
   font-weight: 400;
-  src: url('fonts/Lato-Regular.ttf') format('truetype');
+  src: url('./fonts/Lato-Regular.ttf') format('truetype');
 }
 
 :root {
