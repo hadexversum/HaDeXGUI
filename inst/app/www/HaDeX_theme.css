@@ -425,3 +425,7 @@ h4, .h4 {
   font-size: 16px;
   height: 36px;
 }
+
+svg text {
+   font-family: "Lato" !important;
+}
