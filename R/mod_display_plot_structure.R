@@ -7,11 +7,13 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_display_plot_ui <- function(id, plot_labels,
-                                additional_data_info = NULL,
-                                additional_plot_info = FALSE,
-                                additional_button_server = NULL,
-                                additional_button_below = NULL) {
+#' @importFrom r3dmol r3dmolOutput renderR3dmol
+mod_display_plot_structure_ui <- function(id, plot_labels,
+                                          structure = FALSE,
+                                          additional_data_info = NULL,
+                                          additional_plot_info = FALSE,
+                                          additional_button_server = NULL,
+                                          additional_button_below = NULL) {
 
 
   ns <- NS(id)
@@ -26,7 +28,10 @@ mod_display_plot_ui <- function(id, plot_labels,
           girafeOutput_h(ns("plot")),
           verbatimTextOutput(ns("plot_info")) %.?% additional_plot_info,
           downloadButton(ns("plot_download_button"), "Save chart (.svg)"),
-          additional_button_server
+          additional_button_server,
+          if(structure){
+            r3dmolOutput(ns("structure"), height = "8in")
+          }
         ),
         tabPanel(
           "Data",
@@ -39,7 +44,7 @@ mod_display_plot_ui <- function(id, plot_labels,
           girafeOutput_h(ns(paste0("plot_", .y))),
           downloadButton(ns(paste0("plot_download_button_", .y)), "Save chart (.svg)")
 
-          ),
+        ),
         tabPanel(
           title = "Data",
           dataTableOutput_h(ns(paste0("data_", .y))),
@@ -48,9 +53,10 @@ mod_display_plot_ui <- function(id, plot_labels,
 
       )
 
+
       )
-    ),
-    additional_button_below)
+      ),
+      additional_button_below)
   )
 }
 
@@ -59,7 +65,7 @@ mod_display_plot_ui <- function(id, plot_labels,
 #' @importFrom ggiraph renderGirafe
 #' @importFrom DT renderDataTable
 #' @noRd
-mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
+mod_display_plot_structure_server <- function(id, plot_out, dat_out, structure_out, info_out = NULL) {
 
   moduleServer(id, function(input, output, session) {
 
@@ -94,6 +100,12 @@ mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
         })
       }
     }
+
+    output[["structure"]] <- renderR3dmol({
+
+      structure_out()
+
+    })
 
   })
 }

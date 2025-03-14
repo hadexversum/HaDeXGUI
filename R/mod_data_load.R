@@ -58,7 +58,10 @@ mod_data_load_ui <- function(id){
         id = "HaDeX-standard-settings-panel",
         mod_data_setup_ui(ns("setup"))
       ),
-
+      wellPanel(
+        id = "structure-uptake-panel",
+        mod_data_structure_load_ui(ns("upload_str"))
+      ),
       wellPanel(
         id = "HaDeX-examiner-settings-panel",
         mod_data_hdexaminer_ui(ns("hdexaminer")),
@@ -85,7 +88,7 @@ mod_data_load_server <- function(id) {
       data_file <- input[["data_file"]]
 
       if (is.null(data_file)) {
-        example_data
+        example_data_alpha
       } else {
         validate(need(try({
           file <- HaDeX::read_hdx(data_file[["datapath"]])
@@ -110,7 +113,7 @@ mod_data_load_server <- function(id) {
     output[["data_file_info"]] <- renderText({
       paste0(
         if (is.null(input[["data_file"]]))
-          "Example file: KD_180110_CD160_HVEM.csv."
+          "Example file: eEF1B_alpha.csv."
         else "Supplied file is valid.",
         "\nDetected data source: ", data_source(),
         if (data_source() == "HDeXaminer")
@@ -129,9 +132,12 @@ mod_data_load_server <- function(id) {
 
     dat <- mod_data_setup_server("setup", dat_adjusted = dat_adjusted)
 
+    str_path <- mod_data_structure_load_server("upload_str")
+
     return(
       c(
         dat,
+        str_path = str_path,
         list(input_info = reactive({
           data_file <- input[["data_file"]]
 

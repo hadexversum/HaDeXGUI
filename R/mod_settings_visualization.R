@@ -7,6 +7,7 @@ vis_mode_map <- list(
   MANHATTAN = c("show_length", "split_timepoints", "skip_amino"),
   UNCERTAINTY = c("show_aggregated", "split_timepoints", "skip_amino"),
   MEASUREMENTS = c("log_x", "show_replicates"),
+  HEATMAP = c("show_panels"), #TODO more
   `SEQUENCE DATA` = c("show_residues")
 )
 
@@ -23,64 +24,69 @@ mod_settings_visualization_ui <- function(id, mode){
   ns <- NS(id)
 
   vis_settings <- list(
-    log_x = checkboxInput_h(
+    show_panels <- checkboxInput(
+      inputId = ns("show_panels"),
+      label = "Show devided into panels?",
+      value = TRUE
+    ),
+    log_x = checkboxInput(
       inputId = ns("log_x"),
       label = "Logarithmic x scale for uptake plot?",
       value = TRUE
     ),
-    show_uncertainty = checkboxInput_h(
+    show_uncertainty = checkboxInput(
       inputId = ns("show_uncertainty"),
       label = "Show uncertainty?",
       value = TRUE
     ),
-    uncertainty_type = selectizeInput_h(
+    uncertainty_type = selectizeInput(
       inputId = ns("uncertainty_type"),
       label = "Show uncertainty as:",
       choices = c("ribbon", "bars", "bars + line"),
       selected = "ribbon"
     ),
-    shown_interval = selectizeInput_h(
+    shown_interval = selectizeInput(
       inputId = ns("shown_interval"),
       label = "Show confidence limit for: ",
       choices = c("All time points", "Selected time points"),
       selected = "All time points"
     ),
-    distinguish_timepoints = checkboxInput_h(
+    distinguish_timepoints = checkboxInput(
       inputId = ns("distinguish_timepoints"),
       label = "Distinguish timepoints by color?",
       value = TRUE
     ),
-    hide_insignificant = checkboxInput_h(
+    hide_insignificant = checkboxInput(
       inputId = ns("hide_insignificant"),
       label = "Hide insignificant values?",
       value = FALSE
     ),
-    skip_amino = checkboxInput_h(
+    skip_amino = checkboxInput(
       inputId = ns("skip_amino"),
       label = "Hide first amino?",
       value = TRUE
     ),
-    show_insignificant_grey = checkboxInput_h(
+    show_insignificant_grey = checkboxInput(
       inputId = ns("show_insignificant_grey"),
       label = "Show insignificant values in grey?",
       value = FALSE
     ),
-    show_length = checkboxInput_h(
+    show_length = checkboxInput(
       inputId = ns("show_length"),
       label = "Show peptide length and position in the sequence?",
       value = TRUE
     ),
-    show_aggregated = checkboxInput_h(
+    show_aggregated = checkboxInput(
       inputId = ns("show_aggregated"),
       label = "Show aggregated data?",
       value = TRUE
     ),
-    split_timepoints = checkboxInput_h(
+    split_timepoints = checkboxInput(
       inputId = ns("split_timepoints"),
       label = "Show time points separately?",
       value = FALSE
     ),
-    show_replicates = checkboxInput_h(
+    show_replicates = checkboxInput(
       inputId = ns("show_replicates"),
       label = "Show replicate values?",
       value = FALSE

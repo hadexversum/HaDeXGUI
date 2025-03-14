@@ -14,10 +14,10 @@ mod_plot_coverage_heatmap_ui <- function(id){
     title = "Coverage Heatmap Plot",
 
     settings = install_settings_ui(
-      names = c("variable", "calculation", "state" , "time"),
+      names = c("variable", "state", "time"),
       modes = list(
-        time = "SINGLE POINT",
-        state = "SINGLE" ## add option
+        time = "ONLY LIMITS",
+        state = "SINGLE"
       ),
       ns = ns
     ),
@@ -40,30 +40,30 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     dat_processed <- reactive({
       # variable <- cov_variable()
 
-      browser()
+      # browser()
 
-      if (grepl("diff", cov_variable())){
-        HaDeX::calculate_diff_uptake(
-          dat = dat(),
-          time_t = s_time %()% t
-        )
-      } else if (cov_variable() == "auc") {
+       if (cov_variable() == "auc") {
         dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
         HaDeX::calculate_auc(
-          HaDeX::create_uptake_dataset(dat_tmp),
+          uptake_dat = HaDeX::create_uptake_dataset(
+            dat = dat_tmp,
+            protein = params  %()% chosen_protein,
+            states = s_state[["state"]](),
+            time_0 = s_time  %()% 0,
+            time_100 = s_time  %()% 100,
+            deut_part = params  %()% deut_part
+            ),
+          protein = params  %()% chosen_protein,
+          state = s_state[["state"]](),
           preserve_values = FALSE
         )
       } else if (cov_variable() == "back_exchange") {
         dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
         HaDeX::calculate_back_exchange(
-          dat_tmp,
-          states = s_state[["state"]]()
-        )
-      } else {
-        HaDeX::calculate_state_uptake(
-          dat = dat(),
-          state = s_state[["state"]](),
-          time_t = s_time %()% t
+          dat = dat_tmp,
+          protein = params  %()% chosen_protein,
+          states = s_state[["state"]](),
+          time_100 = s_time  %()% 100
         )
       }
     })
@@ -72,17 +72,17 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
 
     cov_variable <- reactive({
 
-      get_coverage_heatmap_variable(
+        get_coverage_heatmap_variable(
         type = s_variable %()% variable,
         theoretical = s_calculation[["theoretical"]](),
-        fractional = s_calculation[["fractional"]]()
-      )
+        fractional = s_calculation[["fractional"]]())
 
     })
 
     ### OUT REACTIVES
 
     plot_out <- reactive({
+
       HaDeX::plot_coverage_heatmap(
         x_dat = dat_processed(),
         value = cov_variable()
@@ -91,20 +91,23 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     })
 
     dat_out <- reactive({
-      dat_processed
+
+      HaDeX::show_coverage_heatmap_data(x_dat = dat_processed(),
+                                 value = cov_variable())
+
     })
 
     ### SERVER AND PLOT SETTINGS INVOCATION
 
-    s_calculation <- list({
-      theoretical = reactive({ FALSE })
-      fractional = reactive({ FALSE })
-    })
+    s_calculation <- list(
+      theoretical = reactive({ FALSE }),
+      fractional = reactive({ TRUE })
+    )
 
     invoke_settings_servers(
-      names = c("variable", "time", "calculation", "state"),
+      names = c("variable", "state", "time"),
       modes = c(
-        time = "SINGLE POINT",
+        time = "ONLY LIMITS",
         state = "SINGLE"
       )
     )
@@ -112,10 +115,10 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     mod_display_plot_server("display_plot", plot_out, dat_out)
 
     ### RETURN OF THE PLOT AND DATA
-
-    return(
-      autoreturn()
-    )
+#
+#     return(
+#       autoreturn()
+#     )
   })
 }
 

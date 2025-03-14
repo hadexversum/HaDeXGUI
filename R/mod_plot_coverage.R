@@ -57,7 +57,7 @@ mod_plot_coverage_server <- function(id, dat, params){
       HaDeX::plot_coverage(
         dat = dat(),
         protein = params  %()% chosen_protein,
-        state   = s_state %()% state,
+        state   = s_state %()% state
       ) +
         coord_cartesian(xlim = c(
           s_subregion %()% start,
@@ -85,11 +85,12 @@ mod_plot_coverage_server <- function(id, dat, params){
     })
 
     dat_out_position_frequency <- reactive({
+
       dat_processed_position_frequency() %>%
         rename(
-          pos      = "Position",
-          amino    = "Amino acid",
-          coverage = "Coverage"
+          Position        = "pos",
+          `Amino acid`    = "amino",
+          Coverage        = "coverage"
         )
     })
 

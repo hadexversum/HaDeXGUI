@@ -129,7 +129,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       )
     }) else reactive({
       HaDeX::show_uptake_data(
-        uc_dat = dat_processed(),
+        uptake_dat = dat_processed(),
         theoretical = s_calculation[["theoretical"]](),
         fractional = s_calculation[["fractional"]]()
       )

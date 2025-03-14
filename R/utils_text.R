@@ -33,8 +33,9 @@ idize <- function(x) gsub(" ", "_", tolower(x))
 react_construct_uptake_lab_y <- function(differential, env = parent.frame()) rlang::inject(
   reactive({
     frac_str <- if (s_calculation[["fractional"]]()) "Fractional " else ""
-    diff_str <- if (!!differential) "difference [%]" else if (s_calculation[["fractional"]]()) "[%]" else "[Da]"
-    capitalize(glue::glue("{frac_str}deuterium uptake {diff_str}"))
+    diff_str <- if (!!differential) "difference "
+    unit_str <- if (s_calculation[["fractional"]]()) "[%]" else "[Da]"
+    capitalize(glue::glue("{frac_str}deuterium uptake {diff_str} {unit_str}"))
   }, env = env)
 )
 
@@ -55,9 +56,11 @@ react_construct_uptake_title <- function(plot_name, differential = FALSE, includ
       state_str <- if (!!include_state) glue::glue("for state {s_state[['state']]()} ") else ""
       glue::glue("{state_str}for {params[['chosen_protein']]()}")
     }
+
+    peptide_str <- if(plot_name == "uptake curve") paste0(" of ", peptide_table()[s_peptide[["selected"]](), "Sequence"], " ")  else ""
     exposure_str <- if (!!include_exposure && !s_time[["multiple"]]()) glue::glue("in {s_time[['t']]()} min ") else ""
 
-    capitalize(glue::glue("{theo_str}{plot_name} plot {exposure_str}{states_str}"))
+    capitalize(glue::glue("{theo_str}{plot_name} plot {peptide_str}{exposure_str}{states_str}"))
 
   }, env = env)
 )

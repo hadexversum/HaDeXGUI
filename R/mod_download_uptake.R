@@ -142,7 +142,11 @@ mod_download_uptake_server <- function(id, dat, params, peptide_table, s_time, s
             ggsave(
               filename = file_name,
               plot = plt,
-              device = "png"
+              device = "png",
+              bg = 'white',
+              height = 300,
+              width = 400,
+              units = "mm"
             )
             incProgress(1)
             file_name

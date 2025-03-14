@@ -76,13 +76,20 @@ mod_data_setup_server <- function(id, dat_adjusted){
 
       max(ends)
     })
-    # TODO: should here dat_adjusted be used?
-    times_from_file <- reactive({ sort(round(unique(dat_adjusted()[["Exposure"]]), digits = 3)) })
+
+    # using dat() instead of dat_adjusted() so the chosen control is additional time epoint
+    # times_from_file <- reactive({ sort(round(unique(dat()[["Exposure"]]), digits = 3)) })
+    # manually adding control data point to avoid additional waiting
+    times_from_file <- reactive({ c(sort(round(unique(dat_adjusted()[["Exposure"]]), digits = 3)), 99999) })
+
 
     # TODO: -\\-, i'm using times_from_file() bc of that
-    times_with_control <- reactive({ setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
-    times_t <- reactive({ times_from_file()[times_from_file() > input[["no_deut_control"]] & times_from_file() < MAX_TIME] })
-    max_range <- reactive({ max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
+    times_with_control <- reactive({
+      setNames(times_from_file(), c(head(times_from_file(), -1), "chosen control")) })
+    times_t <- reactive({
+      times_from_file()[times_from_file() > input[["no_deut_control"]] ] }) # & times_from_file() < MAX_TIME] })
+    max_range <- reactive({
+      max(max_range_from_file(), as.numeric(input[["sequence_length"]]), na.rm = TRUE) })
 
     states_chosen_protein <- reactive({
       req(input[["chosen_protein"]])

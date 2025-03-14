@@ -8,15 +8,16 @@ app_server <- function(input, output, session) {
 
   # USING LOGO AS LINK TO START PAGE
   # TODO: do it with js instead
-  observe({
+  bindEvent(observe({
     updateTabsetPanel(
       session = session,
       inputId = "navbar",
       selected = "start"
     )
-  }) %>% bindEvent({ input[["logo_link"]] })
+  }), { input[["logo_link"]] })
 
   dat_source <- mod_data_load_server("data_load")
+  # str_path <- mod_data_structure_load_server("str_load")
 
   ### AUTOMATIC INVOCATION OF PLOTTING SERVERS
 
@@ -32,6 +33,8 @@ app_server <- function(input, output, session) {
       "replicates",
       "manhattan",
       "uncertainty",
+      ### HIRES
+      # "structure_heatmap", # +diff
       ### MEASUREMENTS
       "measurements",
       ### SEQUENCE DATA
@@ -41,6 +44,11 @@ app_server <- function(input, output, session) {
     ),
     dat_source = dat_source
   )
+
+  ## HEATMAP & STRUCTURE
+
+  dat_export_hires <- invoke_plot_servers_str(server_name = "hires_heatmap",
+                                              dat_source = dat_source )
 
   ### SUMMARY
 
@@ -54,7 +62,7 @@ app_server <- function(input, output, session) {
 
   mod_report_server(
     id = "report",
-    dat_export = dat_export,
+    dat_export = c(dat_export, dat_export_hires),
     dat_summary = dat_summary,
     input_info = dat_source[["input_info"]],
     params = dat_source[["params"]]

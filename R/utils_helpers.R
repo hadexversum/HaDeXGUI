@@ -105,20 +105,79 @@ hadex_decorate <- function(fun, with_helper = TRUE, is_output = TRUE, with_spinn
 
 # manually decorating to specify default parameter values
 
-selectizeInput_h <- function(inputId, label, choices = "", ...,
-                             options = list(dropdownParent = "body"))
-  hadex_decorate(shiny::selectizeInput, is_output = FALSE)(inputId, label = label, choices = choices, options = options, ...)
+# selectizeInput_h <- function(inputId, label, choices = "", ...,
+#                              options = list(dropdownParent = "body"))
+#   hadex_decorate(shiny::selectizeInput, is_output = FALSE)(inputId, label = label, choices = choices, options = options, ...)
 
 textInput_h <- hadex_decorate(shiny::textInput, is_output = FALSE)
-checkboxInput_h <- hadex_decorate(shiny::checkboxInput, is_output = FALSE)
 
-numericInput_h <- function(inputId, label, value = 0, ...)
-  hadex_decorate(shiny::numericInput, is_output = FALSE)(inputId, label, value, ...)
+# checkboxInput_h <- hadex_decorate(shiny::checkboxInput, is_output = FALSE)
 
-checkboxGroupInput_h <- function(inputId, label, choices = "", ...)
-  hadex_decorate(shiny::checkboxGroupInput, is_output = FALSE)(inputId, label, choices, ...)
+# numericInput_h <- function(inputId, label, value = 0, ...)
+#   hadex_decorate(shiny::numericInput, is_output = FALSE)(inputId, label, value, ...)
 
-plotOutput_h <- hadex_decorate(shiny::plotOutput)
+# checkboxGroupInput_h <- function(inputId, label, choices = "", ...)
+#   hadex_decorate(shiny::checkboxGroupInput, is_output = FALSE)(inputId, label, choices, ...)
+
+# plotOutput_h <- hadex_decorate(shiny::plotOutput) ## not used
 uiOutput_h <- hadex_decorate(shiny::uiOutput)
 dataTableOutput_h <- hadex_decorate(DT::dataTableOutput)
-girafeOutput_h <- hadex_decorate(ggiraph::girafeOutput)
+# girafeOutput_h <- hadex_decorate(ggiraph::girafeOutput)
+
+#####################################################################
+### rewriting explicite helper functions as something doesnt work ###
+#####################################################################
+
+checkboxGroupInput_h <- function(inputId, label, choices = "", ...){
+
+  shinyhelper::helper(
+    shiny::checkboxGroupInput(inputId = inputId, label = label, choices = choices, ...)    ,
+    type = "markdown",
+    content = match_helper_content(inputId)
+  )
+}
+
+
+selectizeInput_h <- function(inputId, label, choices = "", ...,
+                             options = list(dropdownParent = "body")) {
+
+  shinyhelper::helper(
+    shiny::selectizeInput(inputId, label = label, choices = choices, options = options, ...),
+    type = "markdown",
+    content = match_helper_content(inputId)
+  )
+}
+
+numericInput_h <- function(inputId, label, value = 0, ...){
+
+  shinyhelper::helper(
+    shiny::numericInput(inputId = inputId, label = label, value = value, ... ),
+    type = "markdown",
+    content = match_helper_content(inputId)
+  )
+
+}
+
+girafeOutput_h <- function(outputId, ...){
+
+  shinyhelper::helper(
+    hadex_with_spinner(ggiraph::girafeOutput(outputId = outputId, ...)),
+    type = "markdown",
+    content = match_helper_content(outputId)
+  )
+
+}
+
+checkboxInput_h <- function(inputId, label, value, ...){
+
+  shinyhelper::helper(
+    checkboxInput(inputId = inputId,
+                  label = label,
+                  value = value, ...),
+    type = "markdown",
+    content = match_helper_content(inputId)
+  )
+
+}
+
+

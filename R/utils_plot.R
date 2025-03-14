@@ -3,7 +3,8 @@
 #' @noRd
 hadex_ggtheme <- function() {
   thm <- ggplot2::theme_bw()
-  thm_sub <- ggplot2::theme(plot.background = ggplot2::element_rect(fill = NA, color = NA))
+  thm_sub <- ggplot2::theme(plot.background = ggplot2::element_rect(fill = NA, color = NA),
+                            text = ggplot2::element_text(size=20))
   thm[names(thm_sub)] <- thm_sub
   thm
 }

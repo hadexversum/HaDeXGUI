@@ -9,6 +9,7 @@
 #' @importFrom shiny NS tagList
 mod_settings_time_ui <- function(id, mode = "LIMITS AND POINTS"){
   stopifnot(mode %in% c("LIMITS AND POINTS", "ONLY LIMITS", "LIMITS AND EXPOSURE",
+                        "LIMITS AND EXPOSURE 2",
                         "SINGLE POINT", "LIMITS AND SINGLE EXPOSURE"))
   ns <- NS(id)
 
@@ -71,7 +72,7 @@ mod_settings_time_ui <- function(id, mode = "LIMITS AND POINTS"){
           width = 6,
           toggleable(deut_0, id = ns("0")),
           toggleable(deut_100, id = ns("100")),
-          checkboxInput_h(
+          checkboxInput(
             inputId = ns("multiple_exposures"),
             label = "Use multiple Exposures?",
             value = FALSE
@@ -81,6 +82,20 @@ mod_settings_time_ui <- function(id, mode = "LIMITS AND POINTS"){
           width = 6,
           toggleable(exposure, id = ns("t")),
           toggleable(timepoints, id = ns("points"))
+        )
+      )
+    ),
+    `LIMITS AND EXPOSURE 2` = card_timepoints(
+      fluidRow(
+        column(
+          width = 6,
+          toggleable(deut_0, id = ns("0")),
+          toggleable(deut_100, id = ns("100")),
+        ),
+        column(
+          width = 6,
+          toggleable(exposure, id = ns("t")),
+          p("Selected exposure above will be presented on the structure, if supplied."),
         )
       )
     ),
@@ -101,6 +116,7 @@ mod_settings_time_server <- function(id,
                                      p_no_deut_control,
                                      s_calculation) {
   stopifnot(mode %in% c("LIMITS AND POINTS", "ONLY LIMITS", "LIMITS AND EXPOSURE",
+                        "LIMITS AND EXPOSURE 2",
                         "SINGLE POINT", "LIMITS AND SINGLE EXPOSURE"))
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -186,7 +202,7 @@ mod_settings_time_server <- function(id,
 
       ### limits-and-exposure-mode-specific observers
 
-      if (mode %in% c("LIMITS AND EXPOSURE", "LIMITS AND SINGLE EXPOSURE")) {
+      if (mode %in% c("LIMITS AND EXPOSURE", "LIMITS AND SINGLE EXPOSURE", "LIMITS AND EXPOSURE 2")) {
         observe({
           validate(need(length(times_t) > 0,
                         "There should be at least one valid option between Exposure 0% and 100% to choose from."))
@@ -231,7 +247,12 @@ mod_settings_time_server <- function(id,
         if (mode == "LIMITS AND EXPOSURE") list(
           t = t_out,
           multiple = input_r("multiple_exposures")
-        ) else NULL
+        ) else if (mode == "LIMITS AND EXPOSURE 2") list(
+          t = input_r_numeric("t"),
+          `0` = time_0,
+          `100` = time_100
+        )
+          else NULL
       )
     )
   })

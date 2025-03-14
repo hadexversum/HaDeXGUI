@@ -69,12 +69,12 @@ mod_data_hdexaminer_server <- function(id, dat_raw) {
     # this invalidation flag is to be sure that every time a new file is
     # uploaded, confirmation of changes is required
     invalidation_flag <- reactiveVal(0)
-    observe({ invalidation_flag(0) }) %>%
-      bindEvent(dat_raw())
-    observe({ invalidation_flag(invalidation_flag() + 1) }) %>%
-      bindEvent(input[["apply"]])
+    bindEvent(observe({ invalidation_flag(0) }),
+              dat_raw())
+    bindEvent(observe({ invalidation_flag(invalidation_flag() + 1) }),
+              input[["apply"]])
 
-    dat_exam <- reactive({
+    dat_exam <- bindEvent(reactive({
       validate(need(invalidation_flag() > 0, "Apply changes in `Input Data` tab."))
 
       # TODO: do something with the messages
@@ -86,8 +86,7 @@ mod_data_hdexaminer_server <- function(id, dat_raw) {
         old_state_name = states_from_file(),
         new_state_name = strsplit(input[["state_names"]], ",")[[1]],
         confidence = input[["confidence"]]))
-    }) %>% bindEvent(invalidation_flag())
-
+    }), invalidation_flag())
 
     ### observers updating ui
 
@@ -110,10 +109,11 @@ mod_data_hdexaminer_server <- function(id, dat_raw) {
     ### other outputs
 
     output[["updated_data"]] <- DT::renderDataTable({
-      dat_exam() %>%
-        select(Protein, State, Sequence,  Start, End, MHP) %>%
-        unique(.) %>%
-        arrange(Start, End)
+
+      dat <- unique(dat_exam()[, .(Protein, State, Sequence,  Start, End, MHP)])
+      setorderv(dat, cols = c("Start", "End"))
+      dat
+
     })
 
     ### return values
