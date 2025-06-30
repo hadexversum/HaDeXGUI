@@ -83,7 +83,7 @@ mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
         name <- names(plot_out)[i]
         rlang::inject({
           output[[paste0("plot_", !!name)]] <- renderGirafe({ girafe(ggobj = plot_out[[!!name]](), width_svg = 17, height_svg = 9) })
-          output[[paste0("data_", !!name)]] <- renderDataTable({ hadex_datatable(dat_out[[!!name]]()) })
+          output[[paste0("data_", !!name)]] <- renderDataTable(server = FALSE, { hadex_datatable(dat_out[[!!name]]()) })
           output[[paste0("plot_download_button_", !!name)]] <- downloadHandler(
             paste0(!!name, "-", id,".svg"),
             content = function(file) {

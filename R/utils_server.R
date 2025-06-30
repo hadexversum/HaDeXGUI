@@ -20,10 +20,10 @@ hadex_datatable <- function(dat, cols = colnames(dat), dom = "tBip") {
     class = "table-bordered table-condensed",
     extensions = "Buttons",
     options = list(
-      pageLength = 10,
+      # pageLength = 10,
       dom = dom,
       autoWidth = TRUE,
-      buttons = c("excel", "pdf")
+      buttons = c("excel", "pdf", "csv")
     ),
     filter = "bottom",
     rownames = FALSE

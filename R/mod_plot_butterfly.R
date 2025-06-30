@@ -98,7 +98,6 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
       wait_for(s_time %()% points)
-
       (dat_processed() %>%
         HaDeX::plot_butterfly(
           theoretical = s_calculation[["theoretical"]](),
