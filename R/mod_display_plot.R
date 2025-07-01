@@ -66,7 +66,7 @@ mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
 
     if (is.reactive(plot_out)) {
       output[["plot"]] <- renderGirafe({ girafe(ggobj = plot_out(), width_svg = 17, height_svg = 9) })
-      output[["data"]] <- renderDataTable({ hadex_datatable(dat_out()) })
+      output[["data"]] <- renderDataTable(server = FALSE, { hadex_datatable(dat_out()) })
       output[["plot_download_button"]] <- downloadHandler(
         paste0(id, ".svg"),
         content = function(file) {

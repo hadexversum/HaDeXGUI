@@ -33,7 +33,7 @@ mod_page_summary_server <- function(id, dat, params){
     })
 
     output[["table"]] <- DT::renderDataTable(server = FALSE, {
-      hadex_datatable(dat_processed(), dom = "tB")
+      hadex_datatable(dat_processed(), dom = "tB", filename = "summary")
     })
 
     return(

@@ -6,4 +6,5 @@
 #' @rawNamespace import(shiny, except = c(dataTableOutput, renderDataTable))
 #' @name HaDeXGUI-package
 #' @aliases HaDeXGUI
-NULL
+
+"_PACKAGE"

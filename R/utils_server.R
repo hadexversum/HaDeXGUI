@@ -13,7 +13,8 @@ toggle_id <- function(condition, id) {
 #' Wrap DT object with unified style
 #'
 #' @noRd
-hadex_datatable <- function(dat, cols = colnames(dat), dom = "tBip") {
+hadex_datatable <- function(dat, cols = colnames(dat), dom = "tBip", filename = "plot_data") {
+
   DT::datatable(
     data = dat,
     colnames = cols,
@@ -23,7 +24,11 @@ hadex_datatable <- function(dat, cols = colnames(dat), dom = "tBip") {
       # pageLength = 10,
       dom = dom,
       autoWidth = TRUE,
-      buttons = c("excel", "pdf", "csv")
+      buttons = list(
+        list(extend = "excel", filename = filename),
+        list(extend = "pdf", filename = filename),
+        list(extend = "csv", filename = filename)
+      )
     ),
     filter = "bottom",
     rownames = FALSE
