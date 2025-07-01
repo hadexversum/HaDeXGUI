@@ -9,4 +9,4 @@ for states A and B. The values of deuterium uptake difference from all time poin
 
 The dotted red lines indicate confidence limits for the values. The horizontal line indicates the confidence limit based on chosen confidence level to give a threshold on a P-value. The vertical lines indicate the confidence limit from Houde test for all time points and indicate a threshold on deuterium uptake difference. The statistically significant points are in the top left and right corners of the plot.
 
-For more information see the [documentation](https://hadexversum.github.io/HaDeX/articles/visualization.html#volcano-plot-1).
+For more information see the [documentation](https://hadexversum.github.io/HaDeX2/articles/visualization.html#volcano-plot).
