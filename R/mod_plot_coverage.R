@@ -24,7 +24,7 @@ mod_plot_coverage_ui <- function(id){
       id = ns("display_plot"),
       plot_labels = c(
         peptide_coverage = "Peptide Coverage",
-        position_frequency = "Postition Frequency"
+        position_frequency = "Position Frequency"
       )
     )
   )
