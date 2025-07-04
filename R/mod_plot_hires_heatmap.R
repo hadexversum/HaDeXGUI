@@ -11,7 +11,7 @@ mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
   ns <- NS(id)
 
   hadex_tab_plot(
-    title = if(differential) "Differential heatmap" else "Single heatmap",
+    title = if(differential) "Differential heatmap + 3D Vis" else "Single heatmap + 3D Vis",
 
     settings = install_settings_ui(
       names = c("calculation", "state", "time"),

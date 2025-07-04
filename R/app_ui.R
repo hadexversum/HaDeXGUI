@@ -34,7 +34,7 @@ app_ui <- function(request) {
           mod_plot_uncertainty_ui("uncertainty")
         ),
         navbarMenu(
-          title = "Hires",
+          title = "Hi-res + 3D",
           mod_plot_hires_heatmap_ui("hires_heatmap"),
           mod_plot_hires_heatmap_ui("diff_hires_heatmap", differential = TRUE)
         ),
