@@ -112,6 +112,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     .show_fun <- if (differential) HaDeX::show_diff_uptake_data else HaDeX::show_uptake_data
 
     dat_out <- reactive({
+
       dat_processed() %>%
         .show_fun(
           theoretical = s_calculation[["theoretical"]](),

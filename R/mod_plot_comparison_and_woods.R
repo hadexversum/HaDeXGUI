@@ -101,6 +101,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     })
 
     plot_out_comparison <- reactive({
+
       (dat_processed_comparison() %>%
           HaDeX::plot_state_comparison(
             theoretical = s_calculation %()% theoretical,
@@ -108,8 +109,9 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
             skip_amino  = s_visualization %()% skip_amino,
             time_t      = s_time        %()% t,
             all_times   = s_time        %()% multiple
-          ) +
-          scale_color_manual(values = s_color %()% values)
+          )
+        # +
+        #   scale_color_manual(values = s_color %()% values)
       ) %>%
         update_axes_and_labels(s_range[["x"]], s_range[["comparison_y"]],
                                s_label, label_prefix = "comparison") %>%
@@ -119,6 +121,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     ### OUT REACTIVES
 
     plot_out_woods <- reactive({
+
       (dat() %>%
          HaDeX::create_p_diff_uptake_dataset(
            diff_uptake_dat     = dat_processed_woods(),
@@ -205,7 +208,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
             step = 1
           )
         }
-      }),
+      })      ,
       woods_y = range_spec({
         if (s_calculation %()% fractional) list(
           min = -200,
