@@ -11,7 +11,7 @@ mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
   ns <- NS(id)
 
   hadex_tab_plot(
-    title = if(differential) "Differential heatmap" else "Single heatmap",
+    title = if(differential) "Differential heatmap + 3D Vis" else "Single heatmap + 3D Vis",
 
     settings = install_settings_ui(
       names = c("calculation", "state", "time"),
@@ -73,8 +73,6 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
     protein_structure <- reactive({
 
       validate(need(!is.null(structure_path()), "No PDB file supplied. This can be done in the `Input data` tab."))
-
-      # browser()
 
       HaDeX::plot_aggregated_uptake_structure(
         aggregated_dat = dat_processed(),

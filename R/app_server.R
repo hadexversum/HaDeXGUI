@@ -82,5 +82,5 @@ apply_server_settings <- function() {
   }
   options(hadex_use_interactive_plots = TRUE)
   ggplot2::theme_set(hadex_ggtheme())
-  shinyhelper::observe_helpers(help_dir = app_sys("app/helpfiles"))
+  shinyhelper::observe_helpers(help_dir = app_sys("app/helpfiles"), withMathJax = TRUE)
 }

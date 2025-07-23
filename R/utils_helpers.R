@@ -83,7 +83,7 @@ hadex_with_helper <- function(tag, content) if (not_null(content)) shinyhelper::
 #' See examples in file utils_helpers.R
 #'
 #' @noRd
-hadex_decorate <- function(fun, with_helper = TRUE, is_output = TRUE, with_spinner = is_output) {
+hadex_decorate <- function(fun, with_helper = TRUE, is_output = TRUE, with_spinner = is_output, ...) {
   spinner_wrapper <- if (with_spinner) hadex_with_spinner else identity
   helper_wrapper <- if (with_helper) function(tag, id) {
     content <- match_helper_content(id)
@@ -121,7 +121,7 @@ textInput_h <- hadex_decorate(shiny::textInput, is_output = FALSE)
 
 # plotOutput_h <- hadex_decorate(shiny::plotOutput) ## not used
 uiOutput_h <- hadex_decorate(shiny::uiOutput)
-dataTableOutput_h <- hadex_decorate(DT::dataTableOutput)
+dataTableOutput_h <- hadex_decorate(DT::dataTableOutput, server = FALSE)
 # girafeOutput_h <- hadex_decorate(ggiraph::girafeOutput)
 
 #####################################################################

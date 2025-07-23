@@ -92,6 +92,7 @@ mod_plot_volcano_server <- function(id, dat, params){
         bind_rows()
     })
 
+    ## why dat_span is here ??
     dat_selected <- reactive({
       if ((s_visualization %()% shown_interval) == "Selected time points"){
         dat_span() %>%
@@ -101,6 +102,7 @@ mod_plot_volcano_server <- function(id, dat, params){
     })
 
     houde_intervals <- reactive({
+
       dat_selected() %>%
         HaDeX::calculate_confidence_limit_values(
           confidence_level = s_test %()% confidence_level,

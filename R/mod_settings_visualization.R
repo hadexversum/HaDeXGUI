@@ -63,7 +63,7 @@ mod_settings_visualization_ui <- function(id, mode){
     ),
     skip_amino = checkboxInput(
       inputId = ns("skip_amino"),
-      label = "Hide first amino?",
+      label = "Hide first amino acid?",
       value = TRUE
     ),
     show_insignificant_grey = checkboxInput(

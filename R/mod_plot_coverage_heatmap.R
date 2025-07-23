@@ -40,8 +40,6 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     dat_processed <- reactive({
       # variable <- cov_variable()
 
-      # browser()
-
        if (cov_variable() == "auc") {
         dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
         HaDeX::calculate_auc(
