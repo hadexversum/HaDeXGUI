@@ -107,6 +107,10 @@ golem_add_external_resources <- function() {
       app_title = "HaDeXGUI"
     ),
 
+    # 3dmol
+    tags$script(src = "https://3Dmol.org/build/3Dmol-min.js"),
+    tags$script(src = "additional-scripts-3dmol.js"),
+
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
     golem::activate_js()

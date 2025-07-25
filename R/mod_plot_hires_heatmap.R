@@ -10,8 +10,31 @@
 mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
   ns <- NS(id)
 
+  # 3dmol
+  # tags$style(HTML("
+  #     #toolbar {
+  #       margin: 10px 0;
+  #       position: relative !important;
+  #       z-index: 1000;
+  #     }
+  #     #btn-screenshot {
+  #       color: #FFFEFD;
+  #       background: #485696 linear-gradient(180deg, #636fa5, #485696) repeat-x;
+  #       border-color: #485696;
+  #       white-space: normal;
+  #     }
+  #     #toggle-spin {
+  #       cursor: pointer;
+  #       margin-left: 20px;
+  #       transform: scale(1.3);
+  #       vertical-align: middle;
+  #     }
+  #   "))
+
   hadex_tab_plot(
     title = if(differential) "Differential heatmap + 3D Vis" else "Single heatmap + 3D Vis",
+
+
 
     settings = install_settings_ui(
       names = c("calculation", "state", "time"),
@@ -31,7 +54,7 @@ mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
   )
 }
 
-#' plot_chiclet Server Functions
+#'
 #'
 #' @noRd
 mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, differential = FALSE) {
@@ -56,6 +79,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
 
     }) else reactive({
 
+
       dat() %>%
         HaDeX::create_uptake_dataset(
           protein = params[["chosen_protein"]](),
@@ -67,8 +91,34 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
         HaDeX::create_aggregated_uptake_dataset()
     })
 
+    structure_color_map <- reactive({
+
+      colors <- HaDeX::get_structure_color(aggregated_dat = dat_processed(),
+                                 differential = differential,
+                                 fractional = s_calculation[["fractional"]](),
+                                 theoretical = s_calculation[["theoretical"]](),
+                                 time_t = s_time[["t"]]())
+    })
+
     ### STRUCTURE
 
+    observeEvent(structure_path(), {
+      validate(need(!is.null(structure_path()), "No structure file supplied. This can be done in the `Input data` tab."))
+
+      # browser()
+
+      color_map <- structure_color_map()
+      names(color_map) <- 1L:length(structure_color_map())
+
+      session$sendCustomMessage("renderStructure",
+                                list(data = paste0(readLines(structure_path()), collapse = "\n"),
+                                     colorMap = as.list(color_map),
+                                     protName = tools::file_path_sans_ext(params[["chosen_protein"]]())
+                                ))
+    })
+
+
+    ## r3dmol
 
     protein_structure <- reactive({
 
@@ -80,8 +130,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
         fractional = s_calculation[["fractional"]](),
         theoretical = s_calculation[["theoretical"]](),
         time_t = s_time[["t"]](),
-        pdb_file_path = structure_path()
-        )
+        pdb_file_path = structure_path())
 
     })
 

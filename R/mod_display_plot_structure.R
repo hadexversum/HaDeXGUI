@@ -29,9 +29,27 @@ mod_display_plot_structure_ui <- function(id, plot_labels,
           verbatimTextOutput(ns("plot_info")) %.?% additional_plot_info,
           downloadButton(ns("plot_download_button"), "Save chart (.svg)"),
           additional_button_server,
+          br(),
+          br(),
+          br(),
           if(structure){
-            r3dmolOutput(ns("structure"), height = "8in")
-          }
+            # 3dmol
+            div(id = "toolbar",
+                position = "relative",
+                tags$button(id = "btn-screenshot", "Screenshot", class = "btn-default"),
+                tags$input(id = "toggle-spin", type = "checkbox", checked = "checked"),
+                tags$label(" Spin?", `for` = "toggle-spin", style = "margin-left: 8px; font-size: 16px;")
+            )
+          },
+          if(structure){
+            div(id = "viewer",
+                style = "width:100%; height:600px",
+                position = "relative !important")
+            },
+
+          #   if(structure){
+          #     r3dmolOutput(ns("structure"), height = "8in")
+          # }
         ),
         tabPanel(
           "Data",
@@ -102,10 +120,31 @@ mod_display_plot_structure_server <- function(id, plot_out, dat_out, structure_o
     }
 
     output[["structure"]] <- renderR3dmol({
-
       structure_out()
-
     })
+
+    # 3dmol
+    # observeEvent(input[["data_load-upload_str-structure_file"]], {
+    #   req(input[["data_load-upload_str-structure_file"]])
+    #
+    #   browser()
+    #
+    #   # browser()
+    #   #
+    #   # color_map <- rep("red", 100)
+    #   # names(color_map) <- 1L:100
+    #
+    #   color_map <- color_vector()
+    #   names(color_map) <- 1L:length(color_vector())
+    #
+    #
+    #   session$sendCustomMessage("renderStructure",
+    #                             list(data = paste0(readLines(input[["structureFile"]][["datapath"]]), collapse = "\n"),
+    #                                  colorMap = as.list(color_map),
+    #                                  protName = tools::file_path_sans_ext(input[["structureFile"]][["name"]])
+    #                             ))
+    # })
+
 
   })
 }

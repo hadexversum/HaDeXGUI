@@ -429,3 +429,22 @@ h4, .h4 {
 svg text {
    font-family: "Lato" !important;
 }
+
+/* 3dmol elements defined */
+.toggle-spin {
+        cursor: pointer;
+        margin-left: 20px;
+        transform: scale(1.3);
+        vertical-align: middle;
+      }
+
+.toolbar {
+        margin: 10px 0;
+        position: relative !important;
+        z-index: 1000;
+      }
+
+canvas {
+    max-width: 100%;
+    position: relative !important;
+}
