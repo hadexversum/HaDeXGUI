@@ -34,19 +34,8 @@ mod_display_plot_structure_ui <- function(id, plot_labels,
           br(),
           if(structure){
             # 3dmol
-            div(id = "toolbar",
-                position = "relative",
-                tags$button(id = "btn-screenshot", "Screenshot", class = "btn-default"),
-                tags$input(id = "toggle-spin", type = "checkbox", checked = "checked"),
-                tags$label(" Spin?", `for` = "toggle-spin", style = "margin-left: 8px; font-size: 16px;")
-            )
-          },
-          if(structure){
-            div(id = "viewer",
-                style = "width:100%; height:600px",
-                position = "relative !important")
-            },
-
+            viewer3dmolUI(ns("viewer"))
+          }
           #   if(structure){
           #     r3dmolOutput(ns("structure"), height = "8in")
           # }
@@ -70,8 +59,6 @@ mod_display_plot_structure_ui <- function(id, plot_labels,
         )
 
       )
-
-
       )
       ),
       additional_button_below)
@@ -83,10 +70,13 @@ mod_display_plot_structure_ui <- function(id, plot_labels,
 #' @importFrom ggiraph renderGirafe
 #' @importFrom DT renderDataTable
 #' @noRd
-mod_display_plot_structure_server <- function(id, plot_out, dat_out, structure_out, info_out = NULL) {
+mod_display_plot_structure_server <- function(id, plot_out, dat_out, structure_out,
+                                              file_path = NULL, color_map = NULL, chosen_protein = NULL,
+                                              info_out = NULL) {
 
   moduleServer(id, function(input, output, session) {
 
+    ns <- NS(id)
 
     if (is.reactive(plot_out)) {
       output[["plot"]] <- renderGirafe({ girafe(ggobj = plot_out(), width_svg = 17, height_svg = 9) })
@@ -119,32 +109,16 @@ mod_display_plot_structure_server <- function(id, plot_out, dat_out, structure_o
       }
     }
 
-    output[["structure"]] <- renderR3dmol({
-      structure_out()
-    })
-
-    # 3dmol
-    # observeEvent(input[["data_load-upload_str-structure_file"]], {
-    #   req(input[["data_load-upload_str-structure_file"]])
-    #
-    #   browser()
-    #
-    #   # browser()
-    #   #
-    #   # color_map <- rep("red", 100)
-    #   # names(color_map) <- 1L:100
-    #
-    #   color_map <- color_vector()
-    #   names(color_map) <- 1L:length(color_vector())
-    #
-    #
-    #   session$sendCustomMessage("renderStructure",
-    #                             list(data = paste0(readLines(input[["structureFile"]][["datapath"]]), collapse = "\n"),
-    #                                  colorMap = as.list(color_map),
-    #                                  protName = tools::file_path_sans_ext(input[["structureFile"]][["name"]])
-    #                             ))
+    # output[["structure"]] <- renderR3dmol({
+    #   structure_out()
     # })
 
+    ## 3dmol
+
+    viewer3dmolServer("viewer",
+                      file_path = file_path,
+                      color_map = color_map,
+                      chosen_protein = chosen_protein)
 
   })
 }

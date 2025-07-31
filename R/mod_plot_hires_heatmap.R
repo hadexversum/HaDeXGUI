@@ -10,31 +10,8 @@
 mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
   ns <- NS(id)
 
-  # 3dmol
-  # tags$style(HTML("
-  #     #toolbar {
-  #       margin: 10px 0;
-  #       position: relative !important;
-  #       z-index: 1000;
-  #     }
-  #     #btn-screenshot {
-  #       color: #FFFEFD;
-  #       background: #485696 linear-gradient(180deg, #636fa5, #485696) repeat-x;
-  #       border-color: #485696;
-  #       white-space: normal;
-  #     }
-  #     #toggle-spin {
-  #       cursor: pointer;
-  #       margin-left: 20px;
-  #       transform: scale(1.3);
-  #       vertical-align: middle;
-  #     }
-  #   "))
-
   hadex_tab_plot(
     title = if(differential) "Differential heatmap + 3D Vis" else "Single heatmap + 3D Vis",
-
-
 
     settings = install_settings_ui(
       names = c("calculation", "state", "time"),
@@ -91,54 +68,45 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
         HaDeX::create_aggregated_uptake_dataset()
     })
 
+    ## colors for the structure
+
     structure_color_map <- reactive({
+
 
       colors <- HaDeX::get_structure_color(aggregated_dat = dat_processed(),
                                  differential = differential,
                                  fractional = s_calculation[["fractional"]](),
                                  theoretical = s_calculation[["theoretical"]](),
                                  time_t = s_time[["t"]]())
+
+      names(colors) <- 1L:length(colors)
+
+      colors
     })
 
-    ### STRUCTURE
-
-    observeEvent(structure_path(), {
-      validate(need(!is.null(structure_path()), "No structure file supplied. This can be done in the `Input data` tab."))
-
-      # browser()
-
-      color_map <- structure_color_map()
-      names(color_map) <- 1L:length(structure_color_map())
-
-      session$sendCustomMessage("renderStructure",
-                                list(data = paste0(readLines(structure_path()), collapse = "\n"),
-                                     colorMap = as.list(color_map),
-                                     protName = tools::file_path_sans_ext(params[["chosen_protein"]]())
-                                ))
-    })
 
 
     ## r3dmol
 
-    protein_structure <- reactive({
-
-      validate(need(!is.null(structure_path()), "No PDB file supplied. This can be done in the `Input data` tab."))
-
-      HaDeX::plot_aggregated_uptake_structure(
-        aggregated_dat = dat_processed(),
-        differential = differential,
-        fractional = s_calculation[["fractional"]](),
-        theoretical = s_calculation[["theoretical"]](),
-        time_t = s_time[["t"]](),
-        pdb_file_path = structure_path())
-
-    })
-
-    structure_out <- reactive({
-
-      protein_structure()
-
-    })
+    # protein_structure <- reactive({
+    #
+    #   validate(need(!is.null(structure_path()), "No PDB file supplied. This can be done in the `Input data` tab."))
+    #
+    #   HaDeX::plot_aggregated_uptake_structure(
+    #     aggregated_dat = dat_processed(),
+    #     differential = differential,
+    #     fractional = s_calculation[["fractional"]](),
+    #     theoretical = s_calculation[["theoretical"]](),
+    #     time_t = s_time[["t"]](),
+    #     pdb_file_path = structure_path())
+    #
+    # })
+    #
+    # structure_out <- reactive({
+    #
+    #   protein_structure()
+    #
+    # })
 
     ### OUT REACTIVES
 
@@ -212,7 +180,14 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
 
     ### RETURN OF THE PLOT AND DATA
 
-    mod_display_plot_structure_server("display_plot", plot_out, dat_out, structure_out)
+    mod_display_plot_structure_server("display_plot",
+                                      plot_out = plot_out,
+                                      dat_out = dat_out,
+                                      structure_out = structure_out,
+                                      file_path = structure_path,
+                                      color_map = structure_color_map,
+                                      chosen_protein = params[["chosen_protein"]]
+                                      )
 
 
     return(
