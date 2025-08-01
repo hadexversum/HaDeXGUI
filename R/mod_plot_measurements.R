@@ -48,11 +48,17 @@ mod_plot_measurements_server <- function(id, dat, params){
 
     peptide_table <- reactive({
       state <- s_state %()% state
+      time <- s_time[["t"]]()
       dat() %>%
         filter(Protein == params %()% chosen_protein,
-               State == state)  %>%
-        select(Sequence, Start, End) %>%
-        unique(.) %>%
+               State == state,
+               Exposure == time)  %>%
+        # select(Sequence, Start, End) %>%
+        # unique(.) %>%
+        # arrange(Start, End)
+        HaDeX::get_replicate_list_sd(time_t = time) %>%
+        mutate(sd = round(sd, 3)) %>%
+        select(Sequence, Start, End, sd) %>%
         arrange(Start, End)
     })
 
