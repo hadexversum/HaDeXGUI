@@ -23,6 +23,8 @@ mod_data_load_ui <- function(id){
     wellPanel(
       fillRow(
         flex = c(NA, 1),
+        div(
+
         fileInput(
           inputId = ns("data_file"),
           label = "Choose file:",
@@ -30,6 +32,13 @@ mod_data_load_ui <- function(id){
           accept = c(".csv", ".xlsx", ".xls"),
           placeholder = "No file selected"
         ),
+        radioButtons(
+          inputId = ns("data_file_sep"),
+          label = "Choose separator:",
+          choiceNames = c("comma", "dot"),
+          choiceValues = c(",", "."),
+          selected = ","
+        )),
         div(
           id = "HaDeX-file-status-panel",
           h6("File status:"),
@@ -91,7 +100,7 @@ mod_data_load_server <- function(id) {
         example_data_alpha
       } else {
         validate(need(try({
-          file <- HaDeX::read_hdx(data_file[["datapath"]])
+          file <- HaDeX::read_hdx(data_file[["datapath"]], separator = input[["data_file_sep"]])
         }), "File does not fullfill requirements. Check file requirements!"))
         file
       }
