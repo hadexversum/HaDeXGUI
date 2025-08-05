@@ -7,7 +7,6 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-#' @importFrom r3dmol r3dmolOutput renderR3dmol
 mod_display_plot_structure_ui <- function(id, plot_labels,
                                           structure = FALSE,
                                           additional_data_info = NULL,
