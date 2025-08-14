@@ -110,8 +110,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
             time_t      = s_time        %()% t,
             all_times   = s_time        %()% multiple
           )
-        # +
-        #   scale_color_manual(values = s_color %()% values)
+        + scale_color_manual(values = s_color %()% values)
       ) %>%
         update_axes_and_labels(s_range[["x"]], s_range[["comparison_y"]],
                                s_label, label_prefix = "comparison") %>%
