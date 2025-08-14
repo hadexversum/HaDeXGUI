@@ -1,6 +1,6 @@
 ## Uptake curve 
 
-This plot presents uptake curves of the selected peptides. 
+This plot presents uptake curves for the selected peptide. 
 
 On the X axis there are time points of measurement (in minutes). The axis is in logaritmic scale for readability (this can be changed in the settings on the left panel). The minimal uptake control time point of the measurement is not shown on the plot.
 
