@@ -35,7 +35,7 @@ mod_settings_color_server <- function(id, s_state){
         tagList,
         !!!mapply(function(state, color) {
           colourpicker::colourInput(
-            inputId = ns(paste0("color_", state)),
+            inputId = ns(paste0("color_", gsub(" ", "", state))),
             label = paste0("Color for ", state, " state"),
             value = color)
         }, states, colors, SIMPLIFY = FALSE)
@@ -50,7 +50,7 @@ mod_settings_color_server <- function(id, s_state){
 
           colors <- sapply(
             paste0("color_", states),
-            function(x) input[[x]]
+            function(x) input[[gsub(" ", "", x)]]
           )
 
           wait_for(length(colors) > 0)
