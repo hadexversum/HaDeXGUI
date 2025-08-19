@@ -1,6 +1,4 @@
-## High-resolution 
-
-# TODO find correct namespace
+## High-resolution of deuterium uptake
 
 The high-resolution heatmap presents the aggregated values from deuterium uptake values for peptides, calculated using 'weighted approach', as proposed in Keppler & Weis, 2014. For the details, see the [documentation](https://hadexversum.github.io/HaDeX2/articles/datafiles.html#deuterium-uptake-aggregation).
 

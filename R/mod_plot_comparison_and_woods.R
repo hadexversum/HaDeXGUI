@@ -121,6 +121,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
 
     plot_out_woods <- reactive({
 
+
       (dat() %>%
          HaDeX::create_p_diff_uptake_dataset(
            diff_uptake_dat     = dat_processed_woods(),

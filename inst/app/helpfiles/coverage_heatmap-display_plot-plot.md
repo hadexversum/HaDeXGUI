@@ -1,7 +1,5 @@
 ## Coverage Heatmap Plot
 
-TODO find correct name
-
 This plot presents both the coverage information as well as one of two values: AUC or back-exchange.
 
 ### AUC
