@@ -40,6 +40,7 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     dat_processed <- reactive({
       # variable <- cov_variable()
 
+
        if (cov_variable() == "auc") {
         dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
         HaDeX::calculate_auc(
@@ -56,12 +57,12 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
           preserve_values = FALSE
         )
       } else if (cov_variable() == "back_exchange") {
-        dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
+        # dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
         HaDeX::calculate_back_exchange(
-          dat = dat_tmp,
+          dat = dat(),
           protein = params  %()% chosen_protein,
           states = s_state[["state"]](),
-          time_100 = s_time  %()% 100
+          time_100 = MAX_TIME ## s_time  %()% 100
         )
       }
     })
@@ -113,10 +114,10 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
     mod_display_plot_server("display_plot", plot_out, dat_out)
 
     ### RETURN OF THE PLOT AND DATA
-#
-#     return(
-#       autoreturn()
-#     )
+
+    return(
+      autoreturn()
+    )
   })
 }
 
