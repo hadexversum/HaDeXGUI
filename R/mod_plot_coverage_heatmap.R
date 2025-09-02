@@ -57,12 +57,12 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
           preserve_values = FALSE
         )
       } else if (cov_variable() == "back_exchange") {
-        # dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
+        validate(need(s_time  %()% 100 %in% unique(dat()[dat()[["State"]] == s_state[["state"]](), "Exposure"]), "Selected fully deuterated time point not present for selected state!"))
         HaDeX::calculate_back_exchange(
           dat = dat(),
           protein = params  %()% chosen_protein,
           states = s_state[["state"]](),
-          time_100 = MAX_TIME ## s_time  %()% 100
+          time_100 = s_time  %()% 100
         )
       }
     })
