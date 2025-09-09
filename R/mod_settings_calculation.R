@@ -8,7 +8,7 @@
 #'
 #' @importFrom shiny NS tagList
 mod_settings_calculation_ui <- function(id, mode = "FRAC AND THEO"){
-  stopifnot(mode %in% c("FRAC AND THEO", "ONLY FRAC"))
+  stopifnot(mode %in% c("FRAC AND THEO", "ONLY FRAC", "FRAC T AND THEO"))
   ns <- NS(id)
 
   collapsible_card(
@@ -17,21 +17,22 @@ mod_settings_calculation_ui <- function(id, mode = "FRAC AND THEO"){
       inputId = ns("theoretical"),
       label = "Theoretical calculations",
       value = FALSE
-    ) %.?% (mode == "FRAC AND THEO"),
+    ) %.?% (mode == "FRAC AND THEO" | mode == "FRAC T AND THEO"),
     checkboxInput_h(
       inputId = ns("fractional"),
       label = "Fractional values",
-      value = FALSE
+      value = (mode == "FRAC T AND THEO")
     ),
     fancy_icon = "cogs"
   )
+
 }
 
 #' settings_calculation Server Functions
 #'
 #' @noRd
 mod_settings_calculation_server <- function(id, mode = "FRAC AND THEO"){
-  stopifnot(mode %in% c("FRAC AND THEO", "ONLY FRAC"))
+  stopifnot(mode %in% c("FRAC AND THEO", "ONLY FRAC", "FRAC T AND THEO"))
   moduleServer(id, function(input, output, session){
     ns <- session$ns
 
