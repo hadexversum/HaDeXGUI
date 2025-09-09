@@ -2,7 +2,7 @@
 
 Manhattan plot is a novel plot, presenting the P-value of statistical significance between two states for peptides, along the information of their length and position.
 
-On the X axis there is peptide position in the protein sequence. On the Y axis there is negative logaritmic value of P-value between two states selected in the Settings panel on the left. The P-value is calculated using the t-Student test. The time points of measurement are distinquished with the colors, as specified on the legend below the plot.
+On the X axis there is peptide position in the protein sequence. On the Y axis there is negative logaritmic value of P-value between two states selected in the Settings panel on the left. The P-value is calculated using the Student's T-test. The time points of measurement are distinquished with the colors, as specified on the legend below the plot.
 
 ### HaDeX tip
 

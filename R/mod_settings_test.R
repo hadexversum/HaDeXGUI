@@ -23,7 +23,7 @@ mod_settings_test_ui <- function(id, mode){
         ),
         checkboxInput_h(
           inputId = ns("show_tstud"),
-          label = "t-Student test",
+          label = "Student's T-test",
           value = FALSE
         )
       ),
