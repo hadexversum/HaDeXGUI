@@ -154,7 +154,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     ### RETURN OF THE PLOT AND DATA
 
-    mod_display_plot_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out, plot_name = dplyr::if_else(differential, "diff_chiclet_plot", "chiclet_plot"))
 
     return(
       autoreturn()

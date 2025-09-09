@@ -106,7 +106,7 @@ mod_plot_manhattan_server <- function(id, dat, params){
       )
     )
 
-    mod_display_plot_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out, plot_name = "manhattan_plot")
 
     ### RETURN OF THE PLOT AND DATA
 

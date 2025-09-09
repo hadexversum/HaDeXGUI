@@ -177,7 +177,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       )
     )
 
-    mod_display_plot_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out, plot_name = dplyr::if_else(differential, "diff_butterfly_plot", "butterfly_plot"))
 
     ### RETURN OF THE PLOT AND DATA
 

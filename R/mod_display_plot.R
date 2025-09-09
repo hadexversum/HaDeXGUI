@@ -59,7 +59,7 @@ mod_display_plot_ui <- function(id, plot_labels,
 #' @importFrom ggiraph renderGirafe
 #' @importFrom DT renderDataTable
 #' @noRd
-mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
+mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL, plot_name = NULL) {
 
   moduleServer(id, function(input, output, session) {
 
@@ -67,7 +67,7 @@ mod_display_plot_server <- function(id, plot_out, dat_out, info_out = NULL) {
       output[["plot"]] <- renderGirafe({ girafe(ggobj = plot_out(), width_svg = 17, height_svg = 9) })
       output[["data"]] <- renderDataTable(server = FALSE, { hadex_datatable(dat_out()) })
       output[["plot_download_button"]] <- downloadHandler(
-        paste0(id, ".svg"),
+        paste0(dplyr::if_else(is.null(plot_name), id, plot_name), ".svg"),
         content = function(file) {
           ggsave(file, plot_out(), device = svg,
                  height = 300, width = 400, units = "mm")

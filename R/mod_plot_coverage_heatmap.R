@@ -111,7 +111,7 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
       )
     )
 
-    mod_display_plot_server("display_plot", plot_out, dat_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out, plot_name = "coverage_heatmap")
 
     ### RETURN OF THE PLOT AND DATA
 

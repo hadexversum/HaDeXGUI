@@ -205,7 +205,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
 
     ### SERVER AND PLOT SETTINGS INVOCATION
 
-    mod_display_plot_server("display_plot", plot_out, dat_out, info_out = info_out)
+    mod_display_plot_server("display_plot", plot_out, dat_out, info_out = info_out, plot_name = dplyr::if_else(differential, "diff_uptake_curve", "uptake_curve"))
 
     mod_download_uptake_server(
       id = "download_uptake",
