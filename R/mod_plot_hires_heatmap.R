@@ -16,7 +16,7 @@ mod_plot_hires_heatmap_ui <- function(id, differential = FALSE){
     settings = install_settings_ui(
       names = c("calculation", "state", "time"),
       modes = c(
-        calculation = "FRAC T AND THEO",
+        calculation = "FRAC AND THEO",
         state = if (differential) "DOUBLE" else "SINGLE",
         time = "LIMITS AND EXPOSURE 2"
       ),
@@ -156,7 +156,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
         "calculation", "state", "time"
       ),
       modes = c(
-        calculation = "FRAC T AND THEO",
+        calculation = "FRAC AND THEO",
         state = if(differential) "DOUBLE" else "SINGLE",
         time = "LIMITS AND EXPOSURE 2"
       )
