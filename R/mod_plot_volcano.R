@@ -53,6 +53,9 @@ mod_plot_volcano_server <- function(id, dat, params){
     dat_processed <- reactive({
       validate(need(!params[["has_modifications"]](),
                     "This plot is not yet adjusted for proteins with modifications."))
+
+      validate(need((nchar(s_state %()% state_1)>0 & nchar(s_state %()% state_2)>0), "There must be two different states for this plot!"))
+
       wait_for((s_state %()% state_1) != (s_state %()% state_2)) # TODO: find out why is it needed
 
       dat() %>%
