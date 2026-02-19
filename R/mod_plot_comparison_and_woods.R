@@ -72,7 +72,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     dat_processed_comparison <- reactive({
       states <- s_comparison_state %()% states # calculated outside to handle validation error correctly
 
-      HaDeX::create_uptake_dataset(
+      HaDeX2::create_uptake_dataset(
         dat(),
         protein   = params %()% chosen_protein,
         states    = states,
@@ -89,7 +89,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
                     "Not sufficient number of states without modifications."))
 
       dat() %>%
-        HaDeX::create_diff_uptake_dataset(
+        HaDeX2::create_diff_uptake_dataset(
           protein   = params        %()% chosen_protein,
           state_1   = s_woods_state %()% state_1,
           state_2   = s_woods_state %()% state_2,
@@ -103,7 +103,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
     plot_out_comparison <- reactive({
 
       (dat_processed_comparison() %>%
-          HaDeX::plot_state_comparison(
+          HaDeX2::plot_state_comparison(
             theoretical = s_calculation %()% theoretical,
             fractional  = s_calculation %()% fractional,
             skip_amino  = s_visualization %()% skip_amino,
@@ -123,7 +123,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
 
 
       (dat() %>%
-         HaDeX::create_p_diff_uptake_dataset(
+         HaDeX2::create_p_diff_uptake_dataset(
            diff_uptake_dat     = dat_processed_woods(),
            protein             = params        %()% chosen_protein,
            state_1             = s_woods_state %()% state_1,
@@ -134,7 +134,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
            time_100            = s_time        %()% 100,
            deut_part           = params        %()% deut_part
          ) %>%
-         HaDeX::plot_differential(
+         HaDeX2::plot_differential(
            diff_uptake_dat          = dat_processed_woods(),
            diff_p_uptake_dat        = .,
            skip_amino               = s_visualization %()% skip_amino,
@@ -157,7 +157,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
 
     dat_out_comparison <- reactive({
       dat_processed_comparison() %>%
-        HaDeX::show_uptake_data(
+        HaDeX2::show_uptake_data(
           uptake_dat  = dat_processed_comparison(),
           theoretical = s_calculation %()% theoretical,
           fractional  = s_calculation %()% fractional
@@ -169,7 +169,7 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
 
     dat_out_woods <- reactive({
       dat_processed_woods() %>%
-        HaDeX::show_diff_uptake_data_confidence(
+        HaDeX2::show_diff_uptake_data_confidence(
           theoretical      = s_calculation %()% theoretical,
           fractional       = s_calculation %()% fractional,
           confidence_level = s_test        %()% confidence_level
@@ -198,13 +198,13 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
         ) else {
           wait_for(nrow(dat_processed_comparison()) > 0)
 
-          min_abs <- round_any(min(dat_processed_comparison()[c("deut_uptake", "theo_deut_uptake")], na.rm = TRUE), 5, floor)
-          max_abs <- round_any(max(dat_processed_comparison()[c("deut_uptake", "theo_deut_uptake")], na.rm = TRUE), 5, ceiling)
+          min_abs <- 0 # min(dat_processed_woods()["MaxUptake"], na.rm = TRUE) ## round_any(min(dat_processed_comparison()["MaxUptake"], na.rm = TRUE), 5, floor)
+          max_abs <- max(dat_processed_woods()["MaxUptake"], na.rm = TRUE) ## round_any(max(dat_processed_comparison()["MaxUptake"], na.rm = TRUE), 5, ceiling)
 
           list(
             min = min_abs - 5,
             max = max_abs + 5,
-            value = c(min_abs, max_abs),
+            value = c(min_abs - 2, max_abs),
             step = 1
           )
         }
@@ -218,13 +218,13 @@ mod_plot_comparison_and_woods_server <- function(id, dat, params){
         ) else {
           wait_for(nrow(dat_processed_woods()) > 0)
 
-          min_abs <- round_any(min(dat_processed_woods()[c("diff_deut_uptake", "diff_theo_deut_uptake")], na.rm = TRUE), 2, floor)
-          max_abs <- round_any(max(dat_processed_woods()[c("diff_deut_uptake", "diff_theo_deut_uptake")], na.rm = TRUE), 2, ceiling)
+          # min_abs <- 0 # min(dat_processed_woods()["MaxUptake"], na.rm = TRUE) ## round_any(min(dat_processed_woods()["MaxUptake"], na.rm = TRUE), 2, floor)
+          max_abs <- max(dat_processed_woods()["MaxUptake"], na.rm = TRUE) ## round_any(max(dat_processed_woods()["MaxUptake"], na.rm = TRUE), 2, ceiling)
 
           list(
-            min = min_abs - 2,
-            max = max_abs + 2,
-            value = c(min_abs, max_abs),
+            min = max_abs - 5,
+            max = max_abs + 5,
+            value = c(max_abs, max_abs),
             step = 0.5
           )
         }

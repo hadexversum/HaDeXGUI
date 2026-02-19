@@ -60,7 +60,7 @@ mod_plot_volcano_server <- function(id, dat, params){
 
       dat() %>%
         filter(Protein == (params %()% chosen_protein)) %>% # TODO: is this line necessary?
-        HaDeX::create_p_diff_uptake_dataset(
+        HaDeX2::create_p_diff_uptake_dataset(
           state_1             = s_state      %()% state_1,
           state_2             = s_state      %()% state_2,
           protein             = params       %()% chosen_protein,
@@ -82,7 +82,7 @@ mod_plot_volcano_server <- function(id, dat, params){
     dat_span <- reactive({
       lapply(params %()% times_t, function(t){
         dat() %>%
-          HaDeX::calculate_diff_uptake(
+          HaDeX2::calculate_diff_uptake(
             states    = c(s_state %()% state_1, s_state %()% state_2),
             protein   = params %()% chosen_protein,
             time_0    = first(params %()% times), # TODO: should those times be selected like this?
@@ -107,7 +107,7 @@ mod_plot_volcano_server <- function(id, dat, params){
     houde_intervals <- reactive({
 
       dat_selected() %>%
-        HaDeX::calculate_confidence_limit_values(
+        HaDeX2::calculate_confidence_limit_values(
           confidence_level = s_test %()% confidence_level,
           theoretical = FALSE,
           fractional = s_calculation %()% fractional
@@ -122,7 +122,7 @@ mod_plot_volcano_server <- function(id, dat, params){
 
     dat_out <- reactive({
 
-      HaDeX::show_p_diff_uptake_data(
+      HaDeX2::show_p_diff_uptake_data(
         p_diff_uptake_dat = dat_filtered(),
         theoretical = FALSE, # only exp on volcano
         fractional = s_calculation %()% fractional
@@ -134,7 +134,7 @@ mod_plot_volcano_server <- function(id, dat, params){
       range_x <- s_range %()% x
 
       (dat_filtered() %>%
-          HaDeX::plot_volcano(
+          HaDeX2::plot_volcano(
             state_1                 = s_state         %()% state_1,
             state_2                 = s_state         %()% state_2,
             color_times             = s_visualization %()% distinguish_timepoints,

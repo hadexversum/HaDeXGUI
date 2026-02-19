@@ -61,7 +61,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
       validate(need(s_peptide[["selected"]](),
                     "Please select one peptide from the table on the left."))
 
-      HaDeX::create_p_diff_uptake_dataset(
+      HaDeX2::create_p_diff_uptake_dataset(
         dat = dat(),
         protein = params[["chosen_protein"]](),
         state_1 = s_state[["state_1"]](),
@@ -81,7 +81,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
 
       peptide_subset <- peptide_table()[s_peptide %()% selected, ]
 
-      HaDeX::calculate_peptide_kinetics(
+      HaDeX2::calculate_peptide_kinetics(
         dat       = dat(),
         protein   = params  %()% chosen_protein,
         sequence  = peptide_subset[["Sequence"]],
@@ -97,7 +97,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
     ### OUT REACTIVES
 
     plot_out <- if (differential) reactive({
-      HaDeX::plot_differential_uptake_curve(
+      HaDeX2::plot_differential_uptake_curve(
         diff_p_uptake_dat = dat_processed(),
         sequence = peptide_table()[s_peptide[["selected"]](), "Sequence"],
         theoretical = s_calculation[["theoretical"]](),
@@ -110,7 +110,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
         update_axes_and_labels(range_y = s_range[["y"]], labels = s_label) %>%
         suppressMessages()
     }) else reactive({
-      HaDeX::plot_uptake_curve(
+      HaDeX2::plot_uptake_curve(
         uc_dat = dat_processed(),
         theoretical = s_calculation[["theoretical"]](),
         fractional = s_calculation[["fractional"]](),
@@ -122,13 +122,13 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
     })
 
     dat_out <- if (differential) reactive({
-      HaDeX::show_diff_uptake_data(
+      HaDeX2::show_diff_uptake_data(
         diff_uptake_dat = dat_processed(),
         theoretical = s_calculation[["theoretical"]](),
         fractional = s_calculation[["fractional"]]()
       )
     }) else reactive({
-      HaDeX::show_uptake_data(
+      HaDeX2::show_uptake_data(
         uptake_dat = dat_processed(),
         theoretical = s_calculation[["theoretical"]](),
         fractional = s_calculation[["fractional"]]()
@@ -136,7 +136,7 @@ mod_plot_uptake_server <- function(id, differential, dat, params){
     })
 
     info_out <- reactive({
-      data <- HaDeX::calculate_auc(dat_processed(), state = s_state %()% states)
+      data <- HaDeX2::calculate_auc(dat_processed(), state = s_state %()% states)
       glue::glue_data(data, "{Sequence}-{State} AUC: {round(auc, 4)}")
     }) %.?!% differential
 

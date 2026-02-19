@@ -110,7 +110,7 @@ mod_data_setup_server <- function(id, dat_adjusted){
       dat_adjusted() %>%
         mutate(Start = Start + input[["sequence_start_shift"]] - 1,
                End = End + input[["sequence_start_shift"]] - 1) %>%
-        HaDeX::create_control_dataset(
+        HaDeX2::create_control_dataset(
           control_protein = input[["chosen_protein"]],
           control_state = strsplit(input[["chosen_control"]], " \\| ")[[1]][2],
           control_exposure = strsplit(input[["chosen_control"]], " \\| ")[[1]][3]
@@ -207,7 +207,7 @@ mod_data_setup_server <- function(id, dat_adjusted){
 
             dat() %>%
               filter(Protein == input[["chosen_protein"]]) %>%
-              HaDeX::reconstruct_sequence(end = as.numeric(input[["sequence_length"]]))
+              HaDeX2::reconstruct_sequence(end = as.numeric(input[["sequence_length"]]))
           }),
 
           states = states_from_file,

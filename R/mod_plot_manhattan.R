@@ -46,7 +46,7 @@ mod_plot_manhattan_server <- function(id, dat, params){
     dat_processed <- reactive({
       state_1 <- s_state %()% state_1
       state_2 <- s_state %()% state_2
-      HaDeX::create_p_diff_uptake_dataset(
+      HaDeX2::create_p_diff_uptake_dataset(
         dat = dat(),
         protein             = params  %()% chosen_protein,
         state_1             = state_1,
@@ -58,7 +58,7 @@ mod_plot_manhattan_server <- function(id, dat, params){
     ### OUT REACTIVES
 
     plot_out <- reactive({
-      HaDeX::plot_manhattan(
+      HaDeX2::plot_manhattan(
         p_dat                 = dat_processed(),
         plot_title            = "Difference uptake",
         skip_amino            = s_visualization %()% skip_amino,

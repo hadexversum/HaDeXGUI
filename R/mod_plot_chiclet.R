@@ -46,7 +46,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
     dat_processed <- if (differential) reactive({
       wait_for(s_time %()% points)
 
-      HaDeX::create_diff_uptake_dataset(
+      HaDeX2::create_diff_uptake_dataset(
         dat(),
         protein = params[["chosen_protein"]](),
         state_1 = s_state[["state_1"]](),
@@ -60,7 +60,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
       validate(need(s_time[["points"]](),
                     "Wait for parameters to be loaded"))
 
-      dt <- HaDeX::create_state_uptake_dataset(
+      dt <- HaDeX2::create_state_uptake_dataset(
         dat(),
         protein = params[["chosen_protein"]](),
         state = s_state[["state"]](),
@@ -75,7 +75,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
 
     plot_out <- if (differential) reactive({
       (dat() %>%
-         HaDeX::create_p_diff_uptake_dataset(
+         HaDeX2::create_p_diff_uptake_dataset(
            diff_uptake_dat = dat_processed(),
            protein = params[["chosen_protein"]](),
            state_1 = s_state[["state_1"]](),
@@ -85,7 +85,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
            time_0 = s_time[["0"]](),
            time_100 = s_time[["100"]](),
            deut_part = params[["deut_part"]]()
-         ) %>% HaDeX::plot_differential_chiclet(
+         ) %>% HaDeX2::plot_differential_chiclet(
            diff_uptake_dat = dat_processed(),
            diff_p_uptake_dat = .,
            theoretical = s_calculation[["theoretical"]](),
@@ -99,7 +99,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         suppressMessages() # suppressing annoying coordinate system replacement msg
     }) else reactive({
       (dat_processed() %>%
-         HaDeX::plot_chiclet(
+         HaDeX2::plot_chiclet(
            theoretical = s_calculation[["theoretical"]](),
            fractional = s_calculation[["fractional"]](),
            show_uncertainty = s_visualization[["show_uncertainty"]]()
@@ -108,7 +108,7 @@ mod_plot_chiclet_server <- function(id, differential, dat, params) {
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
-    .show_fun <- if (differential) HaDeX::show_diff_uptake_data else HaDeX::show_uptake_data
+    .show_fun <- if (differential) HaDeX2::show_diff_uptake_data else HaDeX2::show_uptake_data
 
     dat_out <- reactive({
       dat_processed() %>%

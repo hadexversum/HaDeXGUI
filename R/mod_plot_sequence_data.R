@@ -53,7 +53,7 @@ mod_plot_sequence_data_server <- function(id, dat, params){
     })
 
     plot_out <- reactive({
-        HaDeX::plot_amino_distribution(
+        HaDeX2::plot_amino_distribution(
           dat_processed(),
           hydro_properties = switch(
             s_visualization %()% show_residues,
@@ -76,7 +76,7 @@ mod_plot_sequence_data_server <- function(id, dat, params){
       c(
         name     = params %()% chosen_protein,
         length   = params %()% sequence_length, # TODO: should there be max_range?
-        coverage = HaDeX::get_protein_coverage(
+        coverage = HaDeX2::get_protein_coverage(
           dat            = dat(),
           protein        = params %()% chosen_protein,
           protein_length = params %()% max_range

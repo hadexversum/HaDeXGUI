@@ -25,7 +25,7 @@ app_server <- function(input, output, session) {
     server_names = c(
       ### DEUTERIUM UPTAKE:
       "comparison_and_woods",
-      "volcano",
+      # "volcano",
       "butterfly", # +diff
       "chiclet",   # +diff
       "uptake",    # +diff

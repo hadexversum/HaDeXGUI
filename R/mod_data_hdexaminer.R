@@ -78,7 +78,7 @@ mod_data_hdexaminer_server <- function(id, dat_raw) {
       validate(need(invalidation_flag() > 0, "Apply changes in `Input Data` tab."))
 
       # TODO: do something with the messages
-      get_internal_messages(HaDeX::update_hdexaminer_file(
+      get_internal_messages(HaDeX2::update_hdexaminer_file(
         dat = dat_raw(),
         fd_time = input[["fd_timepoint"]],
         old_protein_name = proteins_from_file(),

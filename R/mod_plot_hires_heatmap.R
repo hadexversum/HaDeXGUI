@@ -45,7 +45,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
     dat_processed <-  if(differential) reactive({
 
       dat() %>%
-        HaDeX::create_diff_uptake_dataset(
+        HaDeX2::create_diff_uptake_dataset(
           protein = params[["chosen_protein"]](),
           state_1 = s_state[["state_1"]](),
           state_2 = s_state[["state_2"]](),
@@ -53,20 +53,20 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
           time_100 = s_time[["100"]](),
           deut_part = params[["deut_part"]]()
         ) %>%
-        HaDeX::create_aggregated_diff_uptake_dataset()
+        HaDeX2::create_aggregated_diff_uptake_dataset()
 
     }) else reactive({
 
 
       dat() %>%
-        HaDeX::create_uptake_dataset(
+        HaDeX2::create_uptake_dataset(
           protein = params[["chosen_protein"]](),
           states = s_state[["state"]](),
           time_0 = s_time[["0"]](),
           time_100 = s_time[["100"]](),
           deut_part = params[["deut_part"]]()
         ) %>%
-        HaDeX::create_aggregated_uptake_dataset()
+        HaDeX2::create_aggregated_uptake_dataset()
     })
 
     ## colors for the structure
@@ -74,7 +74,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
     structure_color_map <- reactive({
 
 
-      colors <- HaDeX::get_structure_color(aggregated_dat = dat_processed(),
+      colors <- HaDeX2::get_structure_color(aggregated_dat = dat_processed(),
                                  differential = differential,
                                  fractional = s_calculation[["fractional"]](),
                                  theoretical = s_calculation[["theoretical"]](),
@@ -93,7 +93,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
     #
     #   validate(need(!is.null(structure_path()), "No PDB file supplied. This can be done in the `Input data` tab."))
     #
-    #   HaDeX::plot_aggregated_uptake_structure(
+    #   HaDeX2::plot_aggregated_uptake_structure(
     #     aggregated_dat = dat_processed(),
     #     differential = differential,
     #     fractional = s_calculation[["fractional"]](),
@@ -114,7 +114,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
     plot_out <- if(differential) reactive({
 
      (dat_processed() %>%
-        HaDeX::plot_aggregated_differential_uptake(panels = F,
+        HaDeX2::plot_aggregated_differential_uptake(panels = F,
                                                    fractional = s_calculation[["fractional"]](),
                                                    theoretical = s_calculation[["theoretical"]](),
                                                    interactive = T)
@@ -122,7 +122,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
 
     }) else reactive({
       (dat_processed() %>%
-         HaDeX::plot_aggregated_uptake(panels = F,
+         HaDeX2::plot_aggregated_uptake(panels = F,
                                        fractional = s_calculation[["fractional"]](),
                                        theoretical = s_calculation[["theoretical"]](),
                                        interactive = T)
@@ -133,7 +133,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
 
     dat_out <- reactive({
 
-      HaDeX::show_aggregated_uptake_data(
+      HaDeX2::show_aggregated_uptake_data(
         dat_processed(),
         differential = differential,
         fractional = s_calculation[["fractional"]](),
@@ -166,7 +166,7 @@ mod_plot_hires_heatmap_server <- function(id, dat, params, structure_path, diffe
 
     hdxviewer_dat <- reactive({
 
-      HaDeX::prepare_hdxviewer_export(dat_processed(),
+      HaDeX2::prepare_hdxviewer_export(dat_processed(),
                                       differential = differential,
                                       theoretical = s_calculation[["theoretical"]](),
                                       fractional = s_calculation[["fractional"]]())

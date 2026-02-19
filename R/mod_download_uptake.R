@@ -88,7 +88,7 @@ mod_download_uptake_server <- function(id, dat, params, peptide_table, s_time, s
           mutate(title = glue::glue("{Sequence}({Start}-{End})")) %>%
           rowwise() %>%
           mutate(
-            dat_uc = list({ val <- HaDeX::calculate_peptide_kinetics(
+            dat_uc = list({ val <- HaDeX2::calculate_peptide_kinetics(
               dat(),
               protein  = params %()% chosen_protein,
               sequence = Sequence,
@@ -97,7 +97,7 @@ mod_download_uptake_server <- function(id, dat, params, peptide_table, s_time, s
               time_0   = s_time %()% 0,
               time_100 = s_time %()% 100
             ); incProgress(1); val}),
-            plot_uc = list({ val <- HaDeX::plot_uptake_curve( # TODO: shouldn't there be differentiation between diff version (pun intended)?
+            plot_uc = list({ val <- HaDeX2::plot_uptake_curve( # TODO: shouldn't there be differentiation between diff version (pun intended)?
               dat_uc,
               theoretical      = s_calculation   %()% theoretical,
               fractional       = s_calculation   %()% fractional,

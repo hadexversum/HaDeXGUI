@@ -41,7 +41,7 @@ mod_plot_coverage_server <- function(id, dat, params){
 
     dat_processed_position_frequency <- reactive({
       state <- s_state     %()% state
-      HaDeX::create_overlap_distribution_dataset(
+      HaDeX2::create_overlap_distribution_dataset(
         dat(),
         protein          = params      %()% chosen_protein,
         state            = state,
@@ -54,7 +54,7 @@ mod_plot_coverage_server <- function(id, dat, params){
     ### OUT REACTIVES
 
     plot_out_peptide_coverage <- reactive({
-      HaDeX::plot_coverage(
+      HaDeX2::plot_coverage(
         dat = dat(),
         protein = params  %()% chosen_protein,
         state   = s_state %()% state
@@ -67,7 +67,7 @@ mod_plot_coverage_server <- function(id, dat, params){
     })
 
     plot_out_position_frequency <- reactive({
-      HaDeX::plot_overlap_distribution(
+      HaDeX2::plot_overlap_distribution(
         overlap_dist_dat = dat_processed_position_frequency(),
         start            = s_subregion %()% start,
         end              = s_subregion %()% end
@@ -75,7 +75,7 @@ mod_plot_coverage_server <- function(id, dat, params){
     })
 
     dat_out_peptide_coverage <- reactive({
-      HaDeX::show_overlap_data(
+      HaDeX2::show_overlap_data(
         dat = dat(),
         protein = params      %()% chosen_protein,
         state   = s_state     %()% state,

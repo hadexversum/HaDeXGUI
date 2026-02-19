@@ -54,17 +54,17 @@ mod_plot_structure_heatmap_server <- function(id, differential, dat, str_path, p
     dat_out <- reactive({
 
       dat() %>%
-        HaDeX::create_uptake_dataset() %>%
-        HaDeX::create_aggregated_uptake_dataset()
+        HaDeX2::create_uptake_dataset() %>%
+        HaDeX2::create_aggregated_uptake_dataset()
 
     })
 
     plot_out <- reactive({
 
       dat() %>%
-        HaDeX::create_uptake_dataset(time_0 = 0.001) %>%
-        HaDeX::create_aggregated_uptake_dataset() %>%
-        HaDeX::plot_aggregated_uptake(panels = F)
+        HaDeX2::create_uptake_dataset(time_0 = 0.001) %>%
+        HaDeX2::create_aggregated_uptake_dataset() %>%
+        HaDeX2::plot_aggregated_uptake(panels = F)
 
     })
 

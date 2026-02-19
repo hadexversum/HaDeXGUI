@@ -53,7 +53,7 @@ mod_plot_uncertainty_server <- function(id, dat, params){
 
     plot_out <- reactive({
 
-      HaDeX::plot_uncertainty(
+      HaDeX2::plot_uncertainty(
         dat            = dat_processed(),
         skip_amino     = s_visualization %()% skip_amino,
         protein        = params          %()% chosen_protein,
@@ -65,7 +65,7 @@ mod_plot_uncertainty_server <- function(id, dat, params){
 
     dat_out <- reactive({
       func <- if (s_visualization %()% show_aggregated) {
-        HaDeX::calculate_exp_masses
+        HaDeX2::calculate_exp_masses
       } else {
         function(dat) {
           dat %>%

@@ -41,7 +41,7 @@ mod_plot_replicates_server <- function(id, dat, params){
     ### REACTIVES FOR DATA PROCESSING
 
     dat_processed_per_peptide_for_time <- reactive({
-      HaDeX::create_replicate_dataset(
+      HaDeX2::create_replicate_dataset(
         dat(),
         time_t  = s_time  %()% t,
         protein = params  %()% chosen_protein,
@@ -50,7 +50,7 @@ mod_plot_replicates_server <- function(id, dat, params){
     })
 
     dat_processed_per_peptide_all_times <- reactive({
-      HaDeX::create_replicate_dataset(
+      HaDeX2::create_replicate_dataset(
         dat(),
         protein = params  %()% chosen_protein,
         state   = s_state %()% state
@@ -60,29 +60,29 @@ mod_plot_replicates_server <- function(id, dat, params){
     ### OUT REACTIVES
 
     dat_out_per_peptide_for_time <- reactive({
-      HaDeX::show_replicate_histogram_data(dat_processed_per_peptide_for_time())
+      HaDeX2::show_replicate_histogram_data(dat_processed_per_peptide_for_time())
     })
 
     dat_out_per_peptide_all_times <- reactive({
-      HaDeX::show_replicate_histogram_data(dat_processed_per_peptide_all_times())
+      HaDeX2::show_replicate_histogram_data(dat_processed_per_peptide_all_times())
     })
 
     dat_out_per_time <- reactive({
-      HaDeX::show_replicate_histogram_data(dat_processed_per_peptide_all_times()) %>%
+      HaDeX2::show_replicate_histogram_data(dat_processed_per_peptide_all_times()) %>%
         arrange(Exposure, ID) %>%
         select(Exposure, everything())
     })
 
     plot_out_per_peptide_for_time <- reactive({
-      HaDeX::plot_replicate_histogram(dat_processed_per_peptide_for_time())
+      HaDeX2::plot_replicate_histogram(dat_processed_per_peptide_for_time())
     })
 
     plot_out_per_peptide_all_times <- reactive({
-      HaDeX::plot_replicate_histogram(dat_processed_per_peptide_all_times())
+      HaDeX2::plot_replicate_histogram(dat_processed_per_peptide_all_times())
     })
 
     plot_out_per_time <- reactive({
-      HaDeX::plot_replicate_histogram(
+      HaDeX2::plot_replicate_histogram(
         dat_processed_per_peptide_all_times(),
         time_points = TRUE
       )

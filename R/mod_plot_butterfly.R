@@ -47,7 +47,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     dat_processed <- if (differential) reactive({
       wait_for(s_time[["points"]]())
 
-      HaDeX::create_diff_uptake_dataset(
+      HaDeX2::create_diff_uptake_dataset(
         dat(),
         protein = params[["chosen_protein"]](),
         state_1 = s_state[["state_1"]](),
@@ -58,7 +58,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
       ) %>%
         filter(Exposure %in% s_time[["points"]]())
     }) else reactive({
-      HaDeX::create_state_uptake_dataset(
+      HaDeX2::create_state_uptake_dataset(
         dat(),
         protein = params[["chosen_protein"]](),
         state = s_state[["state"]](),
@@ -73,7 +73,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
 
     plot_out <- if (differential) reactive({
       (dat() %>%
-         HaDeX::create_p_diff_uptake_dataset(
+         HaDeX2::create_p_diff_uptake_dataset(
            diff_uptake_dat = dat_processed(),
            protein = params[["chosen_protein"]](),
            state_1 = s_state[["state_1"]](),
@@ -83,7 +83,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
            time_0 = s_time[["0"]](),
            time_100 = s_time[["100"]](),
            deut_part = params[["deut_part"]]()
-         ) %>% HaDeX::plot_differential_butterfly(
+         ) %>% HaDeX2::plot_differential_butterfly(
            diff_uptake_dat = dat_processed(),
            diff_p_uptake_dat = .,
            theoretical = s_calculation[["theoretical"]](),
@@ -99,7 +99,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
     }) else reactive({
       wait_for(s_time %()% points)
       (dat_processed() %>%
-        HaDeX::plot_butterfly(
+        HaDeX2::plot_butterfly(
           theoretical = s_calculation[["theoretical"]](),
           fractional = s_calculation[["fractional"]](),
           uncertainty_type = s_visualization[["uncertainty_type"]](),
@@ -109,7 +109,7 @@ mod_plot_butterfly_server <- function(id, differential, dat, params){
         suppressMessages() # suppressing annoying coordinate system replacement msg
     })
 
-    .show_fun <- if (differential) HaDeX::show_diff_uptake_data else HaDeX::show_uptake_data
+    .show_fun <- if (differential) HaDeX2::show_diff_uptake_data else HaDeX2::show_uptake_data
 
     dat_out <- reactive({
 

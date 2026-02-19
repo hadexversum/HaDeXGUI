@@ -43,8 +43,8 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
 
        if (cov_variable() == "auc") {
         dat_tmp <- dat()[dat()[["Exposure"]] < MAX_TIME, ]
-        HaDeX::calculate_auc(
-          uptake_dat = HaDeX::create_uptake_dataset(
+        HaDeX2::calculate_auc(
+          uptake_dat = HaDeX2::create_uptake_dataset(
             dat = dat_tmp,
             protein = params  %()% chosen_protein,
             states = s_state[["state"]](),
@@ -58,7 +58,7 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
         )
       } else if (cov_variable() == "back_exchange") {
         validate(need(s_time  %()% 100 %in% unique(dat()[dat()[["State"]] == s_state[["state"]](), "Exposure"]), "Selected fully deuterated time point not present for selected state!"))
-        HaDeX::calculate_back_exchange(
+        HaDeX2::calculate_back_exchange(
           dat = dat(),
           protein = params  %()% chosen_protein,
           states = s_state[["state"]](),
@@ -82,7 +82,7 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
 
     plot_out <- reactive({
 
-      HaDeX::plot_coverage_heatmap(
+      HaDeX2::plot_coverage_heatmap(
         x_dat = dat_processed(),
         value = cov_variable()
       ) %>%
@@ -91,7 +91,7 @@ mod_plot_coverage_heatmap_server <- function(id, dat, params){
 
     dat_out <- reactive({
 
-      HaDeX::show_coverage_heatmap_data(x_dat = dat_processed(),
+      HaDeX2::show_coverage_heatmap_data(x_dat = dat_processed(),
                                  value = cov_variable())
 
     })

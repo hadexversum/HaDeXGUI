@@ -56,7 +56,7 @@ mod_plot_measurements_server <- function(id, dat, params){
         # select(Sequence, Start, End) %>%
         # unique(.) %>%
         # arrange(Start, End)
-        HaDeX::get_replicate_list_sd(time_t = time) %>%
+        HaDeX2::get_replicate_list_sd(time_t = time) %>%
         mutate(sd = round(sd, 3)) %>%
         select(Sequence, Start, End, sd) %>%
         arrange(Start, End)
@@ -75,7 +75,7 @@ mod_plot_measurements_server <- function(id, dat, params){
 
     dat_processed_mass_uptake <- reactive({
       func <- if (s_visualization %()% show_replicates) function(data) {
-        HaDeX::calculate_exp_masses_per_replicate(data) %>%
+        HaDeX2::calculate_exp_masses_per_replicate(data) %>%
           mutate(mass_uptake = avg_exp_mass - MHP)
       } else function(data) {
         mutate(
@@ -102,7 +102,7 @@ mod_plot_measurements_server <- function(id, dat, params){
     plot_out_measurements <- reactive({
       sequence <- selected_sequence()
       dat_processed_measurements() %>%
-        HaDeX::plot_peptide_mass_measurement(
+        HaDeX2::plot_peptide_mass_measurement(
           protein            = params            %()% chosen_protein,
           show_charge_values = !(s_visualization %()% show_replicates),
           state              = s_state           %()% state,
@@ -116,7 +116,7 @@ mod_plot_measurements_server <- function(id, dat, params){
     plot_out_mass_uptake <- reactive({
       sequence = selected_sequence()
       dat_processed_measurements() %>% # TODO: is this sic! or sick?
-      HaDeX::plot_replicate_mass_uptake(
+      HaDeX2::plot_replicate_mass_uptake(
         protein         = params          %()% chosen_protein,
         state           = s_state         %()% state,
         sequence        = sequence,
@@ -131,8 +131,8 @@ mod_plot_measurements_server <- function(id, dat, params){
 
       sequence <- selected_sequence()
       dat_processed_measurements() %>%
-        HaDeX::calculate_exp_masses_per_replicate() %>%
-        HaDeX::show_peptide_mass_measurement(
+        HaDeX2::calculate_exp_masses_per_replicate() %>%
+        HaDeX2::show_peptide_mass_measurement(
           protein  = params  %()% chosen_protein,
           state    = s_state %()% state,
           sequence = sequence,

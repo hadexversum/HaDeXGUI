@@ -43,7 +43,7 @@ mod_page_summary_server <- function(id, dat, params){
       validate(need(length(input[["state"]])>0, "Choose at least one state"))
 
       dat() %>% filter(State %in% input[["state"]]) %>%
-      HaDeX::show_summary_data(
+      HaDeX2::show_summary_data(
         dat = .,
         confidence_level = 0.9, #TODO: fix this hardcoded value!
         protein_length = params %()% max_range
